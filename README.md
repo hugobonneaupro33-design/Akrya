@@ -1,101 +1,143 @@
-# Akrya
-Anime/Manga/Webtoon
-
-# 🎌 Anime & Manga Info
-
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue?style=for-the-badge&logo=github)
-![Firebase](https://img.shields.io/badge/Firebase-Auth-orange?style=for-the-badge&logo=firebase)
-![AniList](https://img.shields.io/badge/AniList-API-blue?style=for-the-badge&logo=graphql)
-![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
+<img src="favicon.svg" width="80" alt="Akrya Logo">
 
-**Votre guide ultime pour l'univers des animes, mangas et webtoons**
+# 🎌 Akrya
 
-[![Live Demo](https://img.shields.io/badge/Démo_En_Ligne-FF5722?style=for-the-badge&logo=google-chrome&logoColor=white)](https://hugobonneaupro33-design.github.io/aaaaaa/)
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/hugobonneaupro33-design/aaaaaa)
+### La plateforme anime, manga & webtoon nouvelle génération
+
+[![Site en ligne](https://img.shields.io/badge/🌐_Site_en_ligne-Visiter-e94560?style=for-the-badge)](https://hugobonneaupro33-design.github.io/Akrya/)
+[![GitHub Pages](https://img.shields.io/badge/Hébergé_sur-GitHub_Pages-181717?style=for-the-badge&logo=github)](https://github.com/hugobonneaupro33-design/Akrya)
+[![Firebase](https://img.shields.io/badge/Firebase-Auth_&_DB-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com)
+[![Licence MIT](https://img.shields.io/badge/Licence-MIT-22c55e?style=for-the-badge)](LICENSE)
+
+---
+
+*Découvrez, suivez et regardez vos animes, mangas et webtoons préférés.*  
+*VF · VOSTFR · Calendrier en temps réel · Profil synchronisé.*
 
 </div>
 
 ---
 
-## ✨ Aperçu
+## ✨ Fonctionnalités
 
-**Anime & Manga Info** est une plateforme web moderne permettant de :
+### 🗂️ Catalogue
+- **3 catégories** — Anime (rouge), Manga (violet), Webtoon (tiffany) avec thème de couleur dédié
+- **Filtres par genre** — Action, Fantasy, Romance, Horreur, Sports, Sci-Fi, Historique…
+- **Recherche en temps réel** — résultats instantanés avec aperçu image
+- **Tri du plus récent** — sorties classées par date de diffusion
+- **24+ webtoons** — Solo Leveling, Tower of God, Sweet Home, Weak Hero, Omniscient Reader…
 
-- 📺 **Découvrir** les animes tendances et les dernières sorties
-- 📅 **Consulter** le calendrier hebdomadaire des épisodes
-- ⭐ **Explorer** le classement Top Rated
-- 📰 **Suivre** les actualités du monde manga/anime
-- 🔐 **Créer un compte** pour sauvegarder vos favoris et votre progression
-- 🎬 **Regarder** vos animes préférés en VF/VOSTFR
+### 📺 Lecture
+- **8 sources vidéo** — AnimeSama, Neko-sama, VoirAnime, Mavanimes, AnimePahe, Crunchyroll, VF5, AniWave
+- **VF & VOSTFR** — choix de la langue par bouton
+- **Progression sauvegardée** — reprend là où vous vous êtes arrêté (localStorage + cloud)
+- **Épisodes vus** — marqués visuellement dans la sidebar
+- **Autoplay** — passage automatique à l'épisode suivant
+- **Raccourcis clavier** — ← → pour naviguer, Espace pour lancer, F pour plein écran
+- **Sidebar paginée** — navigation « ‹ › » + boutons première/dernière page + saut direct
+
+### 📅 Calendrier
+- **Temps réel** — données AniList GraphQL, actualisation par semaine
+- **Navigation semaines** — précédente, actuelle, suivante
+- **Heure de diffusion** — jour, heure JST, numéro d'épisode, note
+- **Mise en évidence** — jour actuel surligné
+
+### 👤 Profil utilisateur
+- **Connexion** — Google & Facebook via Firebase Auth
+- **Favoris** — ajout depuis n'importe quelle page, synchronisé Firestore
+- **Historique** — 50 derniers épisodes regardés, cliquables pour reprendre
+- **Statistiques** — 11 métriques (épisodes/jour, heures, note moyenne, jours de membre…)
+- **Paramètres** — thème, autoplay, notifications, profil public, toggle switches
+- **Export/Import** — sauvegarde JSON de toutes les données
+- **Synchronisation** — localStorage ↔ Firestore (merge intelligent)
+
+### 🗞️ Actualités
+- **12 actualités** en fallback immédiat
+- **Flux RSS live** — Anime News Network chargé en arrière-plan
+
+### 📡 Planning saison
+- **Filtrable par jour** — Lundi à Dimanche
+- **Données live** — saison en cours depuis Jikan API
+
+### 📱 PWA & Performance
+- **Service Worker** — mode hors-ligne, cache automatique
+- **Installable** — manifest.json, icône, raccourcis
+- **Responsive** — mobile, tablette, desktop
+- **Thème clair/sombre** — mémorisé entre les sessions
 
 ---
 
-## 🚀 Fonctionnalités
+## 🗂️ Structure du projet
 
-| Fonctionnalité | Description |
-|----------------|-------------|
-| 🏠 **Page d'accueil** | Dernières sorties classées par date, filtres par genre, tendances |
-| 📅 **Calendrier** | Planning hebdomadaire des sorties (style voiranime) |
-| ⭐ **Top Rated** | Classement des meilleurs animes selon les notes utilisateurs |
-| 📰 **Actualités** | Flux RSS d'Anime News Network intégré |
-| 🔍 **Recherche** | Recherche en temps réel avec aperçu des images |
-| 🎬 **Lecteur vidéo** | Support VF/VOSTFR, plusieurs sources, autoplay, progression |
-| ❤️ **Favoris** | Sauvegarde locale + synchronisation Firebase |
-| 👤 **Profil** | Statistiques, historique, gestion des favoris |
-| 📱 **Responsive** | Adapté à toutes les tailles d'écran |
+```
+Akrya/
+├── index.html          # Page d'accueil — 5 onglets, 3 catégories
+├── detail.html         # Détail anime/manga/webtoon + épisodes + recommandations
+├── watch.html          # Lecteur vidéo — 8 sources, sidebar paginée
+├── profile.html        # Profil — favoris, historique, stats, paramètres
+├── offline.html        # Page hors-ligne
+├── style.css           # Styles globaux
+├── firebase-config.js  # Firebase init unique + helpers auth
+├── calendar-data.js    # Calendrier AniList temps réel
+├── script.js           # Catalogue, recherche, top, news
+├── main.js             # Service Worker + bannière offline
+├── sw.js               # Service Worker v3
+├── manifest.json       # PWA manifest
+├── favicon.svg         # Icône du site
+└── README.md           # Documentation
+```
 
 ---
 
-## 🛠️ Stack Technique
+## 🛠️ Stack technique
+
+| Couche | Technologie |
+|--------|-------------|
+| Frontend | HTML5 · CSS3 · JavaScript Vanilla ES2022 |
+| Données animes | [Jikan API v4](https://jikan.moe) (REST) |
+| Calendrier | [AniList](https://anilist.co) (GraphQL) |
+| Authentification | Firebase Auth (Google / Facebook) |
+| Base de données | Cloud Firestore |
+| Hébergement | GitHub Pages |
+| PWA | Service Worker + Web App Manifest |
+
+---
+
+## 📸 Aperçu
+
+| Page | Description |
+|------|-------------|
+| 🏠 Accueil | Catalogue paginé, filtres genre, 3 thèmes de couleur |
+| 📺 Lecteur | Player avec 8 sources, sidebar épisodes, progression |
+| 📅 Calendrier | Planning hebdomadaire temps réel AniList |
+| 👤 Profil | Dashboard complet avec stats et paramètres |
+
+---
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues !
+
+1. Fork le projet
+2. Créez votre branche (`git checkout -b feature/ma-feature`)
+3. Committez vos changements (`git commit -m 'feat: ajouter ...'`)
+4. Push sur la branche (`git push origin feature/ma-feature`)
+5. Ouvrez une Pull Request
+
+---
+
+## 📄 Licence
+
+Distribué sous licence **MIT**. Voir [`LICENSE`](LICENSE) pour plus d'informations.
+
+---
 
 <div align="center">
 
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
-![GraphQL](https://img.shields.io/badge/GraphQL-E10098?style=for-the-badge&logo=graphql&logoColor=white)
-![AniList](https://img.shields.io/badge/AniList-02A9FF?style=for-the-badge&logo=anilist&logoColor=white)
+Fait avec ❤️ par **Irichi** · [Irichi](https://github.com/hugobonneaupro33-design)
+
+⭐ **Si le projet vous plaît, laissez une étoile !** ⭐
 
 </div>
-
-- **Frontend** : HTML5, CSS3, JavaScript Vanilla
-- **API** : AniList GraphQL (données animes)
-- **Authentification** : Firebase Auth (Google/Facebook)
-- **Base de données** : Firestore (favoris, progression)
-- **Hébergement** : GitHub Pages
-
----
-
-## 📁 Structure du projet
-anime-info/
-├── index.html # Page d'accueil
-├── anime-detail.html # Détail d'un anime
-├── watch.html # Lecteur vidéo
-├── profile.html # Profil utilisateur
-├── webtoon.html # Page webtoons
-├── manga-detail.html # Détail d'un manga
-├── style.css # Styles globaux
-├── firebase-config.js # Configuration Firebase
-├── calendar.js # Calendrier des sorties
-├── calendar-data.js # Données du calendrier
-├── detail-page.js # Script page détail
-├── watch.js # Script lecteur vidéo
-├── profile.js # Script profil utilisateur
-├── script.js # Script principal
-├── main.js # Script d'initialisation
-├── news-data.js # Données des actualités
-├── sw.js # Service Worker (offline)
-├── offline.html # Page hors-ligne
-├── favicon.svg # Icône du site
-└── README.md # Documentation
-
-
-📝 Licence
-Ce projet est sous licence MIT
-Iraya - GitHub
-
-<div align="center">
-⭐ Si vous aimez ce projet, n'oubliez pas de laisser une étoile ! ⭐
