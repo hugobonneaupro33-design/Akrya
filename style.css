@@ -1,0 +1,581 @@
+/* ============================================================
+   STYLE.CSS — Akrya Anime
+   ✅ FIX: toast géré uniquement par .show (pas .hidden)
+   ✅ FIX: .hidden retire de l'affichage SAUF pour #toast et #userMenu
+   ============================================================ */
+
+/* ===== VARIABLES ===== */
+:root {
+  --primary:       #e94560;
+  --primary-dark:  #c72e48;
+  --primary-light: #ff6b8b;
+  --secondary:     #6c5ce7;
+  --anime-color:   #e94560;
+  --manga-color:   #8b5cf6;
+  --webtoon-color: #14b8a6;
+
+  --bg-dark:   #0a0a0f;
+  --bg-card:   rgba(19,19,31,.95);
+  --bg-hover:  rgba(30,30,46,.95);
+  --bg-input:  #1a1a2e;
+
+  --text-light: #f0f0f0;
+  --text-muted: #8888aa;
+  --border:     #252540;
+
+  --shadow:       0 8px 20px rgba(0,0,0,.3);
+  --shadow-hover: 0 12px 30px rgba(233,69,96,.2);
+  --radius:    16px;
+  --radius-sm:  8px;
+  --radius-lg: 24px;
+  --transition: all 0.3s ease;
+}
+
+body.light-theme {
+  --bg-dark:    #f5f5f5;
+  --bg-card:    rgba(255,255,255,.95);
+  --bg-hover:   rgba(232,232,232,.95);
+  --text-light: #1a1a2e;
+  --text-muted: #666666;
+  --border:     #dddddd;
+}
+
+/* ===== RESET ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Segoe UI', 'Inter', system-ui, sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-light);
+  min-height: 100vh;
+  line-height: 1.5;
+  transition: background .3s, color .3s;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-card); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
+
+/* ===== HEADER ===== */
+header {
+  background: linear-gradient(135deg,#0f0f1a 0%,#1a1a2e 100%);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+body.light-theme header { background: linear-gradient(135deg,#e8e8e8 0%,#fff 100%); }
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.logo h1 {
+  font-size: 1.5rem;
+  background: linear-gradient(135deg,var(--primary),var(--primary-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.logo p { font-size: .7rem; color: var(--text-muted); }
+
+/* ===== BOUTONS AUTH ===== */
+.auth-buttons { display: flex; gap: .8rem; flex-wrap: wrap; }
+
+.google-btn, .facebook-btn, .logout-btn {
+  padding: .5rem 1.2rem;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .9rem;
+}
+.google-btn   { background: #4285f4; color: #fff; }
+.facebook-btn { background: #1877f2; color: #fff; }
+.logout-btn   { background: var(--primary); color: #fff; }
+.google-btn:hover, .facebook-btn:hover, .logout-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--bg-hover);
+  padding: .4rem 1rem;
+  border-radius: 40px;
+}
+.user-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.profile-link { color: var(--primary); text-decoration: none; font-weight: 500; }
+.profile-link:hover { color: var(--primary-light); }
+
+/* ===== THEME TOGGLE ===== */
+.theme-btn {
+  background: var(--bg-hover);
+  border: none;
+  border-radius: 30px;
+  padding: .4rem .8rem;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.theme-btn:hover { background: var(--primary); }
+
+/* ===== RECHERCHE ===== */
+.search-container {
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+.search-wrapper {
+  display: flex;
+  background: var(--bg-input);
+  border-radius: 50px;
+  border: 2px solid var(--border);
+  transition: var(--transition);
+}
+.search-wrapper:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(233,69,96,.2);
+}
+#searchInput {
+  flex: 1;
+  padding: .8rem 1.5rem;
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: var(--text-light);
+  outline: none;
+}
+#searchInput::placeholder { color: var(--text-muted); }
+#searchBtn {
+  padding: 0 1.5rem;
+  background: var(--primary);
+  border: none;
+  border-radius: 50px;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: var(--transition);
+}
+#searchBtn:hover { background: var(--primary-dark); }
+
+/* Dropdown résultats */
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + .5rem);
+  left: 0; right: 0;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 200;
+  box-shadow: var(--shadow);
+  display: none;
+  border: 1px solid var(--border);
+}
+.search-dropdown.active { display: block; }
+.search-item {
+  display: flex;
+  gap: 1rem;
+  padding: .8rem;
+  cursor: pointer;
+  transition: var(--transition);
+  border-bottom: 1px solid var(--border);
+}
+.search-item:last-child { border-bottom: none; }
+.search-item:hover { background: var(--bg-hover); }
+.search-item img { width: 50px; height: 70px; object-fit: cover; border-radius: var(--radius-sm); }
+.search-item-info h4 { font-size: .9rem; margin-bottom: .2rem; }
+.search-item-info p  { font-size: .7rem; color: var(--text-muted); }
+
+/* ===== NAVIGATION CATÉGORIES ===== */
+.category-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+.cat-nav-btn {
+  padding: .7rem 1.8rem;
+  background: var(--bg-hover);
+  border: none;
+  border-radius: 40px;
+  color: var(--text-light);
+  font-weight: bold;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.cat-nav-btn:hover { transform: translateY(-3px); }
+.cat-nav-btn.anime.active,   .cat-nav-btn.anime:hover   { background: var(--anime-color);   box-shadow: 0 4px 15px rgba(233,69,96,.3); }
+.cat-nav-btn.manga.active,   .cat-nav-btn.manga:hover   { background: var(--manga-color);   box-shadow: 0 4px 15px rgba(139,92,246,.3); }
+.cat-nav-btn.webtoon.active, .cat-nav-btn.webtoon:hover { background: var(--webtoon-color); box-shadow: 0 4px 15px rgba(20,184,166,.3); }
+
+/* ===== NAVIGATION ONGLETS ===== */
+.quick-nav {
+  display: flex;
+  gap: .5rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.nav-btn {
+  padding: .7rem 1.5rem;
+  background: var(--bg-hover);
+  border: none;
+  border-radius: 40px;
+  color: var(--text-light);
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+.nav-btn.active, .nav-btn:hover { background: var(--primary); transform: translateY(-2px); }
+
+/* ===== HERO ===== */
+.hero-section {
+  background: linear-gradient(135deg,rgba(233,69,96,.1),rgba(108,92,231,.05));
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.hero-section h2 { font-size: 2rem; margin-bottom: .5rem; }
+.hero-section p   { color: var(--text-muted); margin-bottom: 1rem; }
+.hero-stats { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 1rem; }
+.hero-stat {
+  text-align: center;
+  background: var(--bg-card);
+  padding: .8rem 1.5rem;
+  border-radius: 40px;
+}
+.hero-stat .number { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+.hero-stat .label  { font-size: .7rem; color: var(--text-muted); }
+
+/* ===== FILTRES GENRES ===== */
+.filters-section { margin-bottom: 1.5rem; }
+.filter-title {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+  font-weight: bold;
+}
+.genre-filters { display: flex; flex-wrap: wrap; gap: .5rem; }
+.genre-filter {
+  padding: .4rem 1rem;
+  background: var(--bg-hover);
+  border: none;
+  border-radius: 30px;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.genre-filter.active, .genre-filter:hover { background: var(--primary); }
+
+/* ===== SECTION TITRE ===== */
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.section-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px; height: 24px;
+  background: var(--primary);
+  border-radius: 4px;
+}
+.section-sub { font-size: .8rem; color: var(--text-muted); }
+
+/* ===== GRILLE ANIMES ===== */
+.anime-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+  gap: 1.5rem;
+}
+.anime-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  animation: fadeIn .4s ease-out;
+}
+.anime-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); }
+.anime-card img {
+  width: 100%; height: 280px;
+  object-fit: cover;
+  transition: transform .3s;
+  display: block;
+}
+.anime-card:hover img { transform: scale(1.05); }
+.anime-info { padding: 1rem; }
+.anime-info h3 {
+  font-size: 1rem;
+  margin-bottom: .3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.anime-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: .75rem;
+  color: var(--text-muted);
+  margin-top: .4rem;
+}
+.score { color: #ffd700; }
+.badge {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: var(--primary);
+  padding: .2rem .6rem;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: bold;
+  z-index: 5;
+}
+
+/* ===== PAGINATION ===== */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: .5rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+.page-btn {
+  padding: .5rem 1rem;
+  background: var(--bg-hover);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-light);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.page-btn:disabled { opacity: .4; cursor: not-allowed; }
+.page-btn.active, .page-btn:not(:disabled):hover { background: var(--primary); }
+
+/* ===== CALENDRIER ===== */
+.calendar-container { background: var(--bg-card); border-radius: var(--radius); padding: 1rem; }
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.calendar-nav button {
+  padding: .5rem 1rem;
+  background: var(--bg-hover);
+  border: none;
+  border-radius: 30px;
+  color: var(--text-light);
+  cursor: pointer;
+  margin: 0 .3rem;
+  transition: var(--transition);
+}
+.calendar-nav button:hover { background: var(--primary); }
+.calendar-week-days {
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  gap: .5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: bold;
+  color: var(--primary);
+  font-size: .85rem;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  gap: .5rem;
+}
+.calendar-day {
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+  padding: .5rem;
+  min-height: 100px;
+}
+.calendar-day-header {
+  font-size: .7rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding-bottom: .3rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .5rem;
+}
+.calendar-episode {
+  background: var(--bg-card);
+  border-radius: 6px;
+  padding: .3rem;
+  margin-bottom: .3rem;
+  cursor: pointer;
+  font-size: .65rem;
+  transition: var(--transition);
+}
+.calendar-episode:hover { background: var(--primary); }
+.calendar-episode strong { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.calendar-episode small  { color: var(--text-muted); font-size: .6rem; }
+.calendar-empty { font-size: .65rem; color: var(--text-muted); text-align: center; padding: .5rem; }
+
+/* ===== ACTUALITÉS ===== */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px,1fr));
+  gap: 1.5rem;
+}
+.news-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.news-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.news-card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.news-content  { padding: 1rem; }
+.news-source {
+  background: var(--primary);
+  padding: .2rem .6rem;
+  border-radius: 20px;
+  font-size: .7rem;
+  display: inline-block;
+  margin-bottom: .5rem;
+}
+.news-content h3  { font-size: 1rem; margin-bottom: .5rem; line-height: 1.4; }
+.news-meta { font-size: .7rem; color: var(--text-muted); margin-top: .5rem; }
+
+/* ===== PAGES / VISIBILITÉ ===== */
+.page { display: block; }
+.page.hidden { display: none !important; }
+
+/* ✅ FIX CRITIQUE: .hidden retire de l'affichage MAIS on ne
+   l'applique PAS via HTML sur #toast ou #userMenu.
+   Ces éléments sont gérés entièrement par JS (classList / style.display). */
+.hidden { display: none !important; }
+
+/* ===== ÉTATS DE CHARGEMENT / ERREUR ===== */
+.loading, .error {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+  grid-column: 1 / -1; /* Occupe toute la largeur dans une grille */
+}
+.error { color: var(--primary); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+.loading { animation: pulse 1.5s infinite; }
+
+/* ===== TOAST ===== */
+/* ✅ FIX: toast est invisible par défaut grâce à opacity/transform,
+   PAS via display:none ni .hidden. Cela permet l'animation CSS. */
+#toast {
+  min-width: 250px;
+  background: var(--bg-card);
+  color: var(--text-light);
+  text-align: center;
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.5rem;
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(30px);
+  z-index: 1000;
+  border-left: 4px solid var(--primary);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease;
+}
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== HOME LINK (pages internes) ===== */
+.home-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  transition: var(--transition);
+}
+.home-link:hover { color: var(--primary-light); }
+
+/* ===== MAIN ===== */
+main {
+  padding: 1rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .calendar-grid { grid-template-columns: repeat(4,1fr); }
+}
+@media (max-width: 768px) {
+  .header-top { flex-direction: column; text-align: center; }
+  .anime-grid { grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); }
+  .anime-card img { height: 220px; }
+  .calendar-grid { grid-template-columns: repeat(2,1fr); }
+  .news-grid { grid-template-columns: 1fr; }
+  .search-wrapper { flex-direction: column; border-radius: var(--radius); }
+  #searchBtn { padding: .8rem; border-radius: 0 0 var(--radius) var(--radius); }
+  .hero-stats { gap: 1rem; }
+}
+@media (max-width: 480px) {
+  header { padding: 1rem; }
+  main { padding: 1rem !important; }
+  .cat-nav-btn { padding: .5rem 1rem; font-size: .85rem; }
+  .nav-btn { padding: .4rem .8rem; font-size: .8rem; }
+  .anime-grid { grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); }
+  .anime-card img { height: 200px; }
+  .calendar-grid { grid-template-columns: 1fr; }
+  .hero-section h2 { font-size: 1.3rem; }
+}
+
+/* ===== PRINT ===== */
+@media print {
+  header, .quick-nav, .category-nav, .filters-section, .pagination, #toast { display: none; }
+  body { background: #fff; color: #000; }
+  .anime-card { break-inside: avoid; }
+}
