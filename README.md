@@ -1,0 +1,2 @@
+# Akrya
+Anime/Manga/Webtoon
