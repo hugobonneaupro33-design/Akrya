@@ -1,30 +1,34 @@
-// ============================================
-// SERVICE WORKER - ANIME & MANGA INFO
-// Version simplifiée et robuste
-// ============================================
+// ============================================================
+// SW.JS — Akrya Anime v3
+// Fusion complète v1 (robuste) + v3 (push, PWA)
+// TOUTES les fonctionnalités conservées
+// ============================================================
 
-const CACHE_NAME = 'anime-info-v1';
+const CACHE_NAME = 'akrya-v3';
 const OFFLINE_URL = '/offline.html';
 
-// Fichiers à mettre en cache (UNIQUEMENT ceux qui existent)
+// Fichiers à mettre en cache au démarrage
 const STATIC_CACHE_URLS = [
   '/',
   '/index.html',
-  '/style.css'
-  // Ne mettez que les fichiers qui existent vraiment !
+  '/style.css',
+  '/offline.html',
+  '/favicon.svg',
+  '/favicon.ico',
+  '/manifest.json'
 ];
 
-// ============================================
+// ============================================================
 // INSTALLATION
-// ============================================
+// ============================================================
 self.addEventListener('install', (event) => {
   console.log('[SW] Installation...');
-  
+
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
-      
-      // Ne mettre en cache que les fichiers qui existent
+
+      // On tente chaque fichier individuellement — si l'un échoue, on continue
       for (const url of STATIC_CACHE_URLS) {
         try {
           const response = await fetch(url);
@@ -32,29 +36,30 @@ self.addEventListener('install', (event) => {
             await cache.put(url, response);
             console.log(`[SW] Cache OK: ${url}`);
           } else {
-            console.warn(`[SW] Fichier non trouvé: ${url}`);
+            console.warn(`[SW] Fichier non trouvé (${response.status}): ${url}`);
           }
         } catch (error) {
-          console.warn(`[SW] Impossible de cacher: ${url}`, error);
+          console.warn(`[SW] Impossible de cacher: ${url}`, error.message);
         }
       }
-      
+
       console.log('[SW] Installation terminée');
     })()
   );
-  
+
+  // Prend le contrôle immédiatement sans attendre le rechargement
   self.skipWaiting();
 });
 
-// ============================================
+// ============================================================
 // ACTIVATION
-// ============================================
+// ============================================================
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activation...');
-  
+
   event.waitUntil(
     (async () => {
-      // Supprimer les anciens caches
+      // Supprimer tous les anciens caches (versions précédentes)
       const cacheNames = await caches.keys();
       await Promise.all(
         cacheNames
@@ -64,25 +69,26 @@ self.addEventListener('activate', (event) => {
             return caches.delete(name);
           })
       );
-      
+
       console.log('[SW] Activation terminée');
     })()
   );
-  
+
+  // Prend immédiatement le contrôle de tous les clients ouverts
   self.clients.claim();
 });
 
-// ============================================
-// STRATÉGIE DE CACHE SIMPLIFIÉE
-// ============================================
+// ============================================================
+// STRATÉGIES DE CACHE
+// ============================================================
 
-// Cache d'abord pour les ressources statiques
+// Cache d'abord → réseau en fallback (assets statiques)
 async function cacheFirst(request) {
   const cachedResponse = await caches.match(request);
   if (cachedResponse) {
     return cachedResponse;
   }
-  
+
   try {
     const networkResponse = await fetch(request);
     if (networkResponse && networkResponse.ok) {
@@ -90,12 +96,14 @@ async function cacheFirst(request) {
       cache.put(request, networkResponse.clone());
       return networkResponse;
     }
-  } catch (error) {}
-  
+  } catch (error) {
+    // Silencieux — ressource non disponible
+  }
+
   return new Response('Ressource non disponible', { status: 404 });
 }
 
-// Réseau d'abord pour les pages HTML
+// Réseau d'abord → cache en fallback (pages HTML)
 async function networkFirst(request) {
   try {
     const networkResponse = await fetch(request);
@@ -105,68 +113,81 @@ async function networkFirst(request) {
       return networkResponse;
     }
   } catch (error) {
+    // Réseau indisponible — on essaie le cache
     const cachedResponse = await caches.match(request);
     if (cachedResponse) {
       return cachedResponse;
     }
-    
-    // Page hors-ligne
+
+    // Fallback page hors-ligne pour les requêtes HTML
     if (request.headers.get('accept')?.includes('text/html')) {
       return caches.match(OFFLINE_URL);
     }
   }
-  
+
   return new Response('Ressource non disponible', { status: 404 });
 }
 
-// ============================================
+// ============================================================
 // ROUTAGE DES REQUÊTES
-// ============================================
+// ============================================================
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
-  
-  // IGNORER les requêtes API et externes
-  if (url.href.includes('api.jikan.moe') || 
-      url.href.includes('firebase') ||
-      url.href.includes('gstatic.com') ||
-      url.href.includes('corsproxy.io')) {
-    return; // Laisser passer normalement
+
+  // ── IGNORER les APIs et ressources externes ──
+  // Elles ne doivent jamais être mises en cache ici
+  if (
+    url.href.includes('api.jikan.moe')    ||
+    url.href.includes('graphql.anilist.co')||
+    url.href.includes('firebase')          ||
+    url.href.includes('gstatic.com')       ||
+    url.href.includes('corsproxy.io')      ||
+    url.href.includes('rss2json.com')      ||
+    url.href.includes('myanimelist.net')   ||
+    url.href.includes('cdnjs.cloudflare')
+  ) {
+    return; // Laisser passer directement
   }
-  
-  // Cache First pour les ressources statiques
-  if (url.pathname.match(/\.(css|js|ico|png|jpg|jpeg|gif|svg|webp|json)$/i)) {
+
+  // ── ASSETS STATIQUES → Cache First ──
+  if (url.pathname.match(/\.(css|js|ico|png|jpg|jpeg|gif|svg|webp|woff2?|json)$/i)) {
     event.respondWith(cacheFirst(event.request));
     return;
   }
-  
-  // Network First pour les pages HTML
-  if (url.pathname.endsWith('.html') || url.pathname === '/' || url.pathname === '') {
+
+  // ── PAGES HTML → Network First ──
+  if (
+    url.pathname.endsWith('.html') ||
+    url.pathname === '/'           ||
+    url.pathname === ''
+  ) {
     event.respondWith(networkFirst(event.request));
     return;
   }
-  
-  // Par défaut, essayer le cache puis le réseau
+
+  // ── PAR DÉFAUT : cache puis réseau ──
   event.respondWith(
-    caches.match(event.request).then(response => {
+    caches.match(event.request).then((response) => {
       return response || fetch(event.request);
     })
   );
 });
 
-// ============================================
-// GESTION DES NOTIFICATIONS (optionnel)
-// ============================================
+// ============================================================
+// NOTIFICATIONS PUSH
+// ============================================================
 self.addEventListener('push', (event) => {
   console.log('[SW] Notification push reçue');
-  
+
   let data = {
-    title: 'Anime & Manga Info',
-    body: 'Nouveau contenu disponible !',
-    icon: '/favicon.ico',
-    tag: 'anime-notification',
-    url: '/'
+    title: 'Akrya Anime',
+    body:  'Nouveau contenu disponible !',
+    icon:  '/favicon.ico',
+    badge: '/favicon.ico',
+    tag:   'akrya-notification',
+    url:   '/'
   };
-  
+
   if (event.data) {
     try {
       data = { ...data, ...event.data.json() };
@@ -174,30 +195,33 @@ self.addEventListener('push', (event) => {
       data.body = event.data.text();
     }
   }
-  
+
   event.waitUntil(
     self.registration.showNotification(data.title, {
-      body: data.body,
-      icon: data.icon,
-      badge: data.icon,
-      tag: data.tag,
-      data: { url: data.url }
+      body:  data.body,
+      icon:  data.icon,
+      badge: data.badge,
+      tag:   data.tag,
+      data:  { url: data.url }
     })
   );
 });
 
+// Clic sur une notification → ouvre la bonne URL
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  
+
   const urlToOpen = event.notification.data?.url || '/';
-  
+
   event.waitUntil(
-    clients.matchAll({ type: 'window' }).then(windowClients => {
+    clients.matchAll({ type: 'window' }).then((windowClients) => {
+      // Réutiliser un onglet déjà ouvert si possible
       for (const client of windowClients) {
         if (client.url === urlToOpen && 'focus' in client) {
           return client.focus();
         }
       }
+      // Sinon ouvrir un nouvel onglet
       if (clients.openWindow) {
         return clients.openWindow(urlToOpen);
       }
@@ -205,14 +229,16 @@ self.addEventListener('notificationclick', (event) => {
   );
 });
 
-// ============================================
+// ============================================================
 // MESSAGE HANDLER
-// ============================================
+// ============================================================
 self.addEventListener('message', (event) => {
+  // Forcer la mise à jour immédiate du SW
   if (event.data === 'skipWaiting') {
     self.skipWaiting();
   }
-  
+
+  // Vider le cache sur demande (ex: bouton "Vider le cache" dans les paramètres)
   if (event.data === 'clearCache') {
     event.waitUntil(
       caches.delete(CACHE_NAME).then(() => {
@@ -225,4 +251,4 @@ self.addEventListener('message', (event) => {
   }
 });
 
-console.log('[SW] Service Worker chargé');
+console.log('[SW] Akrya Service Worker v3 chargé');
