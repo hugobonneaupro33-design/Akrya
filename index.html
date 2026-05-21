@@ -8,300 +8,1284 @@
   <title>Akrya Anime</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="stylesheet" href="style.css">
-  <!-- ✅ FIX: Firebase chargé UNE SEULE FOIS ici, pas dans firebase-config.js -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <style>
+/* ═══════════════════════════════════════════════
+   VARIABLES — 3 THÈMES DE CATÉGORIE
+   ═══════════════════════════════════════════════ */
+:root {
+  --primary:        #e94560;
+  --primary-dark:   #c72e48;
+  --primary-light:  #ff6b8b;
+  --accent:         #e94560;
+  --accent-glow:    rgba(233,69,96,.25);
+  --bg-base:        #0a0a0f;
+  --bg-card:        #13131f;
+  --bg-hover:       #1e1e2e;
+  --bg-input:       #16162a;
+  --text:           #f0f0f0;
+  --text-muted:     #8888aa;
+  --border:         #252540;
+  --radius:         16px;
+  --radius-sm:      8px;
+  --radius-lg:      24px;
+  --transition:     all .3s ease;
+  --shadow:         0 8px 24px rgba(0,0,0,.4);
+  --shadow-card:    0 12px 32px rgba(233,69,96,.18);
+}
+
+/* ── THÈME MANGA (violet/noir) ── */
+body.cat-manga {
+  --primary:       #8b5cf6;
+  --primary-dark:  #6d3fd4;
+  --primary-light: #a78bfa;
+  --accent:        #8b5cf6;
+  --accent-glow:   rgba(139,92,246,.25);
+  --shadow-card:   0 12px 32px rgba(139,92,246,.18);
+}
+
+/* ── THÈME WEBTOON (tiffany/noir) ── */
+body.cat-webtoon {
+  --primary:       #14b8a6;
+  --primary-dark:  #0d9488;
+  --primary-light: #2dd4bf;
+  --accent:        #14b8a6;
+  --accent-glow:   rgba(20,184,166,.25);
+  --shadow-card:   0 12px 32px rgba(20,184,166,.18);
+}
+
+/* ── THÈME CLAIR ── */
+body.light-theme {
+  --bg-base:   #f0f0f5;
+  --bg-card:   #ffffff;
+  --bg-hover:  #e4e4f0;
+  --text:      #1a1a2e;
+  --text-muted:#666688;
+  --border:    #d0d0e0;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg-base);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  transition: background .4s, color .4s;
+}
+
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background: var(--bg-card); }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius:3px; }
+
+/* ═══════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════ */
+header {
+  background: linear-gradient(135deg, #08080f 0%, #12121e 100%);
+  padding: 1rem 2rem .8rem;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  transition: border-color .4s;
+}
+body.light-theme header {
+  background: linear-gradient(135deg,#e8e8f0,#f5f5ff);
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: .8rem;
+}
+
+.logo { flex: 0 0 auto; }
+.logo h1 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: -.3px;
+  transition: background .4s;
+}
+.logo p { font-size: .65rem; color: var(--text-muted); letter-spacing: .5px; }
+
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  flex-wrap: wrap;
+}
+
+.icon-btn {
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: var(--transition);
+  color: var(--text);
+}
+.icon-btn:hover { background: var(--primary); border-color: var(--primary); }
+
+.auth-buttons { display: flex; gap: .5rem; }
+.google-btn, .facebook-btn, .logout-btn {
+  padding: .4rem 1rem;
+  border: none; border-radius: 40px;
+  cursor: pointer; font-weight: 600; font-size: .82rem;
+  display: inline-flex; align-items: center; gap: .4rem;
+  transition: var(--transition);
+}
+.google-btn   { background:#4285f4; color:#fff; }
+.facebook-btn { background:#1877f2; color:#fff; }
+.logout-btn   { background:var(--primary); color:#fff; }
+.google-btn:hover, .facebook-btn:hover, .logout-btn:hover {
+  transform: translateY(-2px); filter: brightness(1.1);
+}
+
+.user-menu {
+  display: flex; align-items: center; gap: .7rem;
+  background: var(--bg-hover);
+  padding: .3rem .8rem .3rem .4rem;
+  border-radius: 40px;
+  border: 1px solid var(--border);
+}
+.user-avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%; object-fit: cover;
+  border: 2px solid var(--primary);
+}
+.user-name { font-size: .82rem; font-weight: 600; }
+.profile-link {
+  color: var(--primary); text-decoration: none;
+  font-size: .78rem; font-weight: 500;
+}
+
+/* ── BARRE DE RECHERCHE ── */
+.search-wrap {
+  max-width: 580px; margin: 0 auto;
+  position: relative;
+}
+.search-inner {
+  display: flex;
+  background: var(--bg-input);
+  border-radius: 50px;
+  border: 1.5px solid var(--border);
+  transition: var(--transition);
+  overflow: hidden;
+}
+.search-inner:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+#searchInput {
+  flex: 1; padding: .75rem 1.4rem;
+  background: transparent; border: none; outline: none;
+  font-size: .95rem; color: var(--text);
+}
+#searchInput::placeholder { color: var(--text-muted); }
+#searchBtn {
+  padding: 0 1.4rem;
+  background: var(--primary); border: none;
+  color: #fff; font-weight: 700; font-size: 1rem;
+  cursor: pointer; transition: background .3s;
+}
+#searchBtn:hover { background: var(--primary-dark); }
+
+.search-dropdown {
+  position: absolute; top: calc(100% + .4rem);
+  left: 0; right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  max-height: 380px; overflow-y: auto;
+  z-index: 300; display: none;
+  box-shadow: var(--shadow);
+  animation: fadeIn .15s ease;
+}
+.search-dropdown.open { display: block; }
+.search-item {
+  display: flex; gap: .8rem; padding: .7rem .9rem;
+  cursor: pointer; border-bottom: 1px solid var(--border);
+  transition: background .2s;
+}
+.search-item:last-child { border: none; }
+.search-item:hover { background: var(--bg-hover); }
+.search-item img { width:44px; height:62px; object-fit:cover; border-radius:6px; flex-shrink:0; }
+.si-info h4 { font-size:.85rem; margin-bottom:.2rem; }
+.si-info p  { font-size:.72rem; color:var(--text-muted); }
+
+/* ═══════════════════════════════════════════════
+   NAVIGATION CATÉGORIES
+   ═══════════════════════════════════════════════ */
+.cat-nav {
+  display: flex; justify-content: center;
+  gap: .8rem; padding: 1.2rem 2rem .5rem;
+  flex-wrap: wrap;
+}
+.cat-btn {
+  padding: .6rem 1.6rem;
+  background: var(--bg-hover);
+  border: 1.5px solid var(--border);
+  border-radius: 40px; cursor: pointer;
+  font-weight: 700; font-size: .95rem;
+  color: var(--text);
+  display: inline-flex; align-items: center; gap: .5rem;
+  transition: var(--transition);
+}
+.cat-btn:hover { transform: translateY(-2px); }
+.cat-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+/* ═══════════════════════════════════════════════
+   MAIN
+   ═══════════════════════════════════════════════ */
+main {
+  max-width: 1400px; margin: 0 auto;
+  padding: .5rem 2rem 2rem;
+}
+
+/* ── NAVIGATION ONGLETS ── */
+.tab-nav {
+  display: flex; gap: .4rem;
+  justify-content: center; flex-wrap: wrap;
+  margin: 1rem 0;
+}
+.tab-btn {
+  padding: .55rem 1.3rem;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 40px; cursor: pointer;
+  font-weight: 600; font-size: .88rem;
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+.tab-btn:hover { color: var(--text); border-color: var(--primary); }
+.tab-btn.active {
+  background: var(--primary); border-color: var(--primary);
+  color: #fff;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--primary) 12%, transparent),
+    color-mix(in srgb, var(--primary) 4%, transparent));
+  border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
+  border-radius: var(--radius-lg);
+  padding: 1.8rem 2rem;
+  margin-bottom: 1.8rem;
+  text-align: center;
+  transition: background .4s, border-color .4s;
+}
+.hero h2 { font-size: 1.9rem; margin-bottom: .4rem; }
+.hero p   { color: var(--text-muted); }
+.hero-stats {
+  display: flex; justify-content: center;
+  gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem;
+}
+.hero-stat {
+  background: var(--bg-card);
+  padding: .6rem 1.3rem; border-radius: 40px;
+  border: 1px solid var(--border);
+}
+.stat-num { font-size:1.4rem; font-weight:800; color:var(--primary); }
+.stat-lbl { font-size:.65rem; color:var(--text-muted); }
+
+/* ── FILTRES GENRES ── */
+.genre-bar {
+  display: flex; flex-wrap: wrap; gap: .4rem;
+  margin-bottom: 1.4rem;
+}
+.g-btn {
+  padding: .35rem .9rem;
+  background: var(--bg-hover); border: 1px solid var(--border);
+  border-radius: 30px; color: var(--text-muted);
+  font-size: .8rem; cursor: pointer; transition: var(--transition);
+}
+.g-btn:hover, .g-btn.active {
+  background: var(--primary); border-color: var(--primary);
+  color: #fff;
+}
+
+/* ── SECTION TITRE ── */
+.sec-title {
+  font-size: 1.35rem; font-weight: 700;
+  display: flex; align-items: center; gap: .6rem;
+  margin-bottom: 1.2rem;
+}
+.sec-title::before {
+  content: '';
+  width: 4px; height: 22px;
+  background: var(--primary); border-radius: 3px;
+  transition: background .4s;
+}
+.sec-sub { font-size: .75rem; color: var(--text-muted); font-weight: 400; }
+
+/* ═══════════════════════════════════════════════
+   GRILLE & CARTES
+   ═══════════════════════════════════════════════ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(185px,1fr));
+  gap: 1.3rem;
+}
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  overflow: hidden; cursor: pointer;
+  border: 1px solid var(--border);
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+  position: relative;
+  animation: fadeIn .3s ease-out;
+}
+.card:hover {
+  transform: translateY(-7px);
+  box-shadow: var(--shadow-card);
+  border-color: color-mix(in srgb, var(--primary) 50%, transparent);
+}
+.card-img-wrap { position:relative; overflow:hidden; }
+.card img {
+  width:100%; height:265px; object-fit:cover; display:block;
+  transition: transform .4s;
+}
+.card:hover img { transform:scale(1.06); }
+
+.card-badge {
+  position:absolute; top:8px; right:8px;
+  background: rgba(0,0,0,.75);
+  backdrop-filter: blur(4px);
+  padding:.18rem .55rem; border-radius:20px;
+  font-size:.65rem; font-weight:700;
+  border: 1px solid color-mix(in srgb, var(--primary) 50%, transparent);
+}
+.fav-btn {
+  position:absolute; bottom:8px; left:8px;
+  background: rgba(0,0,0,.65);
+  border:none; border-radius:20px;
+  padding:.18rem .5rem; font-size:.7rem;
+  cursor:pointer; transition: transform .2s;
+}
+.fav-btn:hover { transform:scale(1.2); }
+
+.card-info { padding: .8rem .9rem; }
+.card-info h3 {
+  font-size:.9rem; font-weight:600;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  margin-bottom:.35rem;
+}
+.card-meta {
+  display:flex; justify-content:space-between;
+  font-size:.72rem; color:var(--text-muted);
+  margin-top:.25rem;
+}
+.score-val { color:#ffd700; font-weight:700; }
+
+/* ═══════════════════════════════════════════════
+   CALENDRIER — style AnimeSama
+   ═══════════════════════════════════════════════ */
+.cal-wrap {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.cal-header {
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap;
+  padding: 1rem 1.3rem;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--primary) 15%, var(--bg-card)),
+    var(--bg-card));
+  border-bottom: 1px solid var(--border);
+  gap: .8rem; transition: background .4s;
+}
+.cal-title { font-size:1rem; font-weight:700; }
+.cal-nav { display:flex; gap:.5rem; }
+.cal-nav button {
+  padding:.4rem .9rem;
+  background:var(--bg-hover); border:1px solid var(--border);
+  border-radius:30px; color:var(--text); cursor:pointer;
+  font-size:.82rem; transition: var(--transition);
+}
+.cal-nav button:hover { background:var(--primary); border-color:var(--primary); color:#fff; }
+
+.cal-days-header {
+  display: grid; grid-template-columns: repeat(7,1fr);
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border);
+}
+.cal-day-hdr {
+  padding: .55rem .4rem;
+  text-align: center; font-size:.75rem; font-weight:700;
+  color: var(--primary); transition: color .4s;
+}
+.cal-day-hdr .day-date { font-size:.65rem; color:var(--text-muted); font-weight:400; }
+
+.cal-grid {
+  display: grid; grid-template-columns: repeat(7,1fr);
+  border-top: 1px solid var(--border);
+}
+.cal-col {
+  min-height: 160px;
+  padding: .4rem;
+  border-right: 1px solid var(--border);
+}
+.cal-col:last-child { border-right: none; }
+
+.cal-episode {
+  background: var(--bg-hover);
+  border-left: 3px solid var(--primary);
+  border-radius: 0 6px 6px 0;
+  padding: .3rem .4rem;
+  margin-bottom: .3rem;
+  cursor: pointer;
+  font-size: .62rem;
+  transition: background .2s, transform .2s;
+}
+.cal-episode:hover { background: var(--primary); transform: translateX(2px); }
+.cal-ep-title { font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cal-ep-info  { color:var(--text-muted); font-size:.58rem; margin-top:.1rem; }
+.cal-episode:hover .cal-ep-info { color:rgba(255,255,255,.75); }
+.cal-empty    { font-size:.65rem; color:var(--text-muted); text-align:center; padding:.5rem 0; }
+
+/* ── Loader calendrier ── */
+#calLoader {
+  text-align:center; padding:2rem;
+  font-size:.9rem; color:var(--text-muted);
+}
+
+/* ═══════════════════════════════════════════════
+   ACTUALITÉS
+   ═══════════════════════════════════════════════ */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px,1fr));
+  gap: 1.3rem;
+}
+.news-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden; cursor: pointer;
+  transition: transform .25s, box-shadow .25s;
+}
+.news-card:hover { transform:translateY(-4px); box-shadow:var(--shadow); }
+.news-card img { width:100%; height:170px; object-fit:cover; display:block; }
+.news-body { padding: .9rem; }
+.news-src {
+  display:inline-block;
+  background:var(--primary); color:#fff;
+  padding:.15rem .55rem; border-radius:20px;
+  font-size:.65rem; margin-bottom:.45rem;
+}
+.news-card h3 { font-size:.9rem; line-height:1.4; }
+.news-date { font-size:.68rem; color:var(--text-muted); margin-top:.4rem; }
+
+/* ═══════════════════════════════════════════════
+   PAGES
+   ═══════════════════════════════════════════════ */
+.page { display:block; }
+.page.hidden { display:none !important; }
+
+/* ═══════════════════════════════════════════════
+   PAGINATION
+   ═══════════════════════════════════════════════ */
+.pagination {
+  display:flex; justify-content:center;
+  gap:.4rem; margin-top:2rem; flex-wrap:wrap;
+}
+.pg-btn {
+  padding:.45rem .9rem;
+  background:var(--bg-hover); border:1px solid var(--border);
+  border-radius:var(--radius-sm); color:var(--text);
+  cursor:pointer; font-size:.82rem; transition: var(--transition);
+}
+.pg-btn:disabled { opacity:.35; cursor:not-allowed; }
+.pg-btn.active, .pg-btn:not(:disabled):hover {
+  background:var(--primary); border-color:var(--primary); color:#fff;
+}
+
+/* ═══════════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════════ */
+#toast {
+  position:fixed; bottom:28px; left:50%;
+  transform:translateX(-50%) translateY(16px);
+  background:var(--bg-card);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-left:4px solid var(--primary);
+  border-radius:var(--radius-sm);
+  padding:.75rem 1.4rem;
+  font-size:.85rem; min-width:240px; text-align:center;
+  box-shadow:var(--shadow);
+  opacity:0; pointer-events:none;
+  transition:opacity .3s, transform .3s;
+  z-index:9999;
+}
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+
+/* ═══════════════════════════════════════════════
+   ÉTATS
+   ═══════════════════════════════════════════════ */
+.loading, .error {
+  text-align:center; padding:2.5rem;
+  color:var(--text-muted); grid-column:1/-1;
+}
+.error { color:var(--primary); }
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.loading { animation:pulse 1.5s infinite; }
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════ */
+@media(max-width:900px){
+  .cal-days-header,.cal-grid{grid-template-columns:repeat(4,1fr);}
+  .cal-col:nth-child(n+5){display:none;}
+}
+@media(max-width:768px){
+  header{padding:.8rem 1rem .6rem;}
+  .header-top{gap:.6rem;}
+  main{padding:.5rem 1rem 2rem;}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr)); gap:1rem;}
+  .card img{height:215px;}
+  .cal-days-header,.cal-grid{grid-template-columns:repeat(3,1fr);}
+  .cal-col:nth-child(n+4){display:none;}
+  .search-inner{flex-direction:column;border-radius:var(--radius);}
+  #searchBtn{padding:.7rem;border-radius:0 0 var(--radius) var(--radius);}
+}
+@media(max-width:480px){
+  .grid{grid-template-columns:repeat(2,1fr);}
+  .card img{height:195px;}
+  .cal-days-header,.cal-grid{grid-template-columns:repeat(2,1fr);}
+  .cal-col:nth-child(n+3){display:none;}
+  .cat-btn{padding:.5rem 1rem;font-size:.82rem;}
+  .hero h2{font-size:1.4rem;}
+}
+  </style>
 </head>
 <body>
 
-  <!-- ===== HEADER ===== -->
-  <header>
-    <div class="header-top">
-      <div class="logo">
-        <h1>🎌 Akrya Anime</h1>
-        <p>Anime · Manga · Webtoon</p>
-      </div>
-      <div class="tools-bar">
-        <button id="themeToggle" class="theme-btn" title="Changer le thème">🌙</button>
-      </div>
-      <!-- ✅ FIX: suppression de style="display:none" inline remplacé par classe CSS gérée par JS -->
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header>
+  <div class="header-top">
+    <div class="logo">
+      <h1>🎌 Akrya</h1>
+      <p>Anime · Manga · Webtoon</p>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" id="themeToggle" title="Changer le thème">🌙</button>
       <div id="authButtons" class="auth-buttons">
-        <button id="btnGoogle" class="google-btn">🔵 Google</button>
+        <button id="btnGoogle"   class="google-btn">🔵 Google</button>
         <button id="btnFacebook" class="facebook-btn">📘 Facebook</button>
       </div>
       <div id="userMenu" class="user-menu" style="display:none">
-        <!-- ✅ FIX: src vide remplacé par placeholder data URI évitant la requête HTTP invalide -->
         <img id="userAvatar" class="user-avatar"
-             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23252540'/%3E%3Cpath d='M20 22c-4.4 0-8 2-8 4.5V28h16v-1.5c0-2.5-3.6-4.5-8-4.5zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8z' fill='%238888aa'/%3E%3C/svg%3E"
-             alt="Avatar">
-        <span id="userName"></span>
-        <button id="btnLogout" class="logout-btn">🚪 Déconnexion</button>
-        <a href="profile.html" class="profile-link">👤 Mon profil</a>
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23252540'/%3E%3Cpath d='M20 22c-4.4 0-8 2-8 4.5V28h16v-1.5c0-2.5-3.6-4.5-8-4.5zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8z' fill='%238888aa'/%3E%3C/svg%3E"
+          alt="Avatar">
+        <span id="userName" class="user-name"></span>
+        <button id="btnLogout" class="logout-btn">🚪 Déco</button>
+        <a href="profile.html" class="profile-link">👤 Profil</a>
       </div>
     </div>
-
-    <!-- Barre de recherche -->
-    <div class="search-container" id="searchContainer">
-      <div class="search-wrapper">
-        <input type="text" id="searchInput" placeholder="Rechercher un anime, manga, webtoon...">
-        <button id="searchBtn">🔍</button>
-      </div>
-      <div id="searchDropdown" class="search-dropdown"></div>
+  </div>
+  <!-- Recherche -->
+  <div class="search-wrap" id="searchContainer">
+    <div class="search-inner">
+      <input type="text" id="searchInput" placeholder="Rechercher un anime, manga, webtoon…">
+      <button id="searchBtn">🔍</button>
     </div>
-  </header>
+    <div id="searchDropdown" class="search-dropdown"></div>
+  </div>
+</header>
 
-  <!-- ===== MAIN ===== -->
-  <main>
-    <!-- Navigation catégories -->
-    <div class="category-nav">
-      <button class="cat-nav-btn anime active" data-cat="anime">📺 Anime</button>
-      <button class="cat-nav-btn manga" data-cat="manga">📖 Manga</button>
-      <button class="cat-nav-btn webtoon" data-cat="webtoon">🎨 Webtoon</button>
+<!-- ═══════════════ CATÉGORIES ═══════════════ -->
+<div class="cat-nav">
+  <button class="cat-btn active" data-cat="anime">📺 Anime</button>
+  <button class="cat-btn"        data-cat="manga">📖 Manga</button>
+  <button class="cat-btn"        data-cat="webtoon">🎨 Webtoon</button>
+</div>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main>
+
+  <!-- ONGLETS -->
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="home">🏠 Accueil</button>
+    <button class="tab-btn"        data-tab="calendar">📅 Calendrier</button>
+    <button class="tab-btn"        data-tab="top">⭐ Top Rated</button>
+    <button class="tab-btn"        data-tab="news">📰 Actualités</button>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <h2 id="heroTitle">📺 Bienvenue sur Akrya Anime</h2>
+    <p id="heroDesc">Découvrez les animes, mangas et webtoons tendances</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="stat-num">+10 000</div><div class="stat-lbl">Œuvres</div></div>
+      <div class="hero-stat"><div class="stat-num">+100 000</div><div class="stat-lbl">Épisodes/Chapitres</div></div>
+      <div class="hero-stat"><div class="stat-num">+5 000</div><div class="stat-lbl">Utilisateurs</div></div>
     </div>
+  </div>
 
-    <!-- ✅ FIX: data-tab cohérent avec switchTab() dans script.js -->
-    <div class="quick-nav">
-      <button class="nav-btn active" data-tab="home">🏠 Accueil</button>
-      <button class="nav-btn" data-tab="calendar">📅 Calendrier</button>
-      <button class="nav-btn" data-tab="top">⭐ Top Rated</button>
-      <button class="nav-btn" data-tab="news">📰 Actualités</button>
+  <!-- ── PAGE ACCUEIL ── -->
+  <div id="homePage" class="page">
+    <div class="genre-bar" id="genreBar"></div>
+    <div class="sec-title">
+      <span id="homeTitle">Sorties récentes</span>
+      <span class="sec-sub">(du plus récent)</span>
     </div>
+    <div id="animeGrid" class="grid"><div class="loading">⏳ Chargement…</div></div>
+    <div id="pagination" class="pagination"></div>
+  </div>
 
-    <!-- Hero -->
-    <div class="hero-section">
-      <h2 id="heroTitle">📺 Bienvenue sur Akrya Anime</h2>
-      <p id="heroDesc">Découvrez les animes, mangas et webtoons tendances</p>
-      <div class="hero-stats">
-        <div class="hero-stat"><div class="number">+10 000</div><div class="label">Œuvres</div></div>
-        <div class="hero-stat"><div class="number">+100 000</div><div class="label">Chapitres/Épisodes</div></div>
-        <div class="hero-stat"><div class="number">+5 000</div><div class="label">Utilisateurs</div></div>
-      </div>
-    </div>
-
-    <!-- ===== PAGE ACCUEIL ===== -->
-    <div id="homePage" class="page">
-      <div class="filters-section">
-        <div class="filter-title">🎯 Filtrer par genre</div>
-        <div class="genre-filters" id="genreFilters">
-          <!-- Généré par script.js selon la catégorie active -->
+  <!-- ── PAGE CALENDRIER ── -->
+  <div id="calendarPage" class="page hidden">
+    <div class="sec-title">📅 Calendrier des sorties</div>
+    <div class="cal-wrap">
+      <div class="cal-header">
+        <span class="cal-title" id="calTitle">📅 Chargement…</span>
+        <div class="cal-nav">
+          <button id="prevWeekBtn">◀ Préc.</button>
+          <button id="curWeekBtn">📍 Cette semaine</button>
+          <button id="nextWeekBtn">Suiv. ▶</button>
         </div>
       </div>
-      <div class="section-title">
-        <span id="homeTitle">Sorties récentes</span>
-        <span class="section-sub">(du plus récent au plus ancien)</span>
-      </div>
-      <div id="animeGrid" class="anime-grid">
-        <div class="loading">⏳ Chargement...</div>
-      </div>
-      <div id="pagination" class="pagination"></div>
-    </div>
-
-    <!-- ===== PAGE CALENDRIER ===== -->
-    <div id="calendarPage" class="page hidden">
-      <div class="section-title">📅 Calendrier des sorties</div>
-      <div class="calendar-container">
-        <div class="calendar-header">
-          <div class="calendar-title" id="calendarTitle">📅 Semaine du ...</div>
-          <div class="calendar-nav">
-            <button id="prevWeekBtn">◀</button>
-            <button id="currentWeekBtn">📍 Cette semaine</button>
-            <button id="nextWeekBtn">▶</button>
-          </div>
-        </div>
-        <div class="calendar-week-days" id="weekDays"></div>
-        <div id="calendarGrid" class="calendar-grid"></div>
+      <div class="cal-days-header" id="calDaysHeader"></div>
+      <div class="cal-grid" id="calGrid">
+        <div id="calLoader" style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-muted)">⏳ Chargement du calendrier…</div>
       </div>
     </div>
+  </div>
 
-    <!-- ===== PAGE TOP RATED ===== -->
-    <div id="topPage" class="page hidden">
-      <div class="section-title">⭐ Top Rated</div>
-      <div id="topGrid" class="anime-grid">
-        <div class="loading">⏳ Chargement...</div>
-      </div>
+  <!-- ── PAGE TOP RATED ── -->
+  <div id="topPage" class="page hidden">
+    <div class="sec-title">⭐ Top Rated</div>
+    <div id="topGrid" class="grid"><div class="loading">⏳ Chargement…</div></div>
+  </div>
+
+  <!-- ── PAGE ACTUALITÉS ── -->
+  <div id="newsPage" class="page hidden">
+    <div class="sec-title">📰 Actualités</div>
+    <div id="newsGrid" class="news-grid"><div class="loading">⏳ Chargement…</div></div>
+  </div>
+
+</main>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ═══════════════ FIREBASE CONFIG ═══════════════ -->
+<script>
+const fbCfg = {
+  apiKey:"AIzaSyCwDOGPUWQ08WGuAAZ9p6hS6SZytmRoKig",
+  authDomain:"arkya-animemanga.firebaseapp.com",
+  projectId:"arkya-animemanga",
+  storageBucket:"arkya-animemanga.firebasestorage.app",
+  messagingSenderId:"52570519836",
+  appId:"1:52570519836:web:dbf4fcd7aafe01aac762d9"
+};
+if(!firebase.apps.length) firebase.initializeApp(fbCfg);
+const fbAuth = firebase.auth();
+let fbDb = null;
+try{
+  fbDb = firebase.firestore();
+  fbDb.enablePersistence({synchronizeTabs:true}).catch(()=>{});
+}catch(e){}
+
+const googleProv   = new firebase.auth.GoogleAuthProvider();
+const facebookProv = new firebase.auth.FacebookAuthProvider();
+googleProv.setCustomParameters({prompt:'select_account'});
+
+let currentUser = null;
+
+fbAuth.onAuthStateChanged(async user => {
+  currentUser = user;
+  const aDiv = document.getElementById('authButtons');
+  const uDiv = document.getElementById('userMenu');
+  if(!aDiv||!uDiv) return;
+  if(user){
+    aDiv.style.display='none'; uDiv.style.display='flex';
+    document.getElementById('userName').textContent = user.displayName||user.email?.split('@')[0]||'Utilisateur';
+    if(user.photoURL) document.getElementById('userAvatar').src = user.photoURL;
+    // Charger les favoris depuis Firestore
+    if(fbDb){
+      try{
+        const doc = await fbDb.collection('users').doc(user.uid).get();
+        if(doc.exists && doc.data().favorites) favorites = doc.data().favorites;
+      }catch(_){}
+    }
+    if(currentTab==='home') renderHome();
+    if(currentTab==='top')  renderTop();
+  }else{
+    aDiv.style.display='flex'; uDiv.style.display='none';
+  }
+});
+
+async function loginWithGoogle(){
+  try{ await fbAuth.signInWithPopup(googleProv); toast('✨ Connexion réussie !'); }
+  catch(e){ toast('❌ '+authErrMsg(e)); }
+}
+async function loginWithFacebook(){
+  try{ await fbAuth.signInWithPopup(facebookProv); toast('✨ Connexion réussie !'); }
+  catch(e){ toast('❌ '+authErrMsg(e)); }
+}
+async function logout(){
+  await fbAuth.signOut(); toast('🔓 Déconnecté');
+  if(location.pathname.includes('profile')) setTimeout(()=>location.href='index.html',1200);
+}
+function authErrMsg(e){
+  return({
+    'auth/popup-blocked':'Popup bloqué. Autorise les popups.',
+    'auth/popup-closed-by-user':'Connexion annulée.',
+    'auth/account-exists-with-different-credential':'Email déjà utilisé.',
+    'auth/network-request-failed':'Erreur réseau.'
+  })[e.code]||e.message||'Erreur inconnue';
+}
+
+window.loginWithGoogle=loginWithGoogle;
+window.loginWithFacebook=loginWithFacebook;
+window.logout=logout;
+</script>
+
+<!-- ═══════════════ APPLICATION ═══════════════ -->
+<script>
+/* ────────────────────────────────────────────
+   CONSTANTES & ÉTAT
+   ──────────────────────────────────────────── */
+const API    = 'https://api.jikan.moe/v4';
+const PROXY  = 'https://corsproxy.io/?url=';
+const ALIST  = 'https://graphql.anilist.co';
+const PH     = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 280'%3E%3Crect width='200' height='280' fill='%231e1e2e'/%3E%3Ctext x='100' y='140' text-anchor='middle' fill='%238888aa' font-size='13'%3ESans image%3C/text%3E%3C/svg%3E";
+
+const EP_FIX = {21:1122,1:220,2:500,3:366,4:291,5:131,6:87,7:47,8:55,9:138,10:293,11:25,12:24,13:25,14:24,15:12};
+
+const GENRES_ANIME = [
+  {id:'',lbl:'🌟 Tous'},{id:'1',lbl:'⚔️ Action'},{id:'4',lbl:'😄 Comédie'},
+  {id:'8',lbl:'🎭 Drame'},{id:'10',lbl:'✨ Fantasy'},{id:'14',lbl:'😱 Horreur'},
+  {id:'22',lbl:'💕 Romance'},{id:'24',lbl:'🥊 Sports'},{id:'36',lbl:'🔮 Surnaturel'},
+];
+const GENRES_MANGA = [
+  {id:'',lbl:'🌟 Tous'},{id:'1',lbl:'⚔️ Action'},{id:'4',lbl:'😄 Comédie'},
+  {id:'8',lbl:'🎭 Drame'},{id:'10',lbl:'✨ Fantasy'},{id:'22',lbl:'💕 Romance'},
+  {id:'24',lbl:'🥊 Sports'},
+];
+const GENRES_WEBTOON = [
+  {id:'all',lbl:'🌟 Tous'},{id:'action',lbl:'⚔️ Action'},{id:'romance',lbl:'💕 Romance'},
+  {id:'fantasy',lbl:'✨ Fantasy'},{id:'horror',lbl:'👻 Horreur'},{id:'drama',lbl:'🎭 Drame'},
+];
+
+/* Webtoons locaux (AniList ne les distingue pas facilement) */
+const WEBTOONS_DB = [
+  {id:113138,title:'Solo Leveling',score:8.9,chapters:179,year:2018,status:'FINISHED',image:'https://cdn.myanimelist.net/images/manga/2/209195.jpg',genre:'action'},
+  {id:100178,title:'Tower of God',score:8.7,chapters:600,year:2010,status:'RELEASING',image:'https://cdn.myanimelist.net/images/manga/2/165032.jpg',genre:'action'},
+  {id:75989, title:'The God of High School',score:7.9,chapters:569,year:2011,status:'FINISHED',image:'https://cdn.myanimelist.net/images/manga/3/131999.jpg',genre:'action'},
+  {id:30785, title:'Noblesse',score:8.3,chapters:544,year:2007,status:'FINISHED',image:'https://cdn.myanimelist.net/images/manga/2/167725.jpg',genre:'action'},
+  {id:103429,title:'True Beauty',score:8.1,chapters:223,year:2018,status:'FINISHED',image:'https://cdn.myanimelist.net/images/manga/2/219756.jpg',genre:'romance'},
+  {id:96680, title:'Lookism',score:8.2,chapters:470,year:2014,status:'RELEASING',image:'https://cdn.myanimelist.net/images/manga/3/115225.jpg',genre:'drama'},
+  {id:117709,title:'Sweet Home',score:8.5,chapters:141,year:2017,status:'FINISHED',image:'https://cdn.myanimelist.net/images/manga/1/217405.jpg',genre:'horror'},
+  {id:119698,title:'The Beginning After The End',score:8.8,chapters:178,year:2018,status:'RELEASING',image:'https://cdn.myanimelist.net/images/manga/2/220707.jpg',genre:'fantasy'},
+  {id:126146,title:'Eleceed',score:8.4,chapters:280,year:2019,status:'RELEASING',image:'https://cdn.myanimelist.net/images/manga/1/227940.jpg',genre:'action'},
+  {id:126000,title:'Wind Breaker',score:8.3,chapters:450,year:2013,status:'RELEASING',image:'https://cdn.myanimelist.net/images/manga/1/228906.jpg',genre:'action'},
+  {id:118737,title:'Omniscient Reader',score:8.9,chapters:204,year:2019,status:'FINISHED',image:'https://cdn.myanimelist.net/images/manga/3/236250.jpg',genre:'fantasy'},
+  {id:125672,title:'I Love Yoo',score:8.0,chapters:200,year:2018,status:'RELEASING',image:'https://cdn.myanimelist.net/images/manga/1/230123.jpg',genre:'romance'},
+];
+
+let currentCat    = 'anime';
+let currentTab    = 'home';
+let currentGenre  = '';
+let currentPage   = 1;
+let calWeekOffset = 0;
+let loading       = false;
+let favorites     = JSON.parse(localStorage.getItem('akrya_fav')||'[]');
+let searchTimer;
+
+/* ────────────────────────────────────────────
+   UTILITAIRES
+   ──────────────────────────────────────────── */
+function esc(s){ if(!s)return''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+let toastTimer;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
+}
+window.showToast=toast;
+
+async function apiFetch(url){
+  try{ const r=await fetch(url,{signal:AbortSignal.timeout(9000)}); if(r.ok)return r; }catch(_){}
+  return fetch(PROXY+encodeURIComponent(url),{signal:AbortSignal.timeout(14000)});
+}
+
+function saveFavs(){
+  localStorage.setItem('akrya_fav',JSON.stringify(favorites));
+  if(currentUser&&fbDb){
+    fbDb.collection('users').doc(currentUser.uid).set({favorites},{merge:true}).catch(()=>{});
+  }
+}
+function isFav(id){ return favorites.some(f=>f.id==id&&f.cat===currentCat); }
+function toggleFav(item){
+  const idx=favorites.findIndex(f=>f.id==item.id&&f.cat===currentCat);
+  if(idx===-1){
+    favorites.push({id:item.id,cat:currentCat,title:item.title,image:item.image,score:item.score});
+    toast('❤️ '+item.title+' ajouté aux favoris');
+  }else{ favorites.splice(idx,1); toast('💔 '+item.title+' retiré'); }
+  saveFavs();
+}
+
+/* ────────────────────────────────────────────
+   THÈME & CATÉGORIE
+   ──────────────────────────────────────────── */
+function applyTheme(){
+  const saved=localStorage.getItem('akrya_theme');
+  if(saved==='light') document.body.classList.add('light-theme');
+  document.getElementById('themeToggle').textContent=saved==='light'?'☀️':'🌙';
+}
+function toggleTheme(){
+  document.body.classList.toggle('light-theme');
+  const l=document.body.classList.contains('light-theme');
+  localStorage.setItem('akrya_theme',l?'light':'dark');
+  document.getElementById('themeToggle').textContent=l?'☀️':'🌙';
+}
+
+const CAT_META={
+  anime:  {title:'📺 Bienvenue sur Akrya Anime',  desc:'Découvrez les animes tendances',         cls:''},
+  manga:  {title:'📖 Bienvenue sur Akrya Manga',  desc:'Découvrez les mangas populaires',        cls:'cat-manga'},
+  webtoon:{title:'🎨 Bienvenue sur Akrya Webtoon',desc:'Découvrez les meilleurs webtoons coréens',cls:'cat-webtoon'},
+};
+
+function setCat(cat){
+  currentCat=cat; currentPage=1; currentGenre='';
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active',b.dataset.cat===cat));
+  const m=CAT_META[cat];
+  document.getElementById('heroTitle').textContent=m.title;
+  document.getElementById('heroDesc').textContent=m.desc;
+  // Couleur de thème
+  document.body.classList.remove('cat-manga','cat-webtoon');
+  if(m.cls) document.body.classList.add(m.cls);
+  buildGenreBar();
+  if(currentTab==='home') loadHome();
+  if(currentTab==='top')  loadTop();
+}
+
+/* ────────────────────────────────────────────
+   GENRES BAR
+   ──────────────────────────────────────────── */
+function buildGenreBar(){
+  const bar=document.getElementById('genreBar');
+  const genres=currentCat==='webtoon'?GENRES_WEBTOON:(currentCat==='manga'?GENRES_MANGA:GENRES_ANIME);
+  bar.innerHTML=genres.map(g=>`<button class="g-btn${g.id===currentGenre?' active':''}" data-gid="${g.id}">${g.lbl}</button>`).join('');
+  bar.querySelectorAll('.g-btn').forEach(b=>b.addEventListener('click',()=>{
+    currentGenre=b.dataset.gid; currentPage=1;
+    bar.querySelectorAll('.g-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    loadHome();
+  }));
+}
+
+/* ────────────────────────────────────────────
+   RENDU DES CARTES
+   ──────────────────────────────────────────── */
+function cardHtml(item,type='anime'){
+  const count=item.episodes?`${item.episodes} ép`:(item.chapters?`${item.chapters} ch`:'');
+  const badge=item.status==='RELEASING'||item.status==='Currently Airing'?'🟢 En cours':'✅ Terminé';
+  const fav=isFav(item.id);
+  const score=item.score||item.averageScore||(item.averageScore?item.averageScore/10:null);
+  const scoreStr=score?`⭐ ${typeof score==='number'&&score>10?(score/10).toFixed(1):score}`:'';
+  return`<div class="card" data-id="${item.id}" data-type="${type}">
+    <div class="card-img-wrap">
+      <span class="card-badge">${badge}</span>
+      <button class="fav-btn" data-id="${item.id}" title="${fav?'Retirer':'Ajouter'} des favoris">${fav?'❤️':'🤍'}</button>
+      <img src="${item.image||PH}" loading="lazy" onerror="this.src='${PH}'" alt="${esc(item.title)}">
     </div>
-
-    <!-- ===== PAGE ACTUALITÉS ===== -->
-    <div id="newsPage" class="page hidden">
-      <div class="section-title">📰 Actualités</div>
-      <div id="newsGrid" class="news-grid">
-        <div class="loading">⏳ Chargement...</div>
-      </div>
+    <div class="card-info">
+      <h3 title="${esc(item.title)}">${esc(item.title.length>34?item.title.slice(0,31)+'…':item.title)}</h3>
+      <div class="card-meta"><span class="score-val">${scoreStr}</span><span>${count}</span></div>
+      <div class="card-meta"><span>📅 ${item.year||''}</span></div>
     </div>
-  </main>
+  </div>`;
+}
 
-  <!-- ✅ FIX: toast sans class="hidden" — géré uniquement par JS via classList.add/remove("show") -->
-  <div id="toast" class="toast"></div>
-
-  <!-- ✅ FIX: scripts inclus dans le bon ordre, après le DOM -->
-  <script src="firebase-config.js"></script>
-  <script src="script.js"></script>
-  <script src="calendar-data.js"></script>
-  <script src="news-data.js"></script>
-
-  <script>
-    // ============================================================
-    // INITIALISATION PRINCIPALE — index.html
-    // Coordonne firebase-config.js + script.js + calendar-data.js
-    // ============================================================
-
-    // ---- Thème ----
-    function initTheme() {
-      const saved = localStorage.getItem('theme');
-      if (saved === 'light') document.body.classList.add('light-theme');
-      document.getElementById('themeToggle').textContent = saved === 'light' ? '☀️' : '🌙';
-    }
-
-    function toggleTheme() {
-      document.body.classList.toggle('light-theme');
-      const isLight = document.body.classList.contains('light-theme');
-      localStorage.setItem('theme', isLight ? 'light' : 'dark');
-      document.getElementById('themeToggle').textContent = isLight ? '☀️' : '🌙';
-    }
-
-    // ---- Navigation catégories ----
-    // Mapping hero par catégorie
-    const HERO_DATA = {
-      anime:   { title: '📺 Bienvenue sur Akrya Anime',   desc: 'Découvrez les animes tendances' },
-      manga:   { title: '📖 Bienvenue sur Akrya Manga',   desc: 'Découvrez les mangas populaires' },
-      webtoon: { title: '🎨 Bienvenue sur Akrya Webtoon', desc: 'Découvrez les webtoons coréens' }
-    };
-
-    // ---- Onglets ----
-    function switchTab(tab) {
-      // ✅ FIX: IDs des pages = tab + "Page", cohérent avec le HTML
-      document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-      const page = document.getElementById(tab + 'Page');
-      if (page) page.classList.remove('hidden');
-
-      document.querySelectorAll('.nav-btn').forEach(b =>
-        b.classList.toggle('active', b.dataset.tab === tab)
-      );
-
-      // Charger le contenu à la demande
-      if (tab === 'calendar' && typeof loadCalendar === 'function') loadCalendar(0);
-      if (tab === 'top'      && typeof loadTopRated === 'function')  loadTopRated();
-      if (tab === 'news'     && typeof loadNews === 'function')      loadNews();
-      // 'home' est géré par setCategory() / loadAnimes()
-    }
-
-    // ---- Catégorie ----
-    function setCategory(cat) {
-      // Mise à jour boutons
-      document.querySelectorAll('.cat-nav-btn').forEach(b =>
-        b.classList.toggle('active', b.dataset.cat === cat)
-      );
-      // Hero
-      const h = HERO_DATA[cat] || HERO_DATA.anime;
-      document.getElementById('heroTitle').textContent = h.title;
-      document.getElementById('heroDesc').textContent  = h.desc;
-
-      // Déléguer à script.js
-      if (typeof window.onCategoryChange === 'function') {
-        window.onCategoryChange(cat);
-      }
-
-      // Si on est sur webtoon, rediriger vers webtoon.html
-      if (cat === 'webtoon') {
-        window.location.href = 'webtoon.html';
-        return;
-      }
-      if (cat === 'manga') {
-        window.location.href = 'manga.html';
-        return;
-      }
-    }
-
-    // ---- Recherche ----
-    let searchTimeout;
-    function initSearch() {
-      const input = document.getElementById('searchInput');
-      const btn   = document.getElementById('searchBtn');
-      if (!input || !btn) return;
-
-      input.addEventListener('input', e => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          if (typeof performSearch === 'function') performSearch(e.target.value);
-        }, 300);
-      });
-
-      input.addEventListener('keydown', e => {
-        if (e.key === 'Enter') {
-          if (typeof fullSearch === 'function') fullSearch(input.value);
-          document.getElementById('searchDropdown').classList.remove('active');
-        }
-      });
-
-      btn.addEventListener('click', () => {
-        if (typeof fullSearch === 'function') fullSearch(input.value);
-      });
-
-      // Fermer dropdown au clic extérieur
-      document.addEventListener('click', e => {
-        if (!e.target.closest('#searchContainer')) {
-          document.getElementById('searchDropdown').classList.remove('active');
-        }
-      });
-    }
-
-    // ---- Auth UI ----
-    // Géré par firebase-config.js via onAuthStateChanged,
-    // mais on branche les boutons ici
-    function initAuthButtons() {
-      document.getElementById('btnGoogle')?.addEventListener('click', () => {
-        if (typeof loginWithGoogle === 'function') loginWithGoogle();
-      });
-      document.getElementById('btnFacebook')?.addEventListener('click', () => {
-        if (typeof loginWithFacebook === 'function') loginWithFacebook();
-      });
-      document.getElementById('btnLogout')?.addEventListener('click', () => {
-        if (typeof logout === 'function') logout();
-      });
-    }
-
-    // ---- DOMContentLoaded ----
-    document.addEventListener('DOMContentLoaded', () => {
-      initTheme();
-      initSearch();
-      initAuthButtons();
-
-      // Bouton thème
-      document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-
-      // Boutons catégories
-      document.querySelectorAll('.cat-nav-btn').forEach(btn =>
-        btn.addEventListener('click', () => setCategory(btn.dataset.cat))
-      );
-
-      // Boutons onglets
-      document.querySelectorAll('.nav-btn').forEach(btn =>
-        btn.addEventListener('click', () => switchTab(btn.dataset.tab))
-      );
-
-      // Calendrier — navigation semaine
-      document.getElementById('prevWeekBtn')?.addEventListener('click', () => {
-        if (typeof prevWeek === 'function') prevWeek();
-      });
-      document.getElementById('nextWeekBtn')?.addEventListener('click', () => {
-        if (typeof nextWeek === 'function') nextWeek();
-      });
-      document.getElementById('currentWeekBtn')?.addEventListener('click', () => {
-        if (typeof currentWeek === 'function') currentWeek();
-      });
-
-      // Charger la page d'accueil (anime par défaut)
-      // script.js expose loadAnimes() et initialise les genres
-      if (typeof loadAnimes === 'function') {
-        loadAnimes(1, '');
-      } else {
-        // Fallback si script.js n'est pas encore prêt (edge case)
-        document.getElementById('animeGrid').innerHTML =
-          '<div class="error">❌ Erreur de chargement des scripts.</div>';
-      }
+function attachCardEvents(container,type){
+  container.querySelectorAll('.card').forEach(c=>{
+    c.addEventListener('click',e=>{
+      if(e.target.classList.contains('fav-btn')||e.target.closest('.fav-btn')) return;
+      location.href=`detail.html?id=${c.dataset.id}&type=${type}`;
     });
-  </script>
+  });
+  container.querySelectorAll('.fav-btn').forEach(b=>{
+    b.addEventListener('click',e=>{
+      e.stopPropagation();
+      const id=b.dataset.id;
+      // Trouver l'item dans la grille parente
+      const card=b.closest('.card');
+      const title=card.querySelector('h3').textContent;
+      const img=card.querySelector('img').src;
+      toggleFav({id,title,image:img,score:null});
+      b.textContent=isFav(id)?'❤️':'🤍';
+    });
+  });
+}
+
+function renderGrid(containerId,items,type){
+  const c=document.getElementById(containerId);
+  if(!c)return;
+  if(!items||items.length===0){c.innerHTML='<div class="error">❌ Aucun résultat.</div>';return;}
+  c.innerHTML=items.map(i=>cardHtml(i,type)).join('');
+  attachCardEvents(c,type);
+}
+
+/* ────────────────────────────────────────────
+   PAGINATION
+   ──────────────────────────────────────────── */
+function renderPagination(current,total){
+  const pag=document.getElementById('pagination');
+  if(!pag||total<=1){if(pag)pag.innerHTML='';return;}
+  const pages=[];
+  for(let i=Math.max(1,current-2);i<=Math.min(total,current+2);i++) pages.push(i);
+  pag.innerHTML=`
+    <button class="pg-btn" data-p="${current-1}" ${current===1?'disabled':''}>◀</button>
+    ${pages.map(p=>`<button class="pg-btn${p===current?' active':''}" data-p="${p}">${p}</button>`).join('')}
+    <button class="pg-btn" data-p="${current+1}" ${current===total?'disabled':''}>▶</button>`;
+  pag.querySelectorAll('.pg-btn:not([disabled])').forEach(b=>b.addEventListener('click',()=>{
+    const p=+b.dataset.p; if(!isNaN(p)&&p!==currentPage){currentPage=p;loadHome();scrollTo({top:0,behavior:'smooth'});}
+  }));
+}
+
+/* ────────────────────────────────────────────
+   PAGE ACCUEIL
+   ──────────────────────────────────────────── */
+async function loadHome(){
+  if(loading)return; loading=true;
+  const grid=document.getElementById('animeGrid');
+  grid.innerHTML='<div class="loading">⏳ Chargement…</div>';
+
+  const titleEl=document.getElementById('homeTitle');
+  if(titleEl) titleEl.textContent=currentCat==='anime'?'Animes récents':currentCat==='manga'?'Mangas récents':'Webtoons récents';
+
+  // ── WEBTOON : données locales ──
+  if(currentCat==='webtoon'){
+    let data=WEBTOONS_DB;
+    if(currentGenre&&currentGenre!=='all') data=data.filter(w=>w.genre===currentGenre);
+    data=[...data].sort((a,b)=>b.year-a.year);
+    const perPage=12, start=(currentPage-1)*perPage;
+    renderGrid('animeGrid',data.slice(start,start+perPage),'webtoon');
+    renderPagination(currentPage,Math.ceil(data.length/perPage));
+    loading=false; return;
+  }
+
+  // ── ANIME / MANGA : Jikan ──
+  const cat=currentCat==='manga'?'manga':'anime';
+  try{
+    let url;
+    if(currentGenre){
+      url=`${API}/${cat}?genres=${currentGenre}&page=${currentPage}&limit=24&order_by=start_date&sort=desc`;
+    }else{
+      url=cat==='anime'
+        ? `${API}/seasons/now?page=${currentPage}&limit=24`
+        : `${API}/manga?page=${currentPage}&limit=24&order_by=start_date&sort=desc&status=publishing`;
+    }
+    const r=await apiFetch(url);
+    const d=await r.json();
+    if(!d.data?.length) throw new Error('Aucune donnée');
+    const items=d.data.map(a=>({
+      id:   a.mal_id,
+      title:a.title||'Sans titre',
+      score:a.score,
+      episodes:cat==='anime'?(EP_FIX[a.mal_id]||a.episodes):null,
+      chapters:cat==='manga'?a.chapters:null,
+      year: a.aired?.from?new Date(a.aired.from).getFullYear():a.published?.from?new Date(a.published.from).getFullYear():null,
+      status:a.status,
+      image:a.images?.jpg?.image_url||PH,
+    })).sort((a,b)=>(b.year||0)-(a.year||0));
+    renderGrid('animeGrid',items,cat);
+    renderPagination(currentPage,d.pagination?.last_visible_page||1);
+  }catch(e){
+    grid.innerHTML=`<div class="error">❌ Erreur : ${esc(e.message)}<br><button onclick="loadHome()" style="margin-top:.8rem;padding:.4rem 1rem;background:var(--primary);border:none;border-radius:8px;color:#fff;cursor:pointer">🔄 Réessayer</button></div>`;
+  }
+  loading=false;
+}
+
+/* ────────────────────────────────────────────
+   TOP RATED
+   ──────────────────────────────────────────── */
+async function loadTop(){
+  const grid=document.getElementById('topGrid');
+  grid.innerHTML='<div class="loading">⏳ Chargement…</div>';
+  if(currentCat==='webtoon'){
+    renderGrid('topGrid',[...WEBTOONS_DB].sort((a,b)=>b.score-a.score).slice(0,12),'webtoon');
+    return;
+  }
+  const cat=currentCat==='manga'?'manga':'anime';
+  try{
+    const r=await apiFetch(`${API}/top/${cat}?limit=24`);
+    const d=await r.json();
+    if(!d.data?.length) throw new Error('Aucune donnée');
+    const items=d.data.map((a,i)=>({
+      id:a.mal_id, title:a.title,
+      score:a.score,
+      episodes:cat==='anime'?(EP_FIX[a.mal_id]||a.episodes):null,
+      chapters:cat==='manga'?a.chapters:null,
+      year:a.year||null,
+      status:a.status,
+      image:a.images?.jpg?.image_url||PH,
+    }));
+    renderGrid('topGrid',items,cat);
+  }catch(e){
+    grid.innerHTML=`<div class="error">❌ Erreur top.<br><small>${esc(e.message)}</small></div>`;
+  }
+}
+
+/* ────────────────────────────────────────────
+   ACTUALITÉS
+   ──────────────────────────────────────────── */
+const NEWS_FB=[
+  {title:'One Piece : arc final annoncé — Oda confirme la fin prochaine',date:new Date().toLocaleDateString('fr-FR'),src:'Shonen Jump',img:'https://cdn.myanimelist.net/images/anime/6/73245.jpg',url:'https://www.crunchyroll.com/fr/news'},
+  {title:'Jujutsu Kaisen : Gege Akutami entre dans l\'arc final du manga',date:new Date().toLocaleDateString('fr-FR'),src:'Weekly Shonen Jump',img:'https://cdn.myanimelist.net/images/anime/1171/109222.jpg',url:'https://www.crunchyroll.com/fr/news'},
+  {title:'Demon Slayer : le film "Infinity Castle" sortira au cinéma',date:new Date().toLocaleDateString('fr-FR'),src:'Crunchyroll',img:'https://cdn.myanimelist.net/images/anime/1286/99889.jpg',url:'https://www.crunchyroll.com/fr/news'},
+  {title:'Dragon Ball Daima : la saison 2 confirmée par Toei Animation',date:new Date().toLocaleDateString('fr-FR'),src:'Toei Animation',img:'https://cdn.myanimelist.net/images/anime/1947/144122.jpg',url:'https://www.crunchyroll.com/fr/news'},
+  {title:'Solo Leveling saison 2 : "Arise from the Shadow" — trailer officiel',date:new Date().toLocaleDateString('fr-FR'),src:'Crunchyroll',img:'https://cdn.myanimelist.net/images/anime/1369/138315.jpg',url:'https://www.crunchyroll.com/fr/news'},
+  {title:'My Hero Academia : All Might confirme le calendrier du film 4',date:new Date().toLocaleDateString('fr-FR'),src:'Bones Studio',img:'https://cdn.myanimelist.net/images/anime/10/78745.jpg',url:'https://www.crunchyroll.com/fr/news'},
+];
+function renderNews(items){
+  document.getElementById('newsGrid').innerHTML=items.map(n=>`
+    <div class="news-card" onclick="window.open('${n.url}','_blank')">
+      <img src="${n.img||PH}" onerror="this.src='${PH}'" alt="${esc(n.title)}">
+      <div class="news-body">
+        <span class="news-src">📰 ${esc(n.src)}</span>
+        <h3>${esc(n.title)}</h3>
+        <div class="news-date">📅 ${n.date}</div>
+      </div>
+    </div>`).join('');
+}
+async function loadNews(){
+  renderNews(NEWS_FB);
+  try{
+    const r=await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent('https://www.animenewsnetwork.com/news/rss.xml')}&count=12`,{signal:AbortSignal.timeout(6000)});
+    if(!r.ok)return;
+    const d=await r.json();
+    if(d.status!=='ok'||!d.items?.length)return;
+    renderNews(d.items.slice(0,12).map(i=>({
+      title:i.title,
+      date:new Date(i.pubDate).toLocaleDateString('fr-FR'),
+      src:'Anime News Network',
+      img:i.enclosure?.link||i.thumbnail||PH,
+      url:i.link||'#'
+    })));
+  }catch(_){}
+}
+
+/* ────────────────────────────────────────────
+   CALENDRIER — style AnimeSama avec AniList
+   ──────────────────────────────────────────── */
+const DAYS_FR=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+const MONTHS_FR=['janv','févr','mars','avr','mai','juin','juil','août','sept','oct','nov','déc'];
+
+function weekRange(offset=0){
+  const now=new Date();
+  now.setDate(now.getDate()+offset*7);
+  const dow=now.getDay(); // 0=dim
+  const diff=dow===0?6:dow-1;
+  const mon=new Date(now); mon.setDate(now.getDate()-diff); mon.setHours(0,0,0,0);
+  const sun=new Date(mon); sun.setDate(mon.getDate()+6); sun.setHours(23,59,59,999);
+  return{mon,sun};
+}
+
+// Requête AniList : planning hebdomadaire (airingSchedules)
+const CAL_QUERY=`query($start:Int,$end:Int){
+  Page(page:1,perPage:100){
+    airingSchedules(airingAt_greater:$start,airingAt_lesser:$end,sort:TIME){
+      airingAt episode
+      media{
+        id title{romaji english}
+        coverImage{medium}
+        averageScore siteUrl
+      }
+    }
+  }
+}`;
+
+async function fetchCalendar(offset=0){
+  const{mon,sun}=weekRange(offset);
+  const start=Math.floor(mon.getTime()/1000);
+  const end=Math.floor(sun.getTime()/1000);
+  // Titre semaine
+  const ts=`${mon.getDate()} ${MONTHS_FR[mon.getMonth()]} – ${sun.getDate()} ${MONTHS_FR[sun.getMonth()]} ${sun.getFullYear()}`;
+  document.getElementById('calTitle').textContent=`📅 Semaine du ${ts}`;
+
+  // Headers jours
+  const hdr=document.getElementById('calDaysHeader');
+  hdr.innerHTML=Array.from({length:7},(_,i)=>{
+    const d=new Date(mon); d.setDate(mon.getDate()+i);
+    return`<div class="cal-day-hdr">${DAYS_FR[i]}<div class="cal-day-date">${d.getDate()} ${MONTHS_FR[d.getMonth()]}</div></div>`;
+  }).join('');
+
+  // Loader
+  document.getElementById('calGrid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-muted)">⏳ Chargement du calendrier…</div>`;
+
+  try{
+    const r=await fetch(PROXY+encodeURIComponent(ALIST),{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({query:CAL_QUERY,variables:{start,end}}),
+      signal:AbortSignal.timeout(12000)
+    });
+    const data=await r.json();
+    const schedules=data?.data?.Page?.airingSchedules||[];
+
+    // Grouper par jour de la semaine (0=lundi..6=dimanche)
+    const byDay=Array.from({length:7},()=>[]);
+    schedules.forEach(s=>{
+      const d=new Date(s.airingAt*1000);
+      let dow=d.getDay()-1; if(dow<0)dow=6;
+      byDay[dow].push(s);
+    });
+
+    const grid=document.getElementById('calGrid');
+    grid.innerHTML=Array.from({length:7},(_,i)=>{
+      const eps=byDay[i];
+      const dayDate=new Date(mon); dayDate.setDate(mon.getDate()+i);
+      const isToday=dayDate.toDateString()===new Date().toDateString();
+      return`<div class="cal-col" style="${isToday?'background:color-mix(in srgb,var(--primary) 8%,var(--bg-card))':''}">`+
+        (eps.length===0?`<div class="cal-empty">Aucune sortie</div>`:
+          eps.map(s=>{
+            const title=s.media?.title?.romaji||s.media?.title?.english||'?';
+            const score=s.media?.averageScore?(s.media.averageScore/10).toFixed(1):null;
+            const time=new Date(s.airingAt*1000);
+            const timeStr=`${String(time.getHours()).padStart(2,'0')}:${String(time.getMinutes()).padStart(2,'0')}`;
+            return`<div class="cal-episode" data-id="${s.media?.id}" onclick="location.href='detail.html?id=${s.media?.id}&type=anime'">
+              <div class="cal-ep-title">${esc(title.length>22?title.slice(0,20)+'…':title)}</div>
+              <div class="cal-ep-info">Ép.${s.episode} · ${timeStr}${score?` · ⭐${score}`:''}</div>
+            </div>`;
+          }).join('')
+        )+`</div>`;
+    }).join('');
+  }catch(e){
+    document.getElementById('calGrid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--primary)">❌ Impossible de charger le calendrier.<br><small>${esc(e.message)}</small></div>`;
+  }
+}
+
+/* ────────────────────────────────────────────
+   RECHERCHE
+   ──────────────────────────────────────────── */
+async function doSearch(q){
+  const drop=document.getElementById('searchDropdown');
+  if(!q.trim()){drop.classList.remove('open');return;}
+  const cat=currentCat==='webtoon'?'anime':currentCat;
+  try{
+    const r=await apiFetch(`${API}/${cat}?q=${encodeURIComponent(q)}&limit=8`);
+    const d=await r.json();
+    if(!d.data?.length){drop.innerHTML='<div class="search-item"><div class="si-info"><p>Aucun résultat</p></div></div>';drop.classList.add('open');return;}
+    drop.innerHTML=d.data.map(a=>`
+      <div class="search-item" data-id="${a.mal_id}">
+        <img src="${a.images?.jpg?.image_url||PH}" onerror="this.src='${PH}'" alt="">
+        <div class="si-info">
+          <h4>${esc(a.title?.length>40?a.title.slice(0,38)+'…':a.title)}</h4>
+          <p>⭐${a.score||'N/A'} · ${cat==='anime'?(EP_FIX[a.mal_id]||a.episodes||'?')+' ép':a.chapters?a.chapters+' ch':'?'} · ${a.year||'?'}</p>
+        </div>
+      </div>`).join('');
+    drop.classList.add('open');
+    drop.querySelectorAll('.search-item').forEach(el=>el.addEventListener('click',()=>{
+      location.href=`detail.html?id=${el.dataset.id}&type=${cat}`;
+    }));
+  }catch(_){drop.classList.remove('open');}
+}
+async function fullSearch(q){
+  if(!q.trim())return;
+  const grid=document.getElementById('animeGrid');
+  grid.innerHTML='<div class="loading">🔍 Recherche…</div>';
+  document.getElementById('searchDropdown').classList.remove('open');
+  // Forcer la page home
+  document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+  document.getElementById('homePage').classList.remove('hidden');
+  const cat=currentCat==='webtoon'?'anime':currentCat;
+  try{
+    const r=await apiFetch(`${API}/${cat}?q=${encodeURIComponent(q)}&limit=30`);
+    const d=await r.json();
+    if(!d.data?.length){grid.innerHTML='<div class="error">❌ Aucun résultat.</div>';return;}
+    const items=d.data.map(a=>({
+      id:a.mal_id,title:a.title,score:a.score,
+      episodes:cat==='anime'?(EP_FIX[a.mal_id]||a.episodes):null,
+      chapters:cat==='manga'?a.chapters:null,
+      year:a.year||null,status:a.status,image:a.images?.jpg?.image_url||PH
+    }));
+    renderGrid('animeGrid',items,cat);
+    document.getElementById('pagination').innerHTML='';
+    if(document.getElementById('homeTitle')) document.getElementById('homeTitle').textContent=`Résultats : "${q}"`;
+  }catch(e){grid.innerHTML=`<div class="error">❌ Erreur recherche.<br><small>${esc(e.message)}</small></div>`;}
+}
+
+/* ────────────────────────────────────────────
+   NAVIGATION ONGLETS
+   ──────────────────────────────────────────── */
+function switchTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+  document.getElementById(tab+'Page').classList.remove('hidden');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  if(tab==='calendar') fetchCalendar(calWeekOffset);
+  if(tab==='top')      loadTop();
+  if(tab==='news')     loadNews();
+}
+
+/* ────────────────────────────────────────────
+   INIT
+   ──────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded',()=>{
+  applyTheme();
+  document.getElementById('themeToggle').addEventListener('click',toggleTheme);
+
+  // Catégories
+  document.querySelectorAll('.cat-btn').forEach(b=>b.addEventListener('click',()=>setCat(b.dataset.cat)));
+
+  // Onglets
+  document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+
+  // Calendrier nav
+  document.getElementById('prevWeekBtn').addEventListener('click',()=>{calWeekOffset--;fetchCalendar(calWeekOffset);});
+  document.getElementById('nextWeekBtn').addEventListener('click',()=>{calWeekOffset++;fetchCalendar(calWeekOffset);});
+  document.getElementById('curWeekBtn').addEventListener('click',()=>{calWeekOffset=0;fetchCalendar(0);});
+
+  // Auth
+  document.getElementById('btnGoogle').addEventListener('click',loginWithGoogle);
+  document.getElementById('btnFacebook').addEventListener('click',loginWithFacebook);
+  document.getElementById('btnLogout').addEventListener('click',logout);
+
+  // Recherche
+  const inp=document.getElementById('searchInput');
+  const btn=document.getElementById('searchBtn');
+  inp.addEventListener('input',e=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>doSearch(e.target.value),280);});
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')fullSearch(inp.value);});
+  btn.addEventListener('click',()=>fullSearch(inp.value));
+  document.addEventListener('click',e=>{if(!e.target.closest('#searchContainer'))document.getElementById('searchDropdown').classList.remove('open');});
+
+  // Démarrage
+  setCat('anime');
+  buildGenreBar();
+  loadHome();
+});
+</script>
+
 </body>
 </html>
