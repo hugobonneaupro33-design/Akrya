@@ -3,814 +3,948 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Mon profil Anime & Manga Info - Gérez vos favoris, votre historique et vos préférences">
   <meta name="theme-color" content="#e94560">
-  <title>Mon Profil - Anime & Manga Info</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    /* ============================================
-       STYLES PROFIL UTILISATEUR
-    ============================================ */
-    :root {
-      --primary: #e94560;
-      --primary-dark: #c72e48;
-      --bg-dark: #0a0a0f;
-      --bg-card: #13131f;
-      --bg-hover: #1e1e2e;
-      --text-light: #f0f0f0;
-      --text-muted: #8888aa;
-      --border: #252540;
-      --shadow: 0 8px 20px rgba(0,0,0,0.3);
-      --radius: 16px;
-      --radius-sm: 8px;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: var(--bg-dark);
-      color: var(--text-light);
-      min-height: 100vh;
-    }
-
-    /* Header */
-    header {
-      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
-      padding: 1rem 2rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      border-bottom: 1px solid var(--border);
-    }
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .home-link {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .home-link:hover { color: var(--primary-dark); }
-
-    /* Auth */
-    .auth-buttons { display: flex; gap: 0.8rem; flex-wrap: wrap; }
-    .google-btn, .facebook-btn, .logout-btn {
-      padding: 0.5rem 1.2rem;
-      border: none;
-      border-radius: 40px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .google-btn { background: #4285f4; color: white; }
-    .facebook-btn { background: #1877f2; color: white; }
-    .logout-btn { background: var(--primary); color: white; }
-    .user-menu {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      background: var(--bg-hover);
-      padding: 0.4rem 1rem;
-      border-radius: 40px;
-    }
-    .user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
-    .profile-link { color: var(--primary); text-decoration: none; }
-
-    /* Main */
-    .profile-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-
-    /* Profile Header */
-    .profile-header {
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
-      border-radius: 24px;
-      padding: 2rem;
-      text-align: center;
-      margin-bottom: 2rem;
-      border: 1px solid var(--border);
-    }
-    .profile-avatar-large {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid var(--primary);
-      margin-bottom: 1rem;
-    }
-    .profile-header h2 { font-size: 1.8rem; margin-bottom: 0.5rem; }
-    .profile-header p { color: var(--text-muted); margin-bottom: 1rem; }
-
-    /* Privacy Toggle */
-    .privacy-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      margin: 1rem 0;
-    }
-    .privacy-toggle label {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      cursor: pointer;
-    }
-    .privacy-toggle input { width: 18px; height: 18px; cursor: pointer; }
-
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .stat-card {
-      background: var(--bg-card);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      text-align: center;
-      transition: all 0.2s;
-    }
-    .stat-card:hover { transform: translateY(-4px); }
-    .stat-number { font-size: 2rem; font-weight: bold; color: var(--primary); }
-    .stat-label { color: var(--text-muted); margin-top: 0.5rem; }
-
-    /* Profile Actions */
-    .profile-actions {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 1rem;
-    }
-    .action-btn {
-      padding: 0.5rem 1.2rem;
-      background: var(--bg-hover);
-      border: none;
-      border-radius: 30px;
-      color: white;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .action-btn:hover { background: var(--primary); transform: translateY(-2px); }
-
-    /* Tabs */
-    .profile-tabs {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      border-bottom: 2px solid var(--border);
-    }
-    .profile-tab {
-      padding: 0.7rem 1.5rem;
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.2s;
-      font-weight: 500;
-    }
-    .profile-tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
-
-    /* Sections */
-    .profile-section {
-      background: var(--bg-card);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--border);
-    }
-    .section-header h3 { color: var(--primary); display: flex; align-items: center; gap: 0.5rem; }
-    .badge-count {
-      background: var(--primary);
-      padding: 0.2rem 0.6rem;
-      border-radius: 20px;
-      font-size: 0.7rem;
-    }
-
-    /* Favorites Grid */
-    .favorites-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 1rem;
-    }
-    .favorite-item {
-      background: var(--bg-hover);
-      border-radius: 12px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .favorite-item:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(233,69,96,0.2); }
-    .favorite-item img { width: 100%; height: 200px; object-fit: cover; }
-    .favorite-info { padding: 0.8rem; text-align: center; }
-    .favorite-info h4 { font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .favorite-score { font-size: 0.75rem; color: #ffd700; margin-top: 0.3rem; }
-    .remove-fav-btn {
-      background: #d63031;
-      border: none;
-      border-radius: 20px;
-      padding: 0.2rem 0.6rem;
-      font-size: 0.7rem;
-      color: white;
-      cursor: pointer;
-      margin-top: 0.3rem;
-    }
-
-    /* History List */
-    .history-list { display: flex; flex-direction: column; gap: 0.8rem; }
-    .history-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.8rem;
-      background: var(--bg-hover);
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .history-item:hover { background: #2a2a3a; transform: translateX(5px); }
-    .history-info { flex: 1; }
-    .history-title { font-weight: bold; margin-bottom: 0.2rem; }
-    .history-meta { font-size: 0.7rem; color: var(--text-muted); }
-    .history-episode {
-      background: var(--primary);
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.7rem;
-    }
-
-    /* Stats Details */
-    .stats-details { display: flex; flex-direction: column; gap: 0.8rem; }
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .stat-value { color: var(--primary); font-weight: bold; }
-
-    /* Empty State */
-    .empty-state { text-align: center; padding: 3rem; color: var(--text-muted); }
-
-    /* Toast */
-    .toast {
-      visibility: hidden;
-      min-width: 250px;
-      background: var(--bg-card);
-      color: white;
-      text-align: center;
-      border-radius: 8px;
-      padding: 1rem;
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      border-left: 4px solid var(--primary);
-    }
-    .toast.show { visibility: visible; animation: fadeInOut 3s ease; }
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
-      15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-      85% { opacity: 1; }
-      100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .profile-container { padding: 1rem; }
-      .favorites-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .profile-header h2 { font-size: 1.3rem; }
-    }
-    @media (max-width: 480px) {
-      .stats-grid { grid-template-columns: 1fr; }
-      .favorites-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="header-top">
-      <a href="index.html" class="home-link">🏠 Accueil</a>
-      <h1>👤 Mon Profil</h1>
-      <div id="authButtons" class="auth-buttons">
-        <button onclick="loginWithGoogle()" class="google-btn">🔵 Google</button>
-        <button onclick="loginWithFacebook()" class="facebook-btn">📘 Facebook</button>
-      </div>
-      <div id="userMenu" class="user-menu hidden">
-        <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
-        <span id="userName"></span>
-        <button onclick="logout()" class="logout-btn">🚪 Déconnexion</button>
-        <a href="profile.html" class="profile-link">👤 Mon profil</a>
-      </div>
-    </div>
-  </header>
-
-  <main class="profile-container">
-    <div id="profileContent">
-      <div class="loading">⏳ Chargement de votre profil...</div>
-    </div>
-  </main>
-
-  <div id="toast" class="toast hidden"></div>
-
+  <title>Mon Profil — Akrya</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-  <script>
-    // ============================================
-    // CONFIGURATION FIREBASE
-    // ============================================
-    const firebaseConfig = {
-      apiKey: "AIzaSyCwDOGPUWQ08WGuAAZ9p6hS6SZytmRoKig",
-      authDomain: "arkya-animemanga.firebaseapp.com",
-      projectId: "arkya-animemanga",
-      storageBucket: "arkya-animemanga.firebasestorage.app",
-      messagingSenderId: "52570519836",
-      appId: "1:52570519836:web:dbf4fcd7aafe01aac762d9",
-      measurementId: "G-04DPK4LP4H"
-    };
+  <style>
+/* ════════════════════════════════════════════
+   VARIABLES & RESET
+════════════════════════════════════════════ */
+:root {
+  --primary:       #e94560;
+  --primary-dark:  #c72e48;
+  --primary-light: #ff6b8b;
+  --primary-glow:  rgba(233,69,96,.18);
+  --bg:        #07070e;
+  --bg-card:   #111120;
+  --bg-hover:  #1a1a2e;
+  --bg-input:  #14142a;
+  --text:      #efefff;
+  --text-muted:#7777aa;
+  --border:    #22223a;
+  --radius:    18px;
+  --radius-sm: 10px;
+  --shadow:    0 8px 32px rgba(0,0,0,.5);
+  --shadow-glow: 0 0 24px rgba(233,69,96,.12);
+}
+body.light-theme {
+  --bg:      #f2f2fa;
+  --bg-card: #ffffff;
+  --bg-hover:#e8e8f4;
+  --bg-input:#eeeef8;
+  --text:    #1a1a30;
+  --text-muted:#6666aa;
+  --border:  #d0d0e8;
+}
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background .35s, color .35s;
+  line-height: 1.5;
+}
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background: var(--bg-card); }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius:3px; }
 
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+/* ════ HEADER ════ */
+header {
+  background: linear-gradient(135deg, #030308 0%, #0d0d1e 100%);
+  padding: .85rem 2rem;
+  position: sticky; top:0; z-index:200;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+}
+body.light-theme header { background: linear-gradient(135deg,#eeeef8,#f8f8ff); }
+.hdr { display:flex; align-items:center; gap:.9rem; flex-wrap:wrap; }
+.home-link {
+  color: var(--primary); text-decoration:none; font-weight:700;
+  display:inline-flex; align-items:center; gap:.4rem; font-size:.92rem;
+  transition: color .2s;
+}
+.home-link:hover { color: var(--primary-light); }
+.hdr-title { font-size:1.05rem; font-weight:700; flex:1; }
+.hdr-right { margin-left:auto; display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
 
-    // Fournisseurs
-    const googleProvider = new firebase.auth.GoogleAuthProvider();
-    const facebookProvider = new firebase.auth.FacebookAuthProvider();
-    googleProvider.setCustomParameters({ prompt: 'select_account' });
-    facebookProvider.setCustomParameters({ display: 'popup' });
+.icon-btn {
+  background: var(--bg-hover); border:1px solid var(--border); border-radius:50%;
+  width:36px; height:36px; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:.95rem; color:var(--text); transition:all .2s;
+}
+.icon-btn:hover { background:var(--primary); border-color:var(--primary); }
 
-    let currentUser = null;
-    let userData = {
-      favorites: [],
-      history: [],
-      settings: {
-        profilePublic: false,
-        notifications: true
-      },
-      stats: {
-        animesWatched: 0,
-        episodesWatched: 0,
-        totalHours: 0,
-        memberSince: new Date().toISOString()
-      }
-    };
-    let currentTab = 'favorites';
+.hdr-auth { display:flex; gap:.4rem; }
+.hdr-g { background:#4285f4; color:#fff; border:none; border-radius:40px; padding:.38rem .95rem; cursor:pointer; font-weight:600; font-size:.78rem; transition:all .2s; }
+.hdr-f { background:#1877f2; color:#fff; border:none; border-radius:40px; padding:.38rem .95rem; cursor:pointer; font-weight:600; font-size:.78rem; transition:all .2s; }
+.hdr-g:hover,.hdr-f:hover { filter:brightness(1.1); transform:translateY(-1px); }
+.hdr-user { display:flex; align-items:center; gap:.5rem; background:var(--bg-hover); padding:.28rem .7rem .28rem .35rem; border-radius:40px; border:1px solid var(--border); font-size:.78rem; }
+.hdr-avatar { width:26px; height:26px; border-radius:50%; object-fit:cover; border:2px solid var(--primary); }
+.hdr-logout { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:.8rem; transition:color .2s; }
+.hdr-logout:hover { color:var(--primary); }
 
-    // ============================================
-    // AUTHENTIFICATION AVEC PERSISTANCE
-    // ============================================
-    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+/* ════ CONTAINER ════ */
+.cont { max-width:1120px; margin:0 auto; padding:2rem; }
 
-    auth.onAuthStateChanged(async (user) => {
-      currentUser = user;
-      updateUIBasedOnAuth();
-      
-      if (user) {
-        await loadUserDataFromFirestore();
-        renderProfileUI();
-      } else {
-        renderNotLoggedIn();
-      }
-    });
+/* ════ PAS CONNECTÉ ════ */
+.not-logged {
+  text-align:center; padding:6rem 2rem;
+  animation: fadeUp .5s ease;
+}
+.nl-illustration { font-size:5rem; margin-bottom:1.5rem; filter:drop-shadow(0 4px 16px rgba(233,69,96,.3)); }
+.not-logged h2 { font-size:2rem; font-weight:800; margin-bottom:.7rem; }
+.not-logged p { color:var(--text-muted); max-width:440px; margin:0 auto 2.5rem; }
+.nl-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+.nl-g { background:#4285f4; color:#fff; border:none; border-radius:50px; padding:.85rem 2rem; cursor:pointer; font-weight:700; font-size:.95rem; transition:all .25s; box-shadow:0 4px 14px rgba(66,133,244,.35); }
+.nl-g:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(66,133,244,.45); }
+.nl-f { background:#1877f2; color:#fff; border:none; border-radius:50px; padding:.85rem 2rem; cursor:pointer; font-weight:700; font-size:.95rem; transition:all .25s; box-shadow:0 4px 14px rgba(24,119,242,.35); }
+.nl-f:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(24,119,242,.45); }
 
-    function updateUIBasedOnAuth() {
-      const authDiv = document.getElementById('authButtons');
-      const userDiv = document.getElementById('userMenu');
-      
-      if (authDiv && userDiv) {
-        if (currentUser) {
-          authDiv.style.display = 'none';
-          userDiv.style.display = 'flex';
-          document.getElementById('userName').textContent = currentUser.displayName || currentUser.email;
-          if (currentUser.photoURL) document.getElementById('userAvatar').src = currentUser.photoURL;
-        } else {
-          authDiv.style.display = 'flex';
-          userDiv.style.display = 'none';
-        }
-      }
-    }
+/* ════ BANNER PROFIL ════ */
+.profile-banner {
+  position: relative;
+  background: linear-gradient(135deg, #0e0e22 0%, #1a0a1a 50%, #0a0e22 100%);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  margin-bottom:1.5rem;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  animation: fadeUp .4s ease;
+}
+body.light-theme .profile-banner { background: linear-gradient(135deg,#f0f0fc,#fdf0f8,#f0f4fc); }
+/* Cercles décoratifs */
+.banner-deco {
+  position:absolute; border-radius:50%; pointer-events:none;
+}
+.banner-deco-1 {
+  width:280px; height:280px; top:-80px; right:-80px;
+  background: radial-gradient(circle, rgba(233,69,96,.12) 0%, transparent 70%);
+}
+.banner-deco-2 {
+  width:200px; height:200px; bottom:-60px; left:-60px;
+  background: radial-gradient(circle, rgba(108,92,231,.1) 0%, transparent 70%);
+}
 
-    // ============================================
-    // FIRESTORE - LECTURE/ÉCRITURE
-    // ============================================
-    async function loadUserDataFromFirestore() {
-      if (!currentUser) return;
-      
-      try {
-        const doc = await db.collection('users').doc(currentUser.uid).get();
-        if (doc.exists) {
-          const data = doc.data();
-          userData.favorites = data.favorites || [];
-          userData.history = data.history || [];
-          userData.settings = data.settings || { profilePublic: false, notifications: true };
-          userData.stats = data.stats || {
-            animesWatched: userData.favorites.length,
-            episodesWatched: 0,
-            totalHours: 0,
-            memberSince: new Date().toISOString()
-          };
-        }
-      } catch (error) {
-        console.error('Erreur chargement:', error);
-      }
-    }
+/* Avatar */
+.avatar-zone { position:relative; display:inline-block; margin-bottom:1.2rem; cursor:pointer; }
+.avatar-ring {
+  width:114px; height:114px; border-radius:50%;
+  background: conic-gradient(from 0deg, #e94560, #ff6b8b, #8b5cf6, #14b8a6, #e94560);
+  padding:3px; animation: rotateBorder 6s linear infinite;
+}
+@keyframes rotateBorder { to { transform:rotate(360deg); } }
+.avatar-inner { background:var(--bg-card); border-radius:50%; padding:3px; }
+.avatar-img {
+  width:100px; height:100px; border-radius:50%; object-fit:cover; display:block;
+}
+.avatar-overlay {
+  position:absolute; inset:0; border-radius:50%;
+  background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:opacity .25s; font-size:.75rem; color:#fff; font-weight:600;
+}
+.avatar-zone:hover .avatar-overlay { opacity:1; }
+.online-dot {
+  position:absolute; bottom:6px; right:6px;
+  width:16px; height:16px; background:#00b894; border-radius:50%;
+  border:2.5px solid var(--bg-card);
+  box-shadow:0 0 8px rgba(0,184,148,.5);
+}
+.profile-name {
+  font-size:1.65rem; font-weight:900; margin-bottom:.2rem;
+  background: linear-gradient(135deg, var(--text), var(--primary-light));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+body.light-theme .profile-name { background: linear-gradient(135deg,#1a1a30,#e94560); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.profile-email { font-size:.82rem; color:var(--text-muted); margin-bottom:.6rem; }
+.profile-badges { display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap; margin-bottom:1.2rem; }
+.p-badge {
+  display:inline-flex; align-items:center; gap:.3rem;
+  background:color-mix(in srgb, var(--primary) 15%, transparent);
+  color:var(--primary); border:1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  padding:.2rem .7rem; border-radius:20px; font-size:.72rem; font-weight:600;
+}
+.p-badge.green { background:rgba(0,184,148,.12); color:#00b894; border-color:rgba(0,184,148,.25); }
+.p-badge.purple { background:rgba(139,92,246,.12); color:#8b5cf6; border-color:rgba(139,92,246,.25); }
 
-    async function saveUserDataToFirestore() {
-      if (!currentUser) return;
-      
-      try {
-        await db.collection('users').doc(currentUser.uid).set({
-          favorites: userData.favorites,
-          history: userData.history,
-          settings: userData.settings,
-          stats: userData.stats,
-          lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-      } catch (error) {
-        console.error('Erreur sauvegarde:', error);
-      }
-    }
+/* Actions profil */
+.profile-actions {
+  display:flex; gap:.55rem; justify-content:center; flex-wrap:wrap; margin-top:1.2rem;
+}
+.act-btn {
+  padding:.42rem 1rem; background:rgba(255,255,255,.06); border:1px solid var(--border);
+  border-radius:30px; color:var(--text); cursor:pointer; font-size:.78rem; transition:all .2s;
+  display:inline-flex; align-items:center; gap:.3rem;
+}
+.act-btn:hover { background:var(--primary); border-color:var(--primary); color:#fff; }
+.act-btn.danger { color:#e17055; border-color:rgba(225,112,85,.3); background:rgba(225,112,85,.08); }
+.act-btn.danger:hover { background:#e17055; border-color:#e17055; color:#fff; }
 
-    // ============================================
-    // FONCTIONS D'AUTHENTIFICATION
-    // ============================================
-    async function loginWithGoogle() {
-      try {
-        const result = await auth.signInWithPopup(googleProvider);
-        showToast(`✨ Bienvenue ${result.user.displayName || result.user.email || 'utilisateur'} !`);
-        await loadUserDataFromFirestore();
-        renderProfileUI();
-      } catch (error) {
-        console.error('Erreur:', error);
-        showToast(`❌ ${error.message}`, 'error');
-      }
-    }
+/* ════ STATS ════ */
+.stats-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:1rem; margin-bottom:1.5rem;
+}
+.stat-card {
+  background:var(--bg-card); border-radius:var(--radius);
+  padding:1.4rem 1rem; text-align:center;
+  border:1px solid var(--border);
+  transition:all .25s; cursor:default; position:relative; overflow:hidden;
+}
+.stat-card::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, var(--primary-glow), transparent);
+  opacity:0; transition:opacity .25s;
+}
+.stat-card:hover { transform:translateY(-4px); border-color:var(--primary); box-shadow:var(--shadow-glow); }
+.stat-card:hover::before { opacity:1; }
+.stat-icon { font-size:1.4rem; margin-bottom:.4rem; }
+.stat-n { font-size:1.95rem; font-weight:900; color:var(--primary); line-height:1; }
+.stat-l { font-size:.7rem; color:var(--text-muted); margin-top:.3rem; text-transform:uppercase; letter-spacing:.5px; }
 
-    async function loginWithFacebook() {
-      try {
-        const result = await auth.signInWithPopup(facebookProvider);
-        showToast(`✨ Bienvenue ${result.user.displayName || result.user.email || 'utilisateur'} !`);
-        await loadUserDataFromFirestore();
-        renderProfileUI();
-      } catch (error) {
-        console.error('Erreur:', error);
-        showToast(`❌ ${error.message}`, 'error');
-      }
-    }
+/* ════ TABS ════ */
+.tabs {
+  display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:1.5rem;
+  flex-wrap:wrap; background:var(--bg-card); border-radius:var(--radius) var(--radius) 0 0;
+  padding:.5rem .5rem 0;
+}
+.tab-btn {
+  padding:.65rem 1.3rem; background:none; border:none; color:var(--text-muted);
+  cursor:pointer; font-weight:600; font-size:.84rem; transition:all .2s;
+  border-bottom:2.5px solid transparent; margin-bottom:-2px; border-radius:8px 8px 0 0;
+  display:inline-flex; align-items:center; gap:.4rem;
+}
+.tab-btn:hover { color:var(--text); background:var(--bg-hover); }
+.tab-btn.active { color:var(--primary); border-bottom-color:var(--primary); background:color-mix(in srgb,var(--primary) 8%,transparent); }
+.badge-n { background:var(--primary); color:#fff; padding:.1rem .48rem; border-radius:12px; font-size:.64rem; font-weight:700; }
 
-    async function logout() {
-      try {
-        await auth.signOut();
-        showToast('🔓 Déconnecté avec succès');
-        renderNotLoggedIn();
-      } catch (error) {
-        showToast('❌ Erreur lors de la déconnexion', 'error');
-      }
-    }
+/* ════ SECTIONS ════ */
+.section {
+  background:var(--bg-card); border-radius:0 0 var(--radius) var(--radius);
+  padding:1.5rem; border:1px solid var(--border); border-top:none;
+  margin-bottom:1.5rem; animation:fadeUp .3s ease;
+}
+.sec-hdr {
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:.7rem; margin-bottom:1.3rem;
+  padding-bottom:.8rem; border-bottom:1px solid var(--border);
+}
+.sec-hdr h3 { font-size:.98rem; font-weight:700; display:flex; align-items:center; gap:.4rem; }
+.empty { text-align:center; padding:4rem 2rem; color:var(--text-muted); }
+.empty-icon { font-size:3rem; margin-bottom:1rem; opacity:.35; display:block; }
+.empty p { font-size:.88rem; }
 
-    // ============================================
-    // GESTION FAVORIS
-    // ============================================
-    function addToFavorites(animeId, animeTitle, animeScore, animeImage) {
-      const exists = userData.favorites.some(f => f.id == animeId);
-      if (exists) {
-        showToast('Cet anime est déjà dans vos favoris');
-        return false;
-      }
-      
-      userData.favorites.push({
-        id: animeId,
-        title: animeTitle,
-        score: animeScore,
-        image: animeImage,
-        dateAdded: new Date().toISOString()
-      });
-      userData.stats.animesWatched = userData.favorites.length;
-      saveUserDataToFirestore();
-      showToast(`❤️ ${animeTitle} ajouté aux favoris`);
-      renderProfileUI();
-      return true;
-    }
+/* ════ FAVORIS ════ */
+.fav-toolbar {
+  display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; margin-bottom:1.2rem;
+}
+.fav-sort {
+  padding:.38rem .8rem; background:var(--bg-hover); border:1px solid var(--border);
+  border-radius:30px; color:var(--text); font-size:.78rem; cursor:pointer; transition:all .2s;
+}
+.fav-sort:hover,.fav-sort.active { background:var(--primary); border-color:var(--primary); color:#fff; }
+.fav-search {
+  padding:.38rem .9rem; background:var(--bg-input); border:1px solid var(--border);
+  border-radius:30px; color:var(--text); font-size:.78rem; width:180px; transition:all .2s;
+}
+.fav-search:focus { outline:none; border-color:var(--primary); }
 
-    function removeFromFavorites(animeId) {
-      userData.favorites = userData.favorites.filter(f => f.id != animeId);
-      userData.stats.animesWatched = userData.favorites.length;
-      saveUserDataToFirestore();
-      showToast('Favori retiré');
-      renderProfileUI();
-    }
+.fav-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:1rem; }
+.fav-item {
+  background:var(--bg-hover); border-radius:14px; overflow:hidden;
+  cursor:pointer; border:1px solid var(--border); transition:all .25s; position:relative;
+  animation: fadeUp .3s ease;
+}
+.fav-item:hover { transform:translateY(-5px); border-color:var(--primary); box-shadow:0 8px 24px rgba(233,69,96,.15); }
+.fav-img-wrap { position:relative; overflow:hidden; }
+.fav-item img { width:100%; height:192px; object-fit:cover; display:block; transition:transform .35s; }
+.fav-item:hover img { transform:scale(1.07); }
+.fav-overlay {
+  position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.8) 0%, transparent 50%);
+  opacity:0; transition:opacity .25s; display:flex; align-items:flex-end; padding:.6rem;
+}
+.fav-item:hover .fav-overlay { opacity:1; }
+.fav-watch-btn {
+  background:var(--primary); color:#fff; border:none; border-radius:20px;
+  padding:.3rem .8rem; font-size:.7rem; font-weight:700; cursor:pointer; width:100%;
+  transition:background .2s;
+}
+.fav-watch-btn:hover { background:var(--primary-dark); }
+.fav-cat-tag {
+  position:absolute; top:7px; left:7px;
+  background:rgba(0,0,0,.75); backdrop-filter:blur(4px);
+  color:#fff; font-size:.6rem; font-weight:700; padding:.15rem .48rem;
+  border-radius:10px; text-transform:uppercase; letter-spacing:.4px;
+}
+.fav-rm-btn {
+  position:absolute; top:7px; right:7px;
+  background:rgba(0,0,0,.75); backdrop-filter:blur(4px);
+  color:#e17055; border:none; border-radius:50%; width:26px; height:26px;
+  cursor:pointer; font-size:.8rem; display:flex; align-items:center; justify-content:center;
+  transition:all .2s; opacity:0;
+}
+.fav-item:hover .fav-rm-btn { opacity:1; }
+.fav-rm-btn:hover { background:#e17055; color:#fff; }
+.fav-body { padding:.7rem .75rem; }
+.fav-body h4 { font-size:.8rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:.2rem; }
+.fav-score { font-size:.7rem; color:#ffd700; }
+.fav-date { font-size:.62rem; color:var(--text-muted); }
 
-    // ============================================
-    // GESTION HISTORIQUE
-    // ============================================
-    function addToHistory(animeId, animeTitle, episode) {
-      const existingIndex = userData.history.findIndex(item => item.id == animeId);
-      const historyItem = {
-        id: animeId,
-        title: animeTitle,
-        episode: episode,
-        date: new Date().toISOString()
-      };
-      
-      if (existingIndex !== -1) {
-        userData.history[existingIndex] = historyItem;
-      } else {
-        userData.history.unshift(historyItem);
-      }
-      
-      if (userData.history.length > 50) userData.history = userData.history.slice(0, 50);
-      userData.stats.episodesWatched += 1;
-      userData.stats.totalHours = Math.floor(userData.stats.episodesWatched * 24 / 60);
-      saveUserDataToFirestore();
-    }
+/* ════ HISTORIQUE ════ */
+.hist-list { display:flex; flex-direction:column; gap:.5rem; }
+.hist-item {
+  display:flex; align-items:center; gap:.85rem; padding:.7rem .85rem;
+  background:var(--bg-hover); border-radius:12px; cursor:pointer;
+  border:1px solid var(--border); transition:all .2s; position:relative;
+}
+.hist-item:hover { border-color:var(--primary); transform:translateX(4px); background:color-mix(in srgb,var(--primary) 6%,var(--bg-hover)); }
+.hist-thumb { width:40px; height:56px; object-fit:cover; border-radius:6px; flex-shrink:0; }
+.hist-info { flex:1; min-width:0; }
+.hist-title { font-size:.86rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:.15rem; }
+.hist-meta { font-size:.68rem; color:var(--text-muted); display:flex; gap:.5rem; flex-wrap:wrap; }
+.hist-ep { background:var(--primary); color:#fff; padding:.18rem .6rem; border-radius:20px; font-size:.68rem; white-space:nowrap; flex-shrink:0; }
+.hist-del { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:.85rem; padding:.2rem .4rem; opacity:0; transition:all .2s; border-radius:5px; flex-shrink:0; }
+.hist-item:hover .hist-del { opacity:1; }
+.hist-del:hover { background:rgba(225,112,85,.15); color:#e17055; }
+.hist-progress { height:3px; background:var(--border); border-radius:2px; margin-top:.5rem; overflow:hidden; }
+.hist-progress-bar { height:100%; background:var(--primary); border-radius:2px; transition:width .3s; }
 
-    function clearHistory() {
-      userData.history = [];
-      saveUserDataToFirestore();
-      showToast('Historique effacé');
-      renderProfileUI();
-    }
+/* ════ STATS ════ */
+.stats-panels { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.stats-panel { background:var(--bg-hover); border-radius:var(--radius-sm); padding:1.1rem; border:1px solid var(--border); }
+.stats-panel h4 { font-size:.82rem; font-weight:700; color:var(--primary); margin-bottom:.9rem; }
+.s-row { display:flex; justify-content:space-between; align-items:center; padding:.4rem 0; border-bottom:1px solid var(--border); font-size:.82rem; }
+.s-row:last-child { border:none; }
+.s-key { color:var(--text-muted); }
+.s-val { color:var(--text); font-weight:700; }
+/* Barre de progression stat */
+.s-bar { margin-top:.8rem; }
+.s-bar-label { display:flex; justify-content:space-between; font-size:.72rem; color:var(--text-muted); margin-bottom:.3rem; }
+.s-bar-track { height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.s-bar-fill { height:100%; background:linear-gradient(90deg,var(--primary),var(--primary-light)); border-radius:3px; transition:width .6s ease; }
 
-    // ============================================
-    // PARAMÈTRES
-    // ============================================
-    function toggleProfileVisibility() {
-      userData.settings.profilePublic = !userData.settings.profilePublic;
-      saveUserDataToFirestore();
-      showToast(userData.settings.profilePublic ? '🌍 Profil public' : '🔒 Profil privé');
-      renderProfileUI();
-    }
+/* Genres donut simulé via barres */
+.genre-bars { display:flex; flex-direction:column; gap:.55rem; }
+.g-bar-item { display:flex; align-items:center; gap:.6rem; font-size:.78rem; }
+.g-bar-label { width:70px; color:var(--text-muted); text-align:right; flex-shrink:0; }
+.g-bar-track { flex:1; height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+.g-bar-fill { height:100%; border-radius:4px; transition:width .8s ease; }
+.g-bar-count { width:28px; color:var(--text); font-weight:700; text-align:right; flex-shrink:0; }
 
-    // ============================================
-    // EXPORT DONNÉES
-    // ============================================
-    function exportUserData() {
-      const exportData = {
-        user: {
-          name: currentUser?.displayName,
-          email: currentUser?.email,
-          uid: currentUser?.uid
-        },
-        favorites: userData.favorites,
-        history: userData.history,
-        stats: userData.stats,
-        settings: userData.settings,
-        exportDate: new Date().toISOString()
-      };
-      
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `anime-profile-${new Date().toISOString().split('T')[0]}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast('📥 Données exportées avec succès');
-    }
+/* ════ PARAMÈTRES ════ */
+.settings-sections { display:flex; flex-direction:column; gap:1.2rem; }
+.settings-group { background:var(--bg-hover); border-radius:var(--radius-sm); padding:1.1rem; border:1px solid var(--border); }
+.settings-group-title { font-size:.78rem; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:.6px; margin-bottom:.9rem; }
+.setting-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:.65rem 0; border-bottom:1px solid var(--border);
+}
+.setting-row:last-child { border:none; }
+.setting-left { flex:1; min-width:0; }
+.setting-label { font-size:.86rem; font-weight:500; margin-bottom:.12rem; }
+.setting-desc { font-size:.7rem; color:var(--text-muted); }
+/* Toggle switch design */
+.toggle-wrap { position:relative; width:46px; height:26px; flex-shrink:0; }
+.toggle-wrap input { opacity:0; width:0; height:0; position:absolute; }
+.toggle-track {
+  position:absolute; inset:0; background:var(--border);
+  border-radius:13px; cursor:pointer; transition:background .3s;
+}
+.toggle-wrap input:checked ~ .toggle-track { background:var(--primary); }
+.toggle-knob {
+  position:absolute; top:3px; left:3px; width:20px; height:20px;
+  background:#fff; border-radius:50%; transition:transform .3s;
+  box-shadow:0 1px 4px rgba(0,0,0,.25); pointer-events:none;
+}
+.toggle-wrap input:checked ~ .toggle-knob { transform:translateX(20px); }
+/* Select style */
+.setting-select {
+  padding:.32rem .7rem; background:var(--bg-input); border:1px solid var(--border);
+  border-radius:8px; color:var(--text); font-size:.78rem; cursor:pointer; transition:all .2s;
+}
+.setting-select:focus { outline:none; border-color:var(--primary); }
 
-    function importUserData() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.json';
-      input.onchange = async (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = async (event) => {
-          try {
-            const imported = JSON.parse(event.target.result);
-            if (imported.favorites) userData.favorites = imported.favorites;
-            if (imported.history) userData.history = imported.history;
-            if (imported.settings) userData.settings = imported.settings;
-            userData.stats.animesWatched = userData.favorites.length;
-            await saveUserDataToFirestore();
-            renderProfileUI();
-            showToast('📥 Données importées avec succès');
-          } catch (error) {
-            showToast('❌ Fichier invalide', 'error');
-          }
-        };
-        reader.readAsText(file);
-      };
-      input.click();
-    }
+/* Zone danger */
+.danger-zone { border-color:rgba(225,112,85,.25); background:rgba(225,112,85,.04); }
+.danger-zone .settings-group-title { color:#e17055; }
 
-    // ============================================
-    // AFFICHAGE
-    // ============================================
-    function renderNotLoggedIn() {
-      const container = document.getElementById('profileContent');
-      container.innerHTML = `
-        <div class="profile-header">
-          <div class="empty-state">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-            <h3>🔐 Vous n'êtes pas connecté</h3>
-            <p>Connectez-vous pour accéder à votre profil et sauvegarder vos animes.</p>
-            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-              <button onclick="loginWithGoogle()" class="google-btn" style="padding: 0.8rem 1.5rem;">🔵 Se connecter avec Google</button>
-              <button onclick="loginWithFacebook()" class="facebook-btn" style="padding: 0.8rem 1.5rem;">📘 Se connecter avec Facebook</button>
-            </div>
+/* ════ TOAST ════ */
+#toast {
+  position:fixed; bottom:28px; left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--bg-card); color:var(--text);
+  border:1px solid var(--border); border-left:4px solid var(--primary);
+  border-radius:var(--radius-sm); padding:.75rem 1.4rem;
+  font-size:.82rem; min-width:240px; text-align:center;
+  box-shadow:var(--shadow); opacity:0; pointer-events:none;
+  transition:opacity .3s, transform .3s; z-index:9999;
+}
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+#toast.success { border-left-color:#00b894; }
+#toast.warning { border-left-color:#fdcb6e; }
+#toast.error   { border-left-color:#e17055; }
+
+/* ════ ANIMATIONS ════ */
+@keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+
+/* ════ RESPONSIVE ════ */
+@media(max-width:768px){
+  .cont { padding:1rem; }
+  .stats-panels { grid-template-columns:1fr; }
+  .fav-grid { grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); }
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+  .profile-banner { padding:1.8rem 1rem; }
+}
+@media(max-width:480px){
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .fav-grid { grid-template-columns:repeat(2,1fr); }
+  .tabs { padding:.4rem .4rem 0; }
+  .tab-btn { padding:.55rem .85rem; font-size:.78rem; }
+}
+  </style>
+</head>
+<body>
+
+<!-- ════ HEADER ════ -->
+<header>
+  <div class="hdr">
+    <a href="index.html" class="home-link">← Accueil</a>
+    <span class="hdr-title">👤 Mon Profil</span>
+    <div class="hdr-right">
+      <div class="hdr-auth" id="hdrAuth">
+        <button class="hdr-g" onclick="loginGoogle()">🔵 Google</button>
+        <button class="hdr-f" onclick="loginFacebook()">📘 Facebook</button>
+      </div>
+      <button class="icon-btn" id="themeToggle">🌙</button>
+    </div>
+  </div>
+</header>
+
+<main class="cont" id="mainCont">
+  <div style="text-align:center;padding:5rem;color:var(--text-muted)">⏳ Chargement du profil…</div>
+</main>
+<div id="toast"></div>
+
+<script>
+/* ════ FIREBASE ════ */
+const fbCfg={apiKey:"AIzaSyCwDOGPUWQ08WGuAAZ9p6hS6SZytmRoKig",authDomain:"arkya-animemanga.firebaseapp.com",projectId:"arkya-animemanga",storageBucket:"arkya-animemanga.firebasestorage.app",messagingSenderId:"52570519836",appId:"1:52570519836:web:dbf4fcd7aafe01aac762d9"};
+if(!firebase.apps.length)firebase.initializeApp(fbCfg);
+const fbAuth=firebase.auth();
+let fbDb=null;
+try{fbDb=firebase.firestore();fbDb.enablePersistence({synchronizeTabs:true}).catch(()=>{});}catch(_){}
+const gProv=new firebase.auth.GoogleAuthProvider();
+const fProv=new firebase.auth.FacebookAuthProvider();
+gProv.setCustomParameters({prompt:'select_account'});
+
+/* ════ ÉTAT ════ */
+let currentUser=null;
+let userData={
+  favorites:[],history:[],
+  stats:{animesWatched:0,episodesWatched:0,totalHours:0,memberSince:new Date().toISOString()},
+  settings:{theme:'dark',autoplay:true,notifications:true,profilePublic:false,defaultLang:'vf',episodesPerPage:60}
+};
+let currentTab='favorites';
+let favSort='date'; // 'date'|'score'|'alpha'
+let favFilter='';
+
+/* ════ UTILS ════ */
+function esc(s){if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+const PH="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 200'%3E%3Crect width='150' height='200' fill='%231a1a2e'/%3E%3C/svg%3E";
+const AVA="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23252540'/%3E%3Cpath d='M50 55c-11 0-20 5-20 11v6h40v-6c0-6-9-11-20-11zm0-5a10 10 0 1 0 0-20 10 10 0 0 0 0 20z' fill='%238888aa'/%3E%3C/svg%3E";
+let toastT;
+function toast(m,type=''){
+  const e=document.getElementById('toast');
+  e.textContent=m;e.className='show';
+  if(type)e.classList.add(type);
+  clearTimeout(toastT);toastT=setTimeout(()=>e.className='',2800);
+}
+
+/* ════ THÈME ════ */
+(()=>{
+  const s=localStorage.getItem('akrya_theme');
+  if(s==='light')document.body.classList.add('light-theme');
+  document.getElementById('themeToggle').textContent=s==='light'?'☀️':'🌙';
+})();
+document.getElementById('themeToggle').addEventListener('click',()=>{
+  document.body.classList.toggle('light-theme');
+  const l=document.body.classList.contains('light-theme');
+  localStorage.setItem('akrya_theme',l?'light':'dark');
+  document.getElementById('themeToggle').textContent=l?'☀️':'🌙';
+  userData.settings.theme=l?'light':'dark';
+  saveToFirestore();
+});
+
+/* ════ AUTH ════ */
+fbAuth.onAuthStateChanged(async u=>{
+  currentUser=u;
+  updateHdrAuth();
+  if(u){await loadFromFirestore();render();}
+  else{renderNotLogged();}
+});
+function updateHdrAuth(){
+  const ha=document.getElementById('hdrAuth');
+  if(!ha)return;
+  if(currentUser){
+    ha.innerHTML=`<div class="hdr-user">
+      <img class="hdr-avatar" src="${currentUser.photoURL||AVA}" onerror="this.src='${AVA}'" alt="">
+      <span style="font-size:.78rem;font-weight:600">${esc(currentUser.displayName||currentUser.email?.split('@')[0])}</span>
+      <button class="hdr-logout" onclick="doLogout()">🚪</button>
+    </div>`;
+  }else{
+    ha.innerHTML=`<button class="hdr-g" onclick="loginGoogle()">🔵 Google</button><button class="hdr-f" onclick="loginFacebook()">📘 Facebook</button>`;
+  }
+}
+function authErr(e){return({'auth/popup-blocked':'Popup bloqué.','auth/popup-closed-by-user':'Annulé.','auth/network-request-failed':'Erreur réseau.'})[e.code]||e.message||'Erreur';}
+async function loginGoogle(){try{await fbAuth.signInWithPopup(gProv);}catch(e){toast('❌ '+authErr(e),'error');}}
+async function loginFacebook(){try{await fbAuth.signInWithPopup(fProv);}catch(e){toast('❌ '+authErr(e),'error');}}
+async function doLogout(){if(!confirm('Se déconnecter ?'))return;await fbAuth.signOut();toast('🔓 Déconnecté');setTimeout(()=>location.href='index.html',1200);}
+window.loginGoogle=loginGoogle;window.loginFacebook=loginFacebook;
+
+/* ════ FIRESTORE ════ */
+async function loadFromFirestore(){
+  const localFavs=JSON.parse(localStorage.getItem('akrya_fav')||'[]');
+  userData.favorites=localFavs;
+  if(!fbDb||!currentUser)return;
+  try{
+    const doc=await fbDb.collection('users').doc(currentUser.uid).get();
+    if(doc.exists){
+      const d=doc.data();
+      if(d.favorites?.length)userData.favorites=d.favorites;
+      if(d.history?.length)userData.history=d.history;
+      if(d.stats)userData.stats={...userData.stats,...d.stats};
+      if(d.settings)userData.settings={...userData.settings,...d.settings};
+      localStorage.setItem('akrya_fav',JSON.stringify(userData.favorites));
+    }else{await saveToFirestore();}
+  }catch(e){console.warn('[Firestore]',e.message);}
+}
+async function saveToFirestore(){
+  localStorage.setItem('akrya_fav',JSON.stringify(userData.favorites));
+  if(!fbDb||!currentUser)return;
+  try{
+    await fbDb.collection('users').doc(currentUser.uid).set({
+      favorites:userData.favorites,history:userData.history,
+      stats:userData.stats,settings:userData.settings,
+      displayName:currentUser.displayName,email:currentUser.email,photoURL:currentUser.photoURL,
+      lastUpdated:firebase.firestore.FieldValue.serverTimestamp()
+    },{merge:true});
+  }catch(e){console.warn('[FS write]',e.message);}
+}
+
+/* ════ FAVORIS LOGIC ════ */
+function sortedFavs(){
+  let f=[...userData.favorites];
+  if(favFilter)f=f.filter(x=>(x.title||'').toLowerCase().includes(favFilter.toLowerCase()));
+  if(favSort==='score')f.sort((a,b)=>parseFloat(b.score||0)-parseFloat(a.score||0));
+  else if(favSort==='alpha')f.sort((a,b)=>(a.title||'').localeCompare(b.title||''));
+  else f.sort((a,b)=>new Date(b.dateAdded||0)-new Date(a.dateAdded||0));
+  return f;
+}
+function removeFav(id,cat){
+  userData.favorites=userData.favorites.filter(f=>!(f.id==id&&(f.cat||'anime')===cat));
+  userData.stats.animesWatched=userData.favorites.length;
+  saveToFirestore();renderTab();toast('💔 Retiré des favoris');
+}
+function removeHist(id){
+  userData.history=userData.history.filter(h=>h.id!==id);
+  saveToFirestore();renderTab();toast('✓ Supprimé de l\'historique');
+}
+function clearHistory(){
+  if(!confirm('Effacer tout l\'historique ?'))return;
+  userData.history=[];saveToFirestore();renderTab();toast('🗑️ Historique effacé');
+}
+
+/* ════ EXPORT / IMPORT ════ */
+function exportData(){
+  const d={user:{name:currentUser?.displayName,email:currentUser?.email},favorites:userData.favorites,history:userData.history,stats:userData.stats,settings:userData.settings,exportDate:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`akrya-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href);
+  toast('📥 Export réussi !','success');
+}
+function importData(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+  inp.onchange=async e=>{
+    const r=new FileReader();
+    r.onload=async ev=>{
+      try{
+        const d=JSON.parse(ev.target.result);
+        if(d.favorites)userData.favorites=d.favorites;
+        if(d.history)userData.history=d.history;
+        if(d.stats)userData.stats={...userData.stats,...d.stats};
+        if(d.settings)userData.settings={...userData.settings,...d.settings};
+        await saveToFirestore();render();toast('📤 Import réussi !','success');
+      }catch(_){toast('❌ Fichier invalide','error');}
+    };r.readAsText(e.target.files[0]);
+  };inp.click();
+}
+async function deleteAllData(){
+  if(!prompt('Tapez "SUPPRIMER" pour confirmer la suppression de toutes vos données :')?.toUpperCase().includes('SUPPRIMER'))return;
+  userData={favorites:[],history:[],stats:{animesWatched:0,episodesWatched:0,totalHours:0,memberSince:new Date().toISOString()},settings:{...userData.settings}};
+  localStorage.removeItem('akrya_fav');
+  if(fbDb&&currentUser)await fbDb.collection('users').doc(currentUser.uid).delete().catch(()=>{});
+  render();toast('🗑️ Données supprimées','warning');
+}
+
+/* ════ CHANGER AVATAR ════ */
+function changeAvatar(){
+  const url=prompt('URL de votre nouvel avatar :');
+  if(!url)return;
+  userData.settings.customAvatar=url;
+  saveToFirestore();render();toast('✅ Avatar mis à jour','success');
+}
+
+/* ════ RENDU PAS CONNECTÉ ════ */
+function renderNotLogged(){
+  document.getElementById('mainCont').innerHTML=`
+    <div class="not-logged">
+      <div class="nl-illustration">🎌</div>
+      <h2>Bienvenue sur Akrya</h2>
+      <p>Connectez-vous pour accéder à votre profil, synchroniser vos favoris et suivre votre progression de visionnage.</p>
+      <div class="nl-btns">
+        <button class="nl-g" onclick="loginGoogle()">🔵 Continuer avec Google</button>
+        <button class="nl-f" onclick="loginFacebook()">📘 Continuer avec Facebook</button>
+      </div>
+    </div>`;
+}
+
+/* ════ RENDU PRINCIPAL ════ */
+function render(){
+  const u=currentUser;
+  const since=new Date(userData.stats.memberSince||Date.now());
+  const sinceStr=since.toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+  const days=Math.max(1,Math.floor((Date.now()-since)/(86400000)));
+  const totalSeries=new Set(userData.history.map(h=>h.id)).size;
+  const avatar=userData.settings.customAvatar||u.photoURL||AVA;
+
+  document.getElementById('mainCont').innerHTML=`
+    <!-- BANNER -->
+    <div class="profile-banner">
+      <div class="banner-deco banner-deco-1"></div>
+      <div class="banner-deco banner-deco-2"></div>
+      <div class="avatar-zone" onclick="changeAvatar()">
+        <div class="avatar-ring">
+          <div class="avatar-inner">
+            <img class="avatar-img" src="${avatar}" onerror="this.src='${AVA}'" alt="Avatar">
           </div>
         </div>
-      `;
-    }
+        <div class="avatar-overlay">✏️ Modifier</div>
+        <div class="online-dot"></div>
+      </div>
+      <div class="profile-name">${esc(u.displayName||u.email?.split('@')[0]||'Utilisateur')}</div>
+      <div class="profile-email">${esc(u.email||'')}</div>
+      <div class="profile-badges">
+        <span class="p-badge">🎌 Membre depuis ${sinceStr}</span>
+        ${userData.stats.episodesWatched>=100?'<span class="p-badge purple">⭐ Passionné</span>':userData.stats.episodesWatched>=10?'<span class="p-badge green">🌱 Débutant</span>':''}
+        ${userData.favorites.length>=20?'<span class="p-badge">❤️ Collectionneur</span>':''}
+      </div>
+      <div class="profile-actions">
+        <button class="act-btn" onclick="refreshData()">🔄 Actualiser</button>
+        <button class="act-btn" onclick="exportData()">📥 Exporter</button>
+        <button class="act-btn" onclick="importData()">📤 Importer</button>
+        <button class="act-btn danger" onclick="doLogout()">🚪 Déconnexion</button>
+      </div>
+    </div>
 
-    function renderProfileUI() {
-      const container = document.getElementById('profileContent');
-      
-      const avgScore = userData.favorites.length > 0 
-        ? (userData.favorites.reduce((acc, f) => acc + parseFloat(f.score || 0), 0) / userData.favorites.length).toFixed(1)
-        : 'N/A';
-      
-      container.innerHTML = `
-        <div class="profile-header">
-          <img class="profile-avatar-large" src="${currentUser?.photoURL || 'https://via.placeholder.com/120x120?text=Avatar'}" alt="Avatar">
-          <h2>${escapeHtml(currentUser?.displayName) || escapeHtml(currentUser?.email)}</h2>
-          <p>${escapeHtml(currentUser?.email)}</p>
-          
-          <div class="privacy-toggle">
-            <label>
-              <input type="checkbox" id="privacyToggle" ${userData.settings.profilePublic ? 'checked' : ''}>
-              <span>🌍 Profil public</span>
-            </label>
-            <label>
-              <input type="checkbox" id="notifToggle" ${userData.settings.notifications ? 'checked' : ''}>
-              <span>🔔 Notifications</span>
-            </label>
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon">❤️</div><div class="stat-n">${userData.favorites.length}</div><div class="stat-l">Favoris</div></div>
+      <div class="stat-card"><div class="stat-icon">📺</div><div class="stat-n">${totalSeries}</div><div class="stat-l">Séries vues</div></div>
+      <div class="stat-card"><div class="stat-icon">🎬</div><div class="stat-n">${userData.stats.episodesWatched||0}</div><div class="stat-l">Épisodes</div></div>
+      <div class="stat-card"><div class="stat-icon">⏱️</div><div class="stat-n">${userData.stats.totalHours||0}<span style="font-size:1rem">h</span></div><div class="stat-l">Visionnés</div></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn${currentTab==='favorites'?' active':''}" onclick="switchTab('favorites')">❤️ Favoris <span class="badge-n">${userData.favorites.length}</span></button>
+      <button class="tab-btn${currentTab==='history'?' active':''}"   onclick="switchTab('history')">📜 Historique <span class="badge-n">${userData.history.length}</span></button>
+      <button class="tab-btn${currentTab==='stats'?' active':''}"     onclick="switchTab('stats')">📊 Statistiques</button>
+      <button class="tab-btn${currentTab==='settings'?' active':''}"  onclick="switchTab('settings')">⚙️ Paramètres</button>
+    </div>
+    <div class="section" id="tabContent"></div>`;
+
+  renderTab();
+}
+
+window.switchTab=function(tab){currentTab=tab;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes(tab==='favorites'?'Favoris':tab==='history'?'Historique':tab==='stats'?'Stat':'Param')));renderTab();};
+
+function renderTab(){
+  const c=document.getElementById('tabContent');
+  if(!c)return;
+  if(currentTab==='favorites')renderFavorites(c);
+  else if(currentTab==='history')renderHistory(c);
+  else if(currentTab==='stats')renderStats(c);
+  else if(currentTab==='settings')renderSettings(c);
+}
+
+/* ════ ONGLET FAVORIS ════ */
+function renderFavorites(c){
+  const favs=sortedFavs();
+  c.innerHTML=`
+    <div class="sec-hdr">
+      <h3>❤️ Mes favoris <span class="badge-n">${userData.favorites.length}</span></h3>
+      ${userData.favorites.length?`<button class="act-btn danger" onclick="if(confirm('Vider tous les favoris ?')){userData.favorites=[];saveToFirestore();renderTab();toast('Favoris vidés','warning');}">🗑️ Vider</button>`:''}
+    </div>
+    <div class="fav-toolbar">
+      <span style="font-size:.74rem;color:var(--text-muted);margin-right:.2rem">Trier:</span>
+      <button class="fav-sort${favSort==='date'?' active':''}" onclick="favSort='date';renderTab()">📅 Récent</button>
+      <button class="fav-sort${favSort==='score'?' active':''}" onclick="favSort='score';renderTab()">⭐ Note</button>
+      <button class="fav-sort${favSort==='alpha'?' active':''}" onclick="favSort='alpha';renderTab()">🔤 A-Z</button>
+      <input class="fav-search" type="text" placeholder="🔍 Filtrer…" value="${esc(favFilter)}"
+        oninput="favFilter=this.value;renderTab()">
+    </div>
+    ${favs.length===0?`<div class="empty"><span class="empty-icon">❤️</span><p>${userData.favorites.length===0?'Aucun favori. Parcourez le catalogue et ajoutez vos œuvres !':'Aucun résultat pour ce filtre.'}</p></div>`:
+    `<div class="fav-grid">${favs.map(f=>`
+      <div class="fav-item" data-id="${f.id}" data-cat="${f.cat||'anime'}">
+        <div class="fav-img-wrap">
+          <img src="${f.image||PH}" onerror="this.src='${PH}'" alt="${esc(f.title)}" loading="lazy">
+          <div class="fav-overlay"><button class="fav-watch-btn" onclick="event.stopPropagation();location.href='watch.html?id=${f.id}&type=${f.cat||'anime'}&ep=1'">▶ Regarder</button></div>
+          <span class="fav-cat-tag">${f.cat||'anime'}</span>
+          <button class="fav-rm-btn" onclick="event.stopPropagation();removeFav('${f.id}','${f.cat||'anime'}')" title="Retirer">✕</button>
+        </div>
+        <div class="fav-body">
+          <h4 title="${esc(f.title)}">${esc(f.title?.length>22?f.title.slice(0,20)+'…':f.title)}</h4>
+          ${f.score?`<div class="fav-score">⭐ ${f.score}</div>`:''}
+          <div class="fav-date">${f.dateAdded?new Date(f.dateAdded).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}):''}</div>
+        </div>
+      </div>`).join('')}</div>`}`;
+
+  c.querySelectorAll('.fav-item').forEach(el=>{
+    el.addEventListener('click',e=>{if(e.target.closest('.fav-rm-btn')||e.target.closest('.fav-watch-btn'))return;location.href=`detail.html?id=${el.dataset.id}&type=${el.dataset.cat}`;});
+  });
+}
+
+/* ════ ONGLET HISTORIQUE ════ */
+function renderHistory(c){
+  const hist=userData.history;
+  c.innerHTML=`
+    <div class="sec-hdr">
+      <h3>📜 Historique <span class="badge-n">${hist.length}</span></h3>
+      ${hist.length?`<button class="act-btn danger" onclick="clearHistory()">🗑️ Tout effacer</button>`:''}
+    </div>
+    ${hist.length===0?`<div class="empty"><span class="empty-icon">📜</span><p>Aucun historique. Regardez un épisode pour le voir apparaître ici !</p></div>`:
+    `<div class="hist-list">${hist.map(h=>{
+      const ep=parseInt(h.episode||1);
+      const total=parseInt(h.totalEps||0);
+      const pct=total>0?Math.min(100,Math.round(ep/total*100)):0;
+      return`<div class="hist-item" data-id="${h.id}" data-ep="${ep}" data-type="${h.type||'anime'}">
+        <img class="hist-thumb" src="${h.image||PH}" onerror="this.src='${PH}'" alt="">
+        <div class="hist-info">
+          <div class="hist-title">${esc(h.title||'Sans titre')}</div>
+          <div class="hist-meta">
+            <span>📅 ${new Date(h.date||Date.now()).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'})}</span>
+            <span>· ${h.type||'anime'}</span>
           </div>
-          
-          <div class="profile-actions">
-            <button id="refreshBtn" class="action-btn">🔄 Actualiser</button>
-            <button id="exportBtn" class="action-btn">📥 Exporter</button>
-            <button id="importBtn" class="action-btn">📤 Importer</button>
+          ${total>0?`<div class="hist-progress"><div class="hist-progress-bar" style="width:${pct}%"></div></div>`:''}
+        </div>
+        <span class="hist-ep">${h.type==='manga'||h.type==='webtoon'?'Ch.':'Ép.'} ${ep}</span>
+        <button class="hist-del" onclick="event.stopPropagation();removeHist('${h.id}')" title="Supprimer">✕</button>
+      </div>`;}).join('')}</div>`}`;
+
+  c.querySelectorAll('.hist-item').forEach(el=>{
+    el.addEventListener('click',e=>{if(e.target.classList.contains('hist-del'))return;location.href=`watch.html?id=${el.dataset.id}&type=${el.dataset.type||'anime'}&ep=${el.dataset.ep||1}`;});
+  });
+}
+
+/* ════ ONGLET STATS ════ */
+function renderStats(c){
+  const since=new Date(userData.stats.memberSince||Date.now());
+  const days=Math.max(1,Math.floor((Date.now()-since)/86400000));
+  const totalSeries=new Set(userData.history.map(h=>h.id)).size;
+  const avg=userData.favorites.length>0?(userData.favorites.reduce((a,f)=>a+parseFloat(f.score||0),0)/userData.favorites.length).toFixed(1):'—';
+  const epPerDay=(userData.stats.episodesWatched/days).toFixed(2);
+  const hPerDay=(userData.stats.totalHours/days).toFixed(1);
+
+  // Genres depuis les favoris
+  const genreCount={};
+  userData.favorites.forEach(f=>{const c=f.cat||'anime';genreCount[c]=(genreCount[c]||0)+1;});
+  const maxG=Math.max(...Object.values(genreCount),1);
+  const genreColors={anime:'#e94560',manga:'#8b5cf6',webtoon:'#14b8a6'};
+
+  c.innerHTML=`
+    <div class="sec-hdr"><h3>📊 Statistiques détaillées</h3></div>
+    <div class="stats-panels">
+      <div class="stats-panel">
+        <h4>🎬 Visionnage</h4>
+        <div class="s-row"><span class="s-key">Séries vues</span><span class="s-val">${totalSeries}</span></div>
+        <div class="s-row"><span class="s-key">Épisodes</span><span class="s-val">${userData.stats.episodesWatched||0}</span></div>
+        <div class="s-row"><span class="s-key">Heures totales</span><span class="s-val">${userData.stats.totalHours||0} h</span></div>
+        <div class="s-row"><span class="s-key">Épisodes / jour</span><span class="s-val">${epPerDay}</span></div>
+        <div class="s-row"><span class="s-key">Heures / jour</span><span class="s-val">${hPerDay} h</span></div>
+        <div class="s-bar">
+          <div class="s-bar-label"><span>Progression globale</span><span>${Math.min(userData.stats.episodesWatched||0,1000)} / 1000 ép.</span></div>
+          <div class="s-bar-track"><div class="s-bar-fill" style="width:${Math.min(100,((userData.stats.episodesWatched||0)/1000)*100)}%"></div></div>
+        </div>
+      </div>
+      <div class="stats-panel">
+        <h4>❤️ Favoris</h4>
+        <div class="s-row"><span class="s-key">Total favoris</span><span class="s-val">${userData.favorites.length}</span></div>
+        <div class="s-row"><span class="s-key">Note moyenne</span><span class="s-val">${avg}</span></div>
+        <div class="s-row"><span class="s-key">Historique</span><span class="s-val">${userData.history.length}</span></div>
+        <div class="genre-bars" style="margin-top:.9rem">
+          ${Object.entries(genreCount).map(([cat,n])=>`
+            <div class="g-bar-item">
+              <span class="g-bar-label">${cat}</span>
+              <div class="g-bar-track"><div class="g-bar-fill" style="width:${Math.round(n/maxG*100)}%;background:${genreColors[cat]||'#e94560'}"></div></div>
+              <span class="g-bar-count">${n}</span>
+            </div>`).join('')||'<p style="font-size:.78rem;color:var(--text-muted)">Ajoutez des favoris pour voir les statistiques.</p>'}
+        </div>
+      </div>
+      <div class="stats-panel">
+        <h4>📅 Compte</h4>
+        <div class="s-row"><span class="s-key">Membre depuis</span><span class="s-val">${since.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'})}</span></div>
+        <div class="s-row"><span class="s-key">Jours d'activité</span><span class="s-val">${days}</span></div>
+        <div class="s-row"><span class="s-key">Email</span><span class="s-val" style="font-size:.75rem">${esc(currentUser?.email||'—')}</span></div>
+        <div class="s-row"><span class="s-key">Connexion</span><span class="s-val">${currentUser?.providerData?.[0]?.providerId==='google.com'?'Google':'Facebook'}</span></div>
+      </div>
+      <div class="stats-panel">
+        <h4>🏆 Palmarès</h4>
+        <div class="s-row"><span class="s-key">Niveau</span><span class="s-val">${(userData.stats.episodesWatched||0)>=500?'🔥 Expert':(userData.stats.episodesWatched||0)>=100?'⭐ Passionné':(userData.stats.episodesWatched||0)>=10?'🌱 Débutant':'🆕 Nouveau'}</span></div>
+        <div class="s-row"><span class="s-key">Prochain badge</span><span class="s-val">${(userData.stats.episodesWatched||0)<10?`${10-(userData.stats.episodesWatched||0)} ép. → 🌱`:(userData.stats.episodesWatched||0)<100?`${100-(userData.stats.episodesWatched||0)} ép. → ⭐`:(userData.stats.episodesWatched||0)<500?`${500-(userData.stats.episodesWatched||0)} ép. → 🔥`:'Max atteint 🏆'}</span></div>
+        <div class="s-bar" style="margin-top:.9rem">
+          <div class="s-bar-label"><span>Vers le prochain badge</span></div>
+          <div class="s-bar-track"><div class="s-bar-fill" style="width:${Math.min(100,((userData.stats.episodesWatched||0)%100))}%"></div></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ════ ONGLET PARAMÈTRES ════ */
+function renderSettings(c){
+  c.innerHTML=`
+    <div class="sec-hdr"><h3>⚙️ Paramètres</h3></div>
+    <div class="settings-sections">
+
+      <div class="settings-group">
+        <div class="settings-group-title">🎨 Apparence</div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-label">Thème sombre</div>
+            <div class="setting-desc">Interface claire ou sombre</div>
           </div>
+          <label class="toggle-wrap">
+            <input type="checkbox" id="tog-theme" ${!document.body.classList.contains('light-theme')?'checked':''} onchange="applyThemeSetting(this.checked)">
+            <div class="toggle-track"></div><div class="toggle-knob"></div>
+          </label>
         </div>
+      </div>
 
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-number">${userData.favorites.length}</div><div class="stat-label">Favoris</div></div>
-          <div class="stat-card"><div class="stat-number">${userData.history.length}</div><div class="stat-label">Animes vus</div></div>
-          <div class="stat-card"><div class="stat-number">${userData.stats.episodesWatched || 0}</div><div class="stat-label">Épisodes</div></div>
-          <div class="stat-card"><div class="stat-number">${userData.stats.totalHours || 0}</div><div class="stat-label">Heures</div></div>
-        </div>
-
-        <div class="profile-tabs">
-          <button class="profile-tab ${currentTab === 'favorites' ? 'active' : ''}" data-tab="favorites">❤️ Favoris</button>
-          <button class="profile-tab ${currentTab === 'history' ? 'active' : ''}" data-tab="history">📜 Historique</button>
-          <button class="profile-tab ${currentTab === 'stats' ? 'active' : ''}" data-tab="stats">📊 Statistiques</button>
-        </div>
-
-        <div id="tabFavorites" class="tab-content ${currentTab === 'favorites' ? 'active' : ''}" style="display: ${currentTab === 'favorites' ? 'block' : 'none'}">
-          <div class="profile-section">
-            <div class="section-header"><h3>❤️ Mes favoris</h3><span class="badge-count">${userData.favorites.length}</span></div>
-            <div id="favoritesList" class="favorites-grid">${renderFavoritesList()}</div>
+      <div class="settings-group">
+        <div class="settings-group-title">📺 Lecture</div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-label">Autoplay</div>
+            <div class="setting-desc">Lancer automatiquement l'épisode suivant</div>
           </div>
+          <label class="toggle-wrap">
+            <input type="checkbox" ${userData.settings.autoplay?'checked':''} onchange="saveSetting('autoplay',this.checked)">
+            <div class="toggle-track"></div><div class="toggle-knob"></div>
+          </label>
         </div>
-
-        <div id="tabHistory" class="tab-content ${currentTab === 'history' ? 'active' : ''}" style="display: ${currentTab === 'history' ? 'block' : 'none'}">
-          <div class="profile-section">
-            <div class="section-header"><h3>📜 Historique</h3><button id="clearHistoryBtn" class="clear-btn" style="background:none; border:none; color:#888; cursor:pointer;">🗑️ Tout effacer</button></div>
-            <div id="historyList" class="history-list">${renderHistoryList()}</div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-label">Langue par défaut</div>
+            <div class="setting-desc">VF ou VOSTFR lors de l'ouverture du lecteur</div>
           </div>
+          <select class="setting-select" onchange="saveSetting('defaultLang',this.value)">
+            <option value="vf" ${userData.settings.defaultLang==='vf'?'selected':''}>🇫🇷 VF</option>
+            <option value="vostfr" ${userData.settings.defaultLang==='vostfr'?'selected':''}>🇯🇵 VOSTFR</option>
+            <option value="vo" ${userData.settings.defaultLang==='vo'?'selected':''}>🎌 VO</option>
+          </select>
         </div>
-
-        <div id="tabStats" class="tab-content ${currentTab === 'stats' ? 'active' : ''}" style="display: ${currentTab === 'stats' ? 'block' : 'none'}">
-          <div class="profile-section">
-            <div class="section-header"><h3>📊 Statistiques détaillées</h3></div>
-            <div class="stats-details">
-              <div class="stat-row"><span>❤️ Favoris</span><span class="stat-value">${userData.favorites.length}</span></div>
-              <div class="stat-row"><span>📜 Historique</span><span class="stat-value">${userData.history.length}</span></div>
-              <div class="stat-row"><span>🎬 Épisodes regardés</span><span class="stat-value">${userData.stats.episodesWatched || 0}</span></div>
-              <div class="stat-row"><span>⏱️ Heures visionnées</span><span class="stat-value">${userData.stats.totalHours || 0}</span></div>
-              <div class="stat-row"><span>⭐ Note moyenne</span><span class="stat-value">${avgScore}/5</span></div>
-              <div class="stat-row"><span>📅 Membre depuis</span><span class="stat-value">${new Date(userData.stats.memberSince).toLocaleDateString('fr-FR')}</span></div>
-            </div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-label">Épisodes par page</div>
+            <div class="setting-desc">Nombre d'épisodes affichés dans la liste</div>
           </div>
+          <select class="setting-select" onchange="saveSetting('episodesPerPage',+this.value)">
+            <option value="30" ${userData.settings.episodesPerPage===30?'selected':''}>30</option>
+            <option value="60" ${userData.settings.episodesPerPage===60?'selected':''}>60</option>
+            <option value="100" ${userData.settings.episodesPerPage===100?'selected':''}>100</option>
+          </select>
         </div>
-      `;
-      
-      attachEventListeners();
-    }
+      </div>
 
-    function renderFavoritesList() {
-      if (userData.favorites.length === 0) {
-        return '<div class="empty-state">❤️ Aucun favori pour le moment</div>';
-      }
-      return userData.favorites.map(anime => `
-        <div class="favorite-item" data-id="${anime.id}">
-          <img src="${anime.image || 'https://via.placeholder.com/160x200?text=No+Image'}" alt="${escapeHtml(anime.title)}" loading="lazy">
-          <div class="favorite-info">
-            <h4>${escapeHtml(anime.title)}</h4>
-            <div class="favorite-score">⭐ ${anime.score || 'N/A'}</div>
-            <button class="remove-fav-btn" data-id="${anime.id}">🗑️ Retirer</button>
+      <div class="settings-group">
+        <div class="settings-group-title">🔔 Notifications & Confidentialité</div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-label">Notifications</div>
+            <div class="setting-desc">Alertes pour les nouvelles sorties</div>
           </div>
+          <label class="toggle-wrap">
+            <input type="checkbox" ${userData.settings.notifications?'checked':''} onchange="saveSetting('notifications',this.checked);reqNotif(this.checked)">
+            <div class="toggle-track"></div><div class="toggle-knob"></div>
+          </label>
         </div>
-      `).join('');
-    }
-
-    function renderHistoryList() {
-      if (userData.history.length === 0) {
-        return '<div class="empty-state">📜 Aucun historique</div>';
-      }
-      return userData.history.map(item => `
-        <div class="history-item" data-id="${item.id}" data-ep="${item.episode}">
-          <div class="history-info">
-            <div class="history-title">${escapeHtml(item.title)}</div>
-            <div class="history-meta">📅 ${new Date(item.date).toLocaleDateString('fr-FR')}</div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-label">Profil public</div>
+            <div class="setting-desc">Permettre à d'autres de voir votre profil</div>
           </div>
-          <div class="history-episode">Ép. ${item.episode || 1}</div>
+          <label class="toggle-wrap">
+            <input type="checkbox" ${userData.settings.profilePublic?'checked':''} onchange="saveSetting('profilePublic',this.checked)">
+            <div class="toggle-track"></div><div class="toggle-knob"></div>
+          </label>
         </div>
-      `).join('');
-    }
+      </div>
 
-    function attachEventListeners() {
-      document.querySelectorAll('.profile-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          currentTab = tab.dataset.tab;
-          renderProfileUI();
-        });
-      });
-      
-      document.querySelectorAll('.favorite-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-          if (e.target.classList.contains('remove-fav-btn')) return;
-          window.location.href = `anime-detail.html?id=${item.dataset.id}`;
-        });
-      });
-      
-      document.querySelectorAll('.remove-fav-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          removeFromFavorites(btn.dataset.id);
-        });
-      });
-      
-      document.querySelectorAll('.history-item').forEach(item => {
-        item.addEventListener('click', () => {
-          window.location.href = `watch.html?id=${item.dataset.id}&ep=${item.dataset.ep}`;
-        });
-      });
-      
-      const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-      if (clearHistoryBtn) clearHistoryBtn.addEventListener('click', () => { if(confirm('Effacer tout l\'historique ?')) clearHistory(); });
-      
-      const refreshBtn = document.getElementById('refreshBtn');
-      if (refreshBtn) refreshBtn.addEventListener('click', () => { loadUserDataFromFirestore(); renderProfileUI(); showToast('Données actualisées'); });
-      
-      const exportBtn = document.getElementById('exportBtn');
-      if (exportBtn) exportBtn.addEventListener('click', exportUserData);
-      
-      const importBtn = document.getElementById('importBtn');
-      if (importBtn) importBtn.addEventListener('click', importUserData);
-      
-      const privacyToggle = document.getElementById('privacyToggle');
-      if (privacyToggle) privacyToggle.addEventListener('change', toggleProfileVisibility);
-    }
+      <div class="settings-group">
+        <div class="settings-group-title">💾 Données</div>
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap;padding:.6rem 0">
+          <button class="act-btn" onclick="exportData()">📥 Exporter mes données</button>
+          <button class="act-btn" onclick="importData()">📤 Importer des données</button>
+        </div>
+      </div>
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    }
+      <div class="settings-group danger-zone">
+        <div class="settings-group-title">⚠️ Zone de danger</div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-label">Effacer l'historique</div>
+            <div class="setting-desc">Supprime tous les épisodes regardés</div>
+          </div>
+          <button class="act-btn danger" onclick="clearHistory()">🗑️ Effacer</button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-label">Supprimer toutes mes données</div>
+            <div class="setting-desc">Favoris, historique, statistiques — irréversible</div>
+          </div>
+          <button class="act-btn danger" onclick="deleteAllData()">💥 Supprimer</button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-left">
+            <div class="setting-label">Se déconnecter</div>
+            <div class="setting-desc">Ferme la session sur cet appareil</div>
+          </div>
+          <button class="act-btn danger" onclick="doLogout()">🚪 Déconnexion</button>
+        </div>
+      </div>
+    </div>`;
+}
 
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
-    }
+function applyThemeSetting(isDark){
+  document.body.classList.toggle('light-theme',!isDark);
+  localStorage.setItem('akrya_theme',isDark?'dark':'light');
+  document.getElementById('themeToggle').textContent=isDark?'🌙':'☀️';
+  userData.settings.theme=isDark?'dark':'light';
+  saveToFirestore();
+}
+function saveSetting(key,val){userData.settings[key]=val;saveToFirestore();toast(`✅ Paramètre enregistré`,'success');}
+async function reqNotif(enable){
+  if(enable&&'Notification' in window&&Notification.permission!=='granted'){
+    const p=await Notification.requestPermission();
+    if(p!=='granted')toast('⚠️ Notifications refusées par le navigateur','warning');
+  }
+}
+window.reqNotif=reqNotif;
 
-    window.loginWithGoogle = loginWithGoogle;
-    window.loginWithFacebook = loginWithFacebook;
-    window.logout = logout;
-    window.addToFavorites = addToFavorites;
-    window.addToHistory = addToHistory;
-  </script>
+async function refreshData(){await loadFromFirestore();render();toast('✅ Données actualisées','success');}
+</script>
 </body>
 </html>
