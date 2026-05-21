@@ -1,0 +1,20 @@
+{
+  "name": "Akrya Anime",
+  "short_name": "Akrya",
+  "description": "Anime, Manga et Webtoon en VF et VOSTFR",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#e94560",
+  "orientation": "portrait-primary",
+  "icons": [
+    {"src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"},
+    {"src": "favicon.ico", "sizes": "48x48", "type": "image/x-icon"}
+  ],
+  "categories": ["entertainment"],
+  "shortcuts": [
+    {"name": "Anime", "url": "/index.html?cat=anime", "description": "Parcourir les animes"},
+    {"name": "Manga", "url": "/index.html?cat=manga", "description": "Parcourir les mangas"},
+    {"name": "Mon profil", "url": "/profile.html", "description": "Mon profil Akrya"}
+  ]
+}
