@@ -69,25 +69,20 @@
 
 ---
 
-## 🗂️ Structure du projet
-
-```
 Akrya/
-├── index.html          # Page d'accueil — 5 onglets, 3 catégories
-├── detail.html         # Détail anime/manga/webtoon + épisodes + recommandations
-├── watch.html          # Lecteur vidéo — 8 sources, sidebar paginée
-├── profile.html        # Profil — favoris, historique, stats, paramètres
-├── offline.html        # Page hors-ligne
-├── style.css           # Styles globaux
-├── firebase-config.js  # Firebase init unique + helpers auth
+├── README.md           # Documentation
 ├── calendar-data.js    # Calendrier AniList temps réel
-├── script.js           # Catalogue, recherche, top, news
+├── detail.html         # Détail anime/manga/webtoon + épisodes + recommandations
+├── firebase-config.js  # Firebase init unique + helpers auth
+├── index.html          # Page d'accueil — 5 onglets, 3 catégories
 ├── main.js             # Service Worker + bannière offline
-├── sw.js               # Service Worker v3
 ├── manifest.json       # PWA manifest
-├── favicon.svg         # Icône du site
-└── README.md           # Documentation
-```
+├── offline.html        # Page hors-ligne
+├── profile.html        # Profil — favoris, historique, stats, paramètres
+├── script.js           # Catalogue, recherche, top, news
+├── style.css           # Styles globaux
+├── sw.js               # Service Worker v3
+└── watch.html          # Lecteur vidéo — 12 sources, sidebar paginée
 
 ---
 
