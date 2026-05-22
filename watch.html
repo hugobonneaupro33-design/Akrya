@@ -280,6 +280,34 @@ const SOURCES={
     url:(id,ep,lang,title)=>`https://aniwave.to/watch/${slug(title)}.${id}/ep-${ep}`,
     embed:(id,ep,lang,title)=>`https://aniwave.to/watch/${slug(title)}.${id}/ep-${ep}`,
   },
+    adn: {
+    name: 'ADN (Animation Digital Network)',
+    icon: '🎬',
+    tag: 'VF/VOSTFR (Légal)',
+    url: (id, ep, lang, title) => `https://animationdigitalnetwork.fr/recherche?q=${slug(title)}`,
+    embed: (id, ep, lang, title) => `https://animationdigitalnetwork.fr/anime/${slug(title)}`,
+  },
+  franime: {
+    name: 'Franime',
+    icon: '🇫🇷',
+    tag: 'VF/VOSTFR',
+    url: (id, ep, lang, title) => `https://franime.fr/anime/${slug(title)}/${ep}`,
+    embed: (id, ep, lang, title) => `https://franime.fr/anime/${slug(title)}/${ep}`,
+  },
+  vostanime: {
+    name: 'VostAnime',
+    icon: '📺',
+    tag: 'VOSTFR',
+    url: (id, ep, lang, title) => `https://voiranime.io/${slug(title)}-vf-episode-${ep}`,
+    embed: (id, ep, lang, title) => `https://voiranime.io/${slug(title)}-vf-episode-${ep}`,
+  },
+  animevf: {
+    name: 'AnimeVF',
+    icon: '🎙️',
+    tag: 'VF',
+    url: (id, ep, lang, title) => `https://animevf.biz/episode/${slug(title)}-episode-${ep}-vf/`,
+    embed: (id, ep, lang, title) => `https://animevf.biz/episode/${slug(title)}-episode-${ep}-vf/`,
+  },
 };
 
 // Construire les cartes sources
