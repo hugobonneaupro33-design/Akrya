@@ -791,12 +791,15 @@ async function loadLatest(){
   const list=document.getElementById('latestList');
   list.innerHTML='<div class="loading">⏳ Chargement…</div>';
   try{
-    const r=await fetch(PROXY+encodeURIComponent(ALIST),{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({query:LATEST_QUERY,variables:{page:1}}),
-      signal:AbortSignal.timeout(12000)
-    });
+    let r;
+  try{
+    r=await fetch(ALIST,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:LATEST_QUERY,variables:{page:1}}),signal:AbortSignal.timeout(10000)});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+  }catch(e1){
+    try{
+      r=await fetch(PROXY+encodeURIComponent(ALIST),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:LATEST_QUERY,variables:{page:1}}),signal:AbortSignal.timeout(14000)});
+    }catch(e2){throw new Error(e1.message);}
+  }
     const data=await r.json();
     const schedules=data?.data?.Page?.airingSchedules||[];
     if(!schedules.length){ list.innerHTML='<div class="error">❌ Aucun épisode récent.</div>'; return; }
@@ -939,12 +942,16 @@ async function fetchCalendar(offset=0){
   document.getElementById('calGrid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:2.5rem;color:var(--text-muted)">⏳ Chargement du calendrier…</div>`;
 
   try{
-    const r=await fetch(PROXY+encodeURIComponent(ALIST),{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({query:CAL_QUERY,variables:{start,end}}),
-      signal:AbortSignal.timeout(14000)
-    });
+    // AniList accepte les requêtes cross-origin directement
+  let r;
+  try{
+    r=await fetch(ALIST,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:CAL_QUERY,variables:{start,end}}),signal:AbortSignal.timeout(12000)});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+  }catch(e1){
+    try{
+      r=await fetch(PROXY+encodeURIComponent(ALIST),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:CAL_QUERY,variables:{start,end}}),signal:AbortSignal.timeout(14000)});
+    }catch(e2){throw new Error(e1.message);}
+  }
     const data=await r.json();
     let schedules=data?.data?.Page?.airingSchedules||[];
 
