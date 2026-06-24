@@ -3,553 +3,329 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Akrya Anime - Anime, Manga, Webtoon">
+  <meta name="description" content="Akrya — Anime, Manga, Webtoon en VF et VOSTFR">
   <meta name="theme-color" content="#e94560">
-  <title>Akrya Anime</title>
+  <title>Akrya — Anime · Manga · Webtoon</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <style>
 /* ═══════════════════════════════════════════════
-   VARIABLES — 3 THÈMES DE CATÉGORIE
-   ═══════════════════════════════════════════════ */
+   VARIABLES
+═══════════════════════════════════════════════ */
 :root {
   --primary:        #e94560;
   --primary-dark:   #c72e48;
   --primary-light:  #ff6b8b;
-  --accent:         #e94560;
-  --accent-glow:    rgba(233,69,96,.25);
+  --accent-glow:    rgba(233,69,96,.22);
   --bg-base:        #0a0a0f;
-  --bg-card:        #13131f;
-  --bg-hover:       #1e1e2e;
-  --bg-input:       #16162a;
-  --text:           #f0f0f0;
-  --text-muted:     #8888aa;
-  --border:         #252540;
-  --radius:         16px;
+  --bg-card:        #111118;
+  --bg-hover:       #1a1a28;
+  --bg-input:       #14141f;
+  --text:           #f0f0f8;
+  --text-muted:     #7878a0;
+  --border:         #222235;
+  --radius:         14px;
   --radius-sm:      8px;
-  --radius-lg:      24px;
-  --transition:     all .3s ease;
-  --shadow:         0 8px 24px rgba(0,0,0,.4);
+  --radius-lg:      22px;
+  --transition:     all .28s ease;
+  --shadow:         0 8px 28px rgba(0,0,0,.5);
   --shadow-card:    0 12px 32px rgba(233,69,96,.18);
 }
-
-/* ── THÈME MANGA (violet/noir) ── */
-body.cat-manga {
-  --primary:       #8b5cf6;
-  --primary-dark:  #6d3fd4;
-  --primary-light: #a78bfa;
-  --accent:        #8b5cf6;
-  --accent-glow:   rgba(139,92,246,.25);
-  --shadow-card:   0 12px 32px rgba(139,92,246,.18);
-}
-
-/* ── THÈME WEBTOON (tiffany/noir) ── */
-body.cat-webtoon {
-  --primary:       #14b8a6;
-  --primary-dark:  #0d9488;
-  --primary-light: #2dd4bf;
-  --accent:        #14b8a6;
-  --accent-glow:   rgba(20,184,166,.25);
-  --shadow-card:   0 12px 32px rgba(20,184,166,.18);
-}
-
-/* ── THÈME CLAIR ── */
-body.light-theme {
-  --bg-base:   #f0f0f5;
-  --bg-card:   #ffffff;
-  --bg-hover:  #e4e4f0;
-  --text:      #1a1a2e;
-  --text-muted:#666688;
-  --border:    #d0d0e0;
-}
+body.cat-manga   { --primary:#8b5cf6; --primary-dark:#6d3fd4; --primary-light:#a78bfa; --accent-glow:rgba(139,92,246,.22); --shadow-card:0 12px 32px rgba(139,92,246,.18); }
+body.cat-webtoon { --primary:#14b8a6; --primary-dark:#0d9488; --primary-light:#2dd4bf; --accent-glow:rgba(20,184,166,.22); --shadow-card:0 12px 32px rgba(20,184,166,.18); }
+body.light-theme { --bg-base:#f0f0f7; --bg-card:#ffffff; --bg-hover:#e8e8f4; --bg-input:#ededf8; --text:#1a1a30; --text-muted:#6666aa; --border:#d0d0e8; }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
-
-body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: var(--bg-base);
-  color: var(--text);
-  min-height: 100vh;
-  line-height: 1.5;
-  transition: background .4s, color .4s;
-}
-
-::-webkit-scrollbar { width:6px; }
-::-webkit-scrollbar-track { background: var(--bg-card); }
-::-webkit-scrollbar-thumb { background: var(--primary); border-radius:3px; }
+body { font-family:'Inter',system-ui,sans-serif; background:var(--bg-base); color:var(--text); min-height:100vh; line-height:1.5; transition:background .4s,color .4s; }
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:var(--bg-card); }
+::-webkit-scrollbar-thumb { background:var(--primary); border-radius:3px; }
 
 /* ═══════════════════════════════════════════════
    HEADER
-   ═══════════════════════════════════════════════ */
+═══════════════════════════════════════════════ */
 header {
-  background: linear-gradient(135deg, #08080f 0%, #12121e 100%);
-  padding: 1rem 2rem .8rem;
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(12px);
-  transition: border-color .4s;
+  background:linear-gradient(135deg,#06060d 0%,#0e0e1c 100%);
+  padding:.85rem 2rem .75rem;
+  position:sticky; top:0; z-index:300;
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(16px);
+  transition:border-color .4s;
 }
-body.light-theme header {
-  background: linear-gradient(135deg,#e8e8f0,#f5f5ff);
-}
-
-.header-top {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: .8rem;
-}
-
-.logo { flex: 0 0 auto; }
+body.light-theme header { background:linear-gradient(135deg,#eaeaf8,#f5f5ff); }
+.header-top { display:flex; align-items:center; gap:.9rem; flex-wrap:wrap; margin-bottom:.75rem; }
+.logo { flex:0 0 auto; cursor:pointer; }
 .logo h1 {
-  font-size: 1.45rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  letter-spacing: -.3px;
-  transition: background .4s;
+  font-size:1.5rem; font-weight:900;
+  background:linear-gradient(135deg,var(--primary),var(--primary-light));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  letter-spacing:-.5px;
 }
-.logo p { font-size: .65rem; color: var(--text-muted); letter-spacing: .5px; }
-
-.header-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  flex-wrap: wrap;
-}
-
+.logo p { font-size:.6rem; color:var(--text-muted); letter-spacing:.8px; text-transform:uppercase; }
+.header-right { margin-left:auto; display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
 .icon-btn {
-  background: var(--bg-hover);
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  width: 36px; height: 36px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: var(--transition);
-  color: var(--text);
+  background:var(--bg-hover); border:1px solid var(--border); border-radius:50%;
+  width:36px; height:36px; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:.9rem; transition:var(--transition); color:var(--text);
 }
-.icon-btn:hover { background: var(--primary); border-color: var(--primary); }
-
-.auth-buttons { display: flex; gap: .5rem; }
+.icon-btn:hover { background:var(--primary); border-color:var(--primary); }
+.auth-buttons { display:flex; gap:.4rem; }
 .google-btn, .facebook-btn, .logout-btn {
-  padding: .4rem 1rem;
-  border: none; border-radius: 40px;
-  cursor: pointer; font-weight: 600; font-size: .82rem;
-  display: inline-flex; align-items: center; gap: .4rem;
-  transition: var(--transition);
+  padding:.38rem .95rem; border:none; border-radius:40px;
+  cursor:pointer; font-weight:700; font-size:.78rem;
+  display:inline-flex; align-items:center; gap:.35rem; transition:var(--transition);
 }
 .google-btn   { background:#4285f4; color:#fff; }
 .facebook-btn { background:#1877f2; color:#fff; }
 .logout-btn   { background:var(--primary); color:#fff; }
-.google-btn:hover, .facebook-btn:hover, .logout-btn:hover {
-  transform: translateY(-2px); filter: brightness(1.1);
-}
-
+.google-btn:hover, .facebook-btn:hover, .logout-btn:hover { transform:translateY(-2px); filter:brightness(1.12); }
 .user-menu {
-  display: flex; align-items: center; gap: .7rem;
-  background: var(--bg-hover);
-  padding: .3rem .8rem .3rem .4rem;
-  border-radius: 40px;
-  border: 1px solid var(--border);
+  display:flex; align-items:center; gap:.6rem;
+  background:var(--bg-hover); padding:.28rem .8rem .28rem .4rem;
+  border-radius:40px; border:1px solid var(--border);
 }
-.user-avatar {
-  width: 30px; height: 30px;
-  border-radius: 50%; object-fit: cover;
-  border: 2px solid var(--primary);
-}
-.user-name { font-size: .82rem; font-weight: 600; }
-.profile-link {
-  color: var(--primary); text-decoration: none;
-  font-size: .78rem; font-weight: 500;
-}
+.user-avatar { width:28px; height:28px; border-radius:50%; object-fit:cover; border:2px solid var(--primary); }
+.user-name { font-size:.78rem; font-weight:700; }
+.profile-link { color:var(--primary); text-decoration:none; font-size:.74rem; font-weight:600; }
 
-/* ── BARRE DE RECHERCHE ── */
-.search-wrap {
-  max-width: 580px; margin: 0 auto;
-  position: relative;
-}
+/* SEARCH */
+.search-wrap { max-width:560px; margin:0 auto; position:relative; }
 .search-inner {
-  display: flex;
-  background: var(--bg-input);
-  border-radius: 50px;
-  border: 1.5px solid var(--border);
-  transition: var(--transition);
-  overflow: hidden;
+  display:flex; background:var(--bg-input); border-radius:50px;
+  border:1.5px solid var(--border); transition:var(--transition); overflow:hidden;
 }
-.search-inner:focus-within {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--accent-glow);
-}
-#searchInput {
-  flex: 1; padding: .75rem 1.4rem;
-  background: transparent; border: none; outline: none;
-  font-size: .95rem; color: var(--text);
-}
-#searchInput::placeholder { color: var(--text-muted); }
-#searchBtn {
-  padding: 0 1.4rem;
-  background: var(--primary); border: none;
-  color: #fff; font-weight: 700; font-size: 1rem;
-  cursor: pointer; transition: background .3s;
-}
-#searchBtn:hover { background: var(--primary-dark); }
-
+.search-inner:focus-within { border-color:var(--primary); box-shadow:0 0 0 3px var(--accent-glow); }
+#searchInput { flex:1; padding:.7rem 1.3rem; background:transparent; border:none; outline:none; font-size:.9rem; color:var(--text); font-family:inherit; }
+#searchInput::placeholder { color:var(--text-muted); }
+#searchBtn { padding:0 1.3rem; background:var(--primary); border:none; color:#fff; font-weight:700; font-size:.95rem; cursor:pointer; transition:background .2s; }
+#searchBtn:hover { background:var(--primary-dark); }
 .search-dropdown {
-  position: absolute; top: calc(100% + .4rem);
-  left: 0; right: 0;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  max-height: 380px; overflow-y: auto;
-  z-index: 300; display: none;
-  box-shadow: var(--shadow);
-  animation: fadeIn .15s ease;
+  position:absolute; top:calc(100% + .4rem); left:0; right:0;
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+  max-height:380px; overflow-y:auto; z-index:400; display:none;
+  box-shadow:var(--shadow); animation:fadeIn .15s ease;
 }
-.search-dropdown.open { display: block; }
-.search-item {
-  display: flex; gap: .8rem; padding: .7rem .9rem;
-  cursor: pointer; border-bottom: 1px solid var(--border);
-  transition: background .2s;
-}
-.search-item:last-child { border: none; }
-.search-item:hover { background: var(--bg-hover); }
-.search-item img { width:44px; height:62px; object-fit:cover; border-radius:6px; flex-shrink:0; }
-.si-info h4 { font-size:.85rem; margin-bottom:.2rem; }
-.si-info p  { font-size:.72rem; color:var(--text-muted); }
+.search-dropdown.open { display:block; }
+.search-item { display:flex; gap:.75rem; padding:.65rem .85rem; cursor:pointer; border-bottom:1px solid var(--border); transition:background .2s; }
+.search-item:last-child { border:none; }
+.search-item:hover { background:var(--bg-hover); }
+.search-item img { width:42px; height:60px; object-fit:cover; border-radius:6px; flex-shrink:0; }
+.si-info h4 { font-size:.82rem; margin-bottom:.18rem; font-weight:600; }
+.si-info p  { font-size:.7rem; color:var(--text-muted); }
 
 /* ═══════════════════════════════════════════════
    NAVIGATION CATÉGORIES
-   ═══════════════════════════════════════════════ */
-.cat-nav {
-  display: flex; justify-content: center;
-  gap: .8rem; padding: 1.2rem 2rem .5rem;
-  flex-wrap: wrap;
-}
+═══════════════════════════════════════════════ */
+.cat-nav { display:flex; justify-content:center; gap:.7rem; padding:1rem 2rem .4rem; flex-wrap:wrap; }
 .cat-btn {
-  padding: .6rem 1.6rem;
-  background: var(--bg-hover);
-  border: 1.5px solid var(--border);
-  border-radius: 40px; cursor: pointer;
-  font-weight: 700; font-size: .95rem;
-  color: var(--text);
-  display: inline-flex; align-items: center; gap: .5rem;
-  transition: var(--transition);
+  padding:.55rem 1.5rem; background:var(--bg-hover); border:1.5px solid var(--border);
+  border-radius:40px; cursor:pointer; font-weight:700; font-size:.9rem; color:var(--text);
+  display:inline-flex; align-items:center; gap:.45rem; transition:var(--transition);
 }
-.cat-btn:hover { transform: translateY(-2px); }
-.cat-btn.active {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #fff;
-  box-shadow: 0 4px 16px var(--accent-glow);
-}
+.cat-btn:hover { transform:translateY(-2px); border-color:var(--primary); }
+.cat-btn.active { background:var(--primary); border-color:var(--primary); color:#fff; box-shadow:0 4px 16px var(--accent-glow); }
 
 /* ═══════════════════════════════════════════════
    MAIN
-   ═══════════════════════════════════════════════ */
-main {
-  max-width: 1400px; margin: 0 auto;
-  padding: .5rem 2rem 2rem;
-}
+═══════════════════════════════════════════════ */
+main { max-width:1400px; margin:0 auto; padding:.5rem 2rem 3rem; }
 
-/* ── NAVIGATION ONGLETS ── */
-.tab-nav {
-  display: flex; gap: .4rem;
-  justify-content: center; flex-wrap: wrap;
-  margin: 1rem 0;
-}
+/* ONGLETS */
+.tab-nav { display:flex; gap:.35rem; justify-content:center; flex-wrap:wrap; margin:.9rem 0 1.2rem; }
 .tab-btn {
-  padding: .55rem 1.3rem;
-  background: var(--bg-hover);
-  border: 1px solid var(--border);
-  border-radius: 40px; cursor: pointer;
-  font-weight: 600; font-size: .88rem;
-  color: var(--text-muted);
-  transition: var(--transition);
+  padding:.5rem 1.2rem; background:var(--bg-hover); border:1px solid var(--border);
+  border-radius:40px; cursor:pointer; font-weight:600; font-size:.85rem; color:var(--text-muted);
+  transition:var(--transition);
 }
-.tab-btn:hover { color: var(--text); border-color: var(--primary); }
-.tab-btn.active {
-  background: var(--primary); border-color: var(--primary);
-  color: #fff;
-}
+.tab-btn:hover { color:var(--text); border-color:var(--primary); }
+.tab-btn.active { background:var(--primary); border-color:var(--primary); color:#fff; }
 
-/* ── HERO ── */
-.hero {
-  background: linear-gradient(135deg,
-    color-mix(in srgb, var(--primary) 12%, transparent),
-    color-mix(in srgb, var(--primary) 4%, transparent));
-  border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent);
-  border-radius: var(--radius-lg);
-  padding: 1.8rem 2rem;
-  margin-bottom: 1.8rem;
-  text-align: center;
-  transition: background .4s, border-color .4s;
+/* HERO BANNER */
+.hero-banner {
+  position:relative; border-radius:var(--radius-lg); overflow:hidden;
+  margin-bottom:2rem; min-height:220px;
+  background:linear-gradient(135deg,
+    color-mix(in srgb,var(--primary) 18%,var(--bg-card)),
+    color-mix(in srgb,var(--primary) 6%,var(--bg-card)));
+  border:1px solid color-mix(in srgb,var(--primary) 28%,transparent);
+  display:flex; align-items:center; padding:2rem 2.5rem;
+  transition:background .4s,border-color .4s;
 }
-.hero h2 { font-size: 1.9rem; margin-bottom: .4rem; }
-.hero p   { color: var(--text-muted); }
-.hero-stats {
-  display: flex; justify-content: center;
-  gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem;
+.hero-banner::before {
+  content:''; position:absolute; top:-80px; right:-80px;
+  width:400px; height:400px; border-radius:50%;
+  background:radial-gradient(circle,var(--accent-glow) 0%,transparent 65%);
+  pointer-events:none;
 }
+.hero-content { position:relative; z-index:1; }
+.hero-content h2 { font-size:2rem; font-weight:900; margin-bottom:.4rem; }
+.hero-content p { color:var(--text-muted); font-size:.95rem; margin-bottom:1.2rem; }
+.hero-stats { display:flex; gap:1.2rem; flex-wrap:wrap; }
 .hero-stat {
-  background: var(--bg-card);
-  padding: .6rem 1.3rem; border-radius: 40px;
-  border: 1px solid var(--border);
+  background:rgba(0,0,0,.3); backdrop-filter:blur(8px);
+  padding:.55rem 1.2rem; border-radius:40px;
+  border:1px solid color-mix(in srgb,var(--primary) 30%,transparent);
 }
-.stat-num { font-size:1.4rem; font-weight:800; color:var(--primary); }
-.stat-lbl { font-size:.65rem; color:var(--text-muted); }
+.stat-num { font-size:1.3rem; font-weight:900; color:var(--primary); }
+.stat-lbl { font-size:.6rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; }
 
-/* ── FILTRES GENRES ── */
-.genre-bar {
-  display: flex; flex-wrap: wrap; gap: .4rem;
-  margin-bottom: 1.4rem;
-}
-.g-btn {
-  padding: .35rem .9rem;
-  background: var(--bg-hover); border: 1px solid var(--border);
-  border-radius: 30px; color: var(--text-muted);
-  font-size: .8rem; cursor: pointer; transition: var(--transition);
-}
-.g-btn:hover, .g-btn.active {
-  background: var(--primary); border-color: var(--primary);
-  color: #fff;
-}
-
-/* ── SECTION TITRE ── */
+/* SECTION TITRE */
 .sec-title {
-  font-size: 1.35rem; font-weight: 700;
-  display: flex; align-items: center; gap: .6rem;
-  margin-bottom: 1.2rem;
+  font-size:1.25rem; font-weight:800;
+  display:flex; align-items:center; gap:.6rem;
+  margin-bottom:1.1rem;
 }
-.sec-title::before {
-  content: '';
-  width: 4px; height: 22px;
-  background: var(--primary); border-radius: 3px;
-  transition: background .4s;
+.sec-title::before { content:''; width:4px; height:20px; background:var(--primary); border-radius:3px; transition:background .4s; }
+.sec-sub { font-size:.72rem; color:var(--text-muted); font-weight:400; }
+
+/* FILTRES GENRES */
+.genre-bar { display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:1.3rem; }
+.g-btn {
+  padding:.32rem .85rem; background:var(--bg-hover); border:1px solid var(--border);
+  border-radius:30px; color:var(--text-muted); font-size:.78rem; cursor:pointer; transition:var(--transition);
 }
-.sec-sub { font-size: .75rem; color: var(--text-muted); font-weight: 400; }
+.g-btn:hover, .g-btn.active { background:var(--primary); border-color:var(--primary); color:#fff; }
+
+/* ═══════════════════════════════════════════════
+   SECTION DERNIERS ÉPISODES (style FRAnime)
+═══════════════════════════════════════════════ */
+.latest-section { margin-bottom:2.5rem; }
+.latest-list { display:flex; flex-direction:column; gap:.45rem; }
+.latest-item {
+  display:flex; align-items:center; gap:.9rem;
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:.55rem .85rem;
+  cursor:pointer; transition:var(--transition);
+  text-decoration:none; color:var(--text);
+}
+.latest-item:hover { background:var(--bg-hover); border-color:color-mix(in srgb,var(--primary) 40%,transparent); transform:translateX(4px); }
+.latest-thumb { width:52px; height:72px; object-fit:cover; border-radius:6px; flex-shrink:0; }
+.latest-info { flex:1; min-width:0; }
+.latest-title { font-size:.88rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:.2rem; }
+.latest-meta { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+.badge-lang { padding:.12rem .45rem; border-radius:12px; font-size:.62rem; font-weight:700; }
+.badge-vf     { background:rgba(66,133,244,.2); color:#4285f4; border:1px solid rgba(66,133,244,.3); }
+.badge-vostfr { background:rgba(233,69,96,.2); color:var(--primary); border:1px solid var(--accent-glow); }
+.badge-vo     { background:rgba(139,92,246,.2); color:#8b5cf6; border:1px solid rgba(139,92,246,.3); }
+.latest-ep { font-size:.75rem; color:var(--text-muted); }
+.latest-time { font-size:.68rem; color:var(--text-muted); margin-left:auto; white-space:nowrap; }
 
 /* ═══════════════════════════════════════════════
    GRILLE & CARTES
-   ═══════════════════════════════════════════════ */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(185px,1fr));
-  gap: 1.3rem;
-}
+═══════════════════════════════════════════════ */
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(175px,1fr)); gap:1.2rem; }
 .card {
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  overflow: hidden; cursor: pointer;
-  border: 1px solid var(--border);
-  transition: transform .25s, box-shadow .25s, border-color .25s;
-  position: relative;
-  animation: fadeIn .3s ease-out;
+  background:var(--bg-card); border-radius:var(--radius); overflow:hidden;
+  cursor:pointer; border:1px solid var(--border);
+  transition:transform .25s,box-shadow .25s,border-color .25s;
+  position:relative; animation:fadeIn .3s ease-out;
 }
-.card:hover {
-  transform: translateY(-7px);
-  box-shadow: var(--shadow-card);
-  border-color: color-mix(in srgb, var(--primary) 50%, transparent);
-}
+.card:hover { transform:translateY(-6px); box-shadow:var(--shadow-card); border-color:color-mix(in srgb,var(--primary) 50%,transparent); }
 .card-img-wrap { position:relative; overflow:hidden; }
-.card img {
-  width:100%; height:265px; object-fit:cover; display:block;
-  transition: transform .4s;
-}
+.card img { width:100%; height:255px; object-fit:cover; display:block; transition:transform .4s; }
 .card:hover img { transform:scale(1.06); }
-
 .card-badge {
   position:absolute; top:8px; right:8px;
-  background: rgba(0,0,0,.75);
-  backdrop-filter: blur(4px);
-  padding:.18rem .55rem; border-radius:20px;
-  font-size:.65rem; font-weight:700;
-  border: 1px solid color-mix(in srgb, var(--primary) 50%, transparent);
+  background:rgba(0,0,0,.78); backdrop-filter:blur(4px);
+  padding:.16rem .5rem; border-radius:20px; font-size:.62rem; font-weight:700;
+  border:1px solid color-mix(in srgb,var(--primary) 45%,transparent);
 }
 .fav-btn {
   position:absolute; bottom:8px; left:8px;
-  background: rgba(0,0,0,.65);
-  border:none; border-radius:20px;
-  padding:.18rem .5rem; font-size:.7rem;
-  cursor:pointer; transition: transform .2s;
+  background:rgba(0,0,0,.65); border:none; border-radius:20px;
+  padding:.16rem .48rem; font-size:.68rem; cursor:pointer; transition:transform .2s;
 }
 .fav-btn:hover { transform:scale(1.2); }
-
-.card-info { padding: .8rem .9rem; }
-.card-info h3 {
-  font-size:.9rem; font-weight:600;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  margin-bottom:.35rem;
-}
-.card-meta {
-  display:flex; justify-content:space-between;
-  font-size:.72rem; color:var(--text-muted);
-  margin-top:.25rem;
-}
+.card-info { padding:.75rem .85rem; }
+.card-info h3 { font-size:.86rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:.3rem; }
+.card-meta { display:flex; justify-content:space-between; font-size:.7rem; color:var(--text-muted); margin-top:.2rem; }
 .score-val { color:#ffd700; font-weight:700; }
 
 /* ═══════════════════════════════════════════════
-   CALENDRIER — style AnimeSama
-   ═══════════════════════════════════════════════ */
-.cal-wrap {
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
+   CALENDRIER — style FRAnime
+═══════════════════════════════════════════════ */
+.cal-wrap { background:var(--bg-card); border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; }
 .cal-header {
-  display: flex; justify-content: space-between;
-  align-items: center; flex-wrap: wrap;
-  padding: 1rem 1.3rem;
-  background: linear-gradient(135deg,
-    color-mix(in srgb, var(--primary) 15%, var(--bg-card)),
-    var(--bg-card));
-  border-bottom: 1px solid var(--border);
-  gap: .8rem; transition: background .4s;
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;
+  padding:.9rem 1.2rem;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--primary) 14%,var(--bg-card)),var(--bg-card));
+  border-bottom:1px solid var(--border); gap:.7rem; transition:background .4s;
 }
-.cal-title { font-size:1rem; font-weight:700; }
-.cal-nav { display:flex; gap:.5rem; }
+.cal-title { font-size:.95rem; font-weight:800; }
+.cal-nav { display:flex; gap:.4rem; }
 .cal-nav button {
-  padding:.4rem .9rem;
-  background:var(--bg-hover); border:1px solid var(--border);
-  border-radius:30px; color:var(--text); cursor:pointer;
-  font-size:.82rem; transition: var(--transition);
+  padding:.35rem .85rem; background:var(--bg-hover); border:1px solid var(--border);
+  border-radius:30px; color:var(--text); cursor:pointer; font-size:.78rem; transition:var(--transition);
 }
 .cal-nav button:hover { background:var(--primary); border-color:var(--primary); color:#fff; }
 
-.cal-days-header {
-  display: grid; grid-template-columns: repeat(7,1fr);
-  background: var(--bg-hover);
-  border-bottom: 1px solid var(--border);
+/* Filtres calendrier */
+.cal-filters { display:flex; gap:.4rem; padding:.6rem 1.2rem; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+.cal-filter-btn {
+  padding:.28rem .75rem; background:var(--bg-hover); border:1px solid var(--border);
+  border-radius:20px; font-size:.72rem; cursor:pointer; color:var(--text-muted); transition:var(--transition);
 }
-.cal-day-hdr {
-  padding: .55rem .4rem;
-  text-align: center; font-size:.75rem; font-weight:700;
-  color: var(--primary); transition: color .4s;
-}
-.cal-day-hdr .day-date { font-size:.65rem; color:var(--text-muted); font-weight:400; }
+.cal-filter-btn.active { background:var(--primary); border-color:var(--primary); color:#fff; }
 
-.cal-grid {
-  display: grid; grid-template-columns: repeat(7,1fr);
-  border-top: 1px solid var(--border);
-}
-.cal-col {
-  min-height: 160px;
-  padding: .4rem;
-  border-right: 1px solid var(--border);
-}
-.cal-col:last-child { border-right: none; }
+/* Colonnes jours */
+.cal-days-header { display:grid; grid-template-columns:repeat(7,1fr); background:var(--bg-hover); border-bottom:1px solid var(--border); }
+.cal-day-hdr { padding:.6rem .4rem; text-align:center; font-size:.72rem; font-weight:800; color:var(--primary); transition:color .4s; }
+.cal-day-hdr.today { background:color-mix(in srgb,var(--primary) 15%,transparent); }
+.cal-day-date { font-size:.62rem; color:var(--text-muted); font-weight:400; margin-top:.1rem; }
 
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); border-top:1px solid var(--border); }
+.cal-col { min-height:180px; padding:.4rem; border-right:1px solid var(--border); }
+.cal-col:last-child { border-right:none; }
+.cal-col.today-col { background:color-mix(in srgb,var(--primary) 6%,var(--bg-card)); }
+
+/* Carte épisode calendrier */
 .cal-episode {
-  background: var(--bg-hover);
-  border-left: 3px solid var(--primary);
-  border-radius: 0 6px 6px 0;
-  padding: .3rem .4rem;
-  margin-bottom: .3rem;
-  cursor: pointer;
-  font-size: .62rem;
-  transition: background .2s, transform .2s;
+  background:var(--bg-hover); border-radius:8px; padding:.4rem .45rem;
+  margin-bottom:.35rem; cursor:pointer; transition:var(--transition);
+  border:1px solid transparent; position:relative; overflow:hidden;
 }
-.cal-episode:hover { background: var(--primary); transform: translateX(2px); }
-.cal-ep-title { font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.cal-ep-info  { color:var(--text-muted); font-size:.58rem; margin-top:.1rem; }
-.cal-episode:hover .cal-ep-info { color:rgba(255,255,255,.75); }
-.cal-empty    { font-size:.65rem; color:var(--text-muted); text-align:center; padding:.5rem 0; }
-
-/* ── Loader calendrier ── */
-#calLoader {
-  text-align:center; padding:2rem;
-  font-size:.9rem; color:var(--text-muted);
-}
+.cal-episode:hover { background:color-mix(in srgb,var(--primary) 16%,var(--bg-hover)); border-color:color-mix(in srgb,var(--primary) 35%,transparent); transform:translateY(-1px); }
+.cal-ep-thumb { width:100%; height:52px; object-fit:cover; border-radius:5px; margin-bottom:.3rem; display:block; }
+.cal-ep-title { font-size:.65rem; font-weight:700; line-height:1.3; margin-bottom:.2rem; }
+.cal-ep-info { font-size:.58rem; color:var(--text-muted); display:flex; gap:.3rem; flex-wrap:wrap; align-items:center; }
+.cal-ep-badge { padding:.08rem .3rem; border-radius:8px; font-size:.55rem; font-weight:700; }
+.cal-ep-badge.vf     { background:rgba(66,133,244,.25); color:#4285f4; }
+.cal-ep-badge.vostfr { background:rgba(233,69,96,.25); color:var(--primary); }
+.cal-empty { font-size:.68rem; color:var(--text-muted); text-align:center; padding:1rem .4rem; }
 
 /* ═══════════════════════════════════════════════
    ACTUALITÉS
-   ═══════════════════════════════════════════════ */
-.news-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px,1fr));
-  gap: 1.3rem;
-}
+═══════════════════════════════════════════════ */
+.news-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.2rem; }
 .news-card {
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  overflow: hidden; cursor: pointer;
-  transition: transform .25s, box-shadow .25s;
+  background:var(--bg-card); border-radius:var(--radius); overflow:hidden;
+  cursor:pointer; border:1px solid var(--border); transition:var(--transition);
+  animation:fadeIn .3s ease;
 }
-.news-card:hover { transform:translateY(-4px); box-shadow:var(--shadow); }
-.news-card img { width:100%; height:170px; object-fit:cover; display:block; }
-.news-body { padding: .9rem; }
-.news-src {
-  display:inline-block;
-  background:var(--primary); color:#fff;
-  padding:.15rem .55rem; border-radius:20px;
-  font-size:.65rem; margin-bottom:.45rem;
-}
-.news-card h3 { font-size:.9rem; line-height:1.4; }
-.news-date { font-size:.68rem; color:var(--text-muted); margin-top:.4rem; }
+.news-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-card); border-color:color-mix(in srgb,var(--primary) 45%,transparent); }
+.news-card img { width:100%; height:160px; object-fit:cover; display:block; }
+.news-body { padding:.85rem; }
+.news-src { font-size:.65rem; color:var(--primary); font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+.news-body h3 { font-size:.88rem; font-weight:700; margin:.3rem 0 .5rem; line-height:1.4; }
+.news-date { font-size:.7rem; color:var(--text-muted); }
 
 /* ═══════════════════════════════════════════════
-   PAGES
-   ═══════════════════════════════════════════════ */
+   PAGES / PAGINATION / TOAST / ÉTATS
+═══════════════════════════════════════════════ */
 .page { display:block; }
 .page.hidden { display:none !important; }
-
-/* ═══════════════════════════════════════════════
-   PAGINATION
-   ═══════════════════════════════════════════════ */
-.pagination {
-  display:flex; justify-content:center;
-  gap:.4rem; margin-top:2rem; flex-wrap:wrap;
-}
-.pg-btn {
-  padding:.45rem .9rem;
-  background:var(--bg-hover); border:1px solid var(--border);
-  border-radius:var(--radius-sm); color:var(--text);
-  cursor:pointer; font-size:.82rem; transition: var(--transition);
-}
+.pagination { display:flex; justify-content:center; gap:.35rem; margin-top:2rem; flex-wrap:wrap; }
+.pg-btn { padding:.42rem .85rem; background:var(--bg-hover); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); cursor:pointer; font-size:.8rem; transition:var(--transition); }
 .pg-btn:disabled { opacity:.35; cursor:not-allowed; }
-.pg-btn.active, .pg-btn:not(:disabled):hover {
-  background:var(--primary); border-color:var(--primary); color:#fff;
-}
-
-/* ═══════════════════════════════════════════════
-   TOAST
-   ═══════════════════════════════════════════════ */
-#toast {
-  position:fixed; bottom:28px; left:50%;
-  transform:translateX(-50%) translateY(16px);
-  background:var(--bg-card);
-  color:var(--text);
-  border:1px solid var(--border);
-  border-left:4px solid var(--primary);
-  border-radius:var(--radius-sm);
-  padding:.75rem 1.4rem;
-  font-size:.85rem; min-width:240px; text-align:center;
-  box-shadow:var(--shadow);
-  opacity:0; pointer-events:none;
-  transition:opacity .3s, transform .3s;
-  z-index:9999;
-}
+.pg-btn.active, .pg-btn:not(:disabled):hover { background:var(--primary); border-color:var(--primary); color:#fff; }
+#toast { position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(16px); background:var(--bg-card); color:var(--text); border:1px solid var(--border); border-left:4px solid var(--primary); border-radius:var(--radius-sm); padding:.7rem 1.3rem; font-size:.82rem; min-width:230px; text-align:center; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .3s,transform .3s; z-index:9999; }
 #toast.show { opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
-
-/* ═══════════════════════════════════════════════
-   ÉTATS
-   ═══════════════════════════════════════════════ */
-.loading, .error {
-  text-align:center; padding:2.5rem;
-  color:var(--text-muted); grid-column:1/-1;
-}
+.loading, .error { text-align:center; padding:2.5rem; color:var(--text-muted); grid-column:1/-1; }
 .error { color:var(--primary); }
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
 .loading { animation:pulse 1.5s infinite; }
@@ -557,30 +333,11 @@ main {
 
 /* ═══════════════════════════════════════════════
    RESPONSIVE
-   ═══════════════════════════════════════════════ */
-@media(max-width:900px){
-  .cal-days-header,.cal-grid{grid-template-columns:repeat(4,1fr);}
-  .cal-col:nth-child(n+5){display:none;}
-}
-@media(max-width:768px){
-  header{padding:.8rem 1rem .6rem;}
-  .header-top{gap:.6rem;}
-  main{padding:.5rem 1rem 2rem;}
-  .grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr)); gap:1rem;}
-  .card img{height:215px;}
-  .cal-days-header,.cal-grid{grid-template-columns:repeat(3,1fr);}
-  .cal-col:nth-child(n+4){display:none;}
-  .search-inner{flex-direction:column;border-radius:var(--radius);}
-  #searchBtn{padding:.7rem;border-radius:0 0 var(--radius) var(--radius);}
-}
-@media(max-width:480px){
-  .grid{grid-template-columns:repeat(2,1fr);}
-  .card img{height:195px;}
-  .cal-days-header,.cal-grid{grid-template-columns:repeat(2,1fr);}
-  .cal-col:nth-child(n+3){display:none;}
-  .cat-btn{padding:.5rem 1rem;font-size:.82rem;}
-  .hero h2{font-size:1.4rem;}
-}
+═══════════════════════════════════════════════ */
+@media(max-width:1100px) { .cal-days-header,.cal-grid{grid-template-columns:repeat(5,1fr);} .cal-col:nth-child(n+6){display:none;} }
+@media(max-width:900px)  { .cal-days-header,.cal-grid{grid-template-columns:repeat(4,1fr);} .cal-col:nth-child(n+5){display:none;} }
+@media(max-width:768px)  { header{padding:.7rem 1rem .6rem;} main{padding:.5rem 1rem 2rem;} .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.9rem;} .card img{height:205px;} .cal-days-header,.cal-grid{grid-template-columns:repeat(3,1fr);} .cal-col:nth-child(n+4){display:none;} .search-inner{flex-direction:column;border-radius:var(--radius);} #searchBtn{padding:.65rem;border-radius:0 0 var(--radius) var(--radius);} .hero-banner{padding:1.5rem;} .hero-content h2{font-size:1.5rem;} }
+@media(max-width:480px)  { .grid{grid-template-columns:repeat(2,1fr);} .card img{height:185px;} .cal-days-header,.cal-grid{grid-template-columns:repeat(2,1fr);} .cal-col:nth-child(n+3){display:none;} .cat-btn{padding:.45rem .95rem;font-size:.82rem;} }
   </style>
 </head>
 <body>
@@ -588,19 +345,19 @@ main {
 <!-- ═══════════════ HEADER ═══════════════ -->
 <header>
   <div class="header-top">
-    <div class="logo">
+    <div class="logo" onclick="location.href='index.html'">
       <h1>🎌 Akrya</h1>
       <p>Anime · Manga · Webtoon</p>
     </div>
     <div class="header-right">
-      <button class="icon-btn" id="themeToggle" title="Changer le thème">🌙</button>
+      <button class="icon-btn" id="themeToggle" title="Thème">🌙</button>
       <div id="authButtons" class="auth-buttons">
         <button id="btnGoogle"   class="google-btn">🔵 Google</button>
         <button id="btnFacebook" class="facebook-btn">📘 Facebook</button>
       </div>
       <div id="userMenu" class="user-menu" style="display:none">
         <img id="userAvatar" class="user-avatar"
-          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23252540'/%3E%3Cpath d='M20 22c-4.4 0-8 2-8 4.5V28h16v-1.5c0-2.5-3.6-4.5-8-4.5zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8z' fill='%238888aa'/%3E%3C/svg%3E"
+          src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%231a1a2e'/%3E%3Cpath d='M20 22c-4.4 0-8 2-8 4.5V28h16v-1.5c0-2.5-3.6-4.5-8-4.5zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8z' fill='%237878a0'/%3E%3C/svg%3E"
           alt="Avatar">
         <span id="userName" class="user-name"></span>
         <button id="btnLogout" class="logout-btn">🚪 Déco</button>
@@ -608,7 +365,6 @@ main {
       </div>
     </div>
   </div>
-  <!-- Recherche -->
   <div class="search-wrap" id="searchContainer">
     <div class="search-inner">
       <input type="text" id="searchInput" placeholder="Rechercher un anime, manga, webtoon…">
@@ -631,24 +387,25 @@ main {
   <!-- ONGLETS -->
   <div class="tab-nav">
     <button class="tab-btn active" data-tab="home">🏠 Accueil</button>
+    <button class="tab-btn"        data-tab="latest">🕐 Derniers épisodes</button>
     <button class="tab-btn"        data-tab="calendar">📅 Calendrier</button>
     <button class="tab-btn"        data-tab="top">⭐ Top Rated</button>
     <button class="tab-btn"        data-tab="news">📰 Actualités</button>
   </div>
 
-  <!-- HERO -->
-  <div class="hero">
-    <h2 id="heroTitle">📺 Bienvenue sur Akrya Anime</h2>
-    <p id="heroDesc">Découvrez les animes, mangas et webtoons tendances</p>
-    <div class="hero-stats">
-      <div class="hero-stat"><div class="stat-num">+10 000</div><div class="stat-lbl">Œuvres</div></div>
-      <div class="hero-stat"><div class="stat-num">+100 000</div><div class="stat-lbl">Épisodes/Chapitres</div></div>
-      <div class="hero-stat"><div class="stat-num">+5 000</div><div class="stat-lbl">Utilisateurs</div></div>
-    </div>
-  </div>
-
   <!-- ── PAGE ACCUEIL ── -->
   <div id="homePage" class="page">
+    <div class="hero-banner">
+      <div class="hero-content">
+        <h2 id="heroTitle">📺 Bienvenue sur Akrya</h2>
+        <p id="heroDesc">Découvrez les animes, mangas et webtoons tendances</p>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="stat-num">+10 000</div><div class="stat-lbl">Œuvres</div></div>
+          <div class="hero-stat"><div class="stat-num">+100 000</div><div class="stat-lbl">Épisodes</div></div>
+          <div class="hero-stat"><div class="stat-num">VF & VOSTFR</div><div class="stat-lbl">Disponible</div></div>
+        </div>
+      </div>
+    </div>
     <div class="genre-bar" id="genreBar"></div>
     <div class="sec-title">
       <span id="homeTitle">Sorties récentes</span>
@@ -656,6 +413,14 @@ main {
     </div>
     <div id="animeGrid" class="grid"><div class="loading">⏳ Chargement…</div></div>
     <div id="pagination" class="pagination"></div>
+  </div>
+
+  <!-- ── PAGE DERNIERS ÉPISODES ── -->
+  <div id="latestPage" class="page hidden">
+    <div class="sec-title">🕐 Derniers épisodes <span class="sec-sub">(mis à jour en temps réel)</span></div>
+    <div class="latest-section">
+      <div id="latestList" class="latest-list"><div class="loading">⏳ Chargement…</div></div>
+    </div>
   </div>
 
   <!-- ── PAGE CALENDRIER ── -->
@@ -670,9 +435,14 @@ main {
           <button id="nextWeekBtn">Suiv. ▶</button>
         </div>
       </div>
+      <div class="cal-filters" id="calFilters">
+        <button class="cal-filter-btn active" data-lang="all">🌐 Tout</button>
+        <button class="cal-filter-btn" data-lang="vf">🇫🇷 VF</button>
+        <button class="cal-filter-btn" data-lang="vostfr">🇯🇵 VOSTFR</button>
+      </div>
       <div class="cal-days-header" id="calDaysHeader"></div>
       <div class="cal-grid" id="calGrid">
-        <div id="calLoader" style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-muted)">⏳ Chargement du calendrier…</div>
+        <div id="calLoader" style="grid-column:1/-1;text-align:center;padding:2.5rem;color:var(--text-muted)">⏳ Chargement du calendrier…</div>
       </div>
     </div>
   </div>
@@ -691,10 +461,9 @@ main {
 
 </main>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
-<!-- ═══════════════ FIREBASE CONFIG ═══════════════ -->
+<!-- ═══════════════ FIREBASE ═══════════════ -->
 <script>
 const fbCfg = {
   apiKey:"AIzaSyCwDOGPUWQ08WGuAAZ9p6hS6SZytmRoKig",
@@ -707,15 +476,10 @@ const fbCfg = {
 if(!firebase.apps.length) firebase.initializeApp(fbCfg);
 const fbAuth = firebase.auth();
 let fbDb = null;
-try{
-  fbDb = firebase.firestore();
-  fbDb.enablePersistence({synchronizeTabs:true}).catch(()=>{});
-}catch(e){}
-
+try { fbDb = firebase.firestore(); fbDb.enablePersistence({synchronizeTabs:true}).catch(()=>{}); } catch(e){}
 const googleProv   = new firebase.auth.GoogleAuthProvider();
 const facebookProv = new firebase.auth.FacebookAuthProvider();
 googleProv.setCustomParameters({prompt:'select_account'});
-
 let currentUser = null;
 
 fbAuth.onAuthStateChanged(async user => {
@@ -727,7 +491,6 @@ fbAuth.onAuthStateChanged(async user => {
     aDiv.style.display='none'; uDiv.style.display='flex';
     document.getElementById('userName').textContent = user.displayName||user.email?.split('@')[0]||'Utilisateur';
     if(user.photoURL) document.getElementById('userAvatar').src = user.photoURL;
-    // Charger les favoris depuis Firestore
     if(fbDb){
       try{
         const doc = await fbDb.collection('users').doc(user.uid).get();
@@ -736,11 +499,10 @@ fbAuth.onAuthStateChanged(async user => {
     }
     if(currentTab==='home') renderHome();
     if(currentTab==='top')  renderTop();
-  }else{
+  } else {
     aDiv.style.display='flex'; uDiv.style.display='none';
   }
 });
-
 async function loginWithGoogle(){
   try{ await fbAuth.signInWithPopup(googleProv); toast('✨ Connexion réussie !'); }
   catch(e){ toast('❌ '+authErrMsg(e)); }
@@ -754,14 +516,8 @@ async function logout(){
   if(location.pathname.includes('profile')) setTimeout(()=>location.href='index.html',1200);
 }
 function authErrMsg(e){
-  return({
-    'auth/popup-blocked':'Popup bloqué. Autorise les popups.',
-    'auth/popup-closed-by-user':'Connexion annulée.',
-    'auth/account-exists-with-different-credential':'Email déjà utilisé.',
-    'auth/network-request-failed':'Erreur réseau.'
-  })[e.code]||e.message||'Erreur inconnue';
+  return({'auth/popup-blocked':'Popup bloqué.','auth/popup-closed-by-user':'Connexion annulée.','auth/account-exists-with-different-credential':'Email déjà utilisé.','auth/network-request-failed':'Erreur réseau.'})[e.code]||e.message||'Erreur inconnue';
 }
-
 window.loginWithGoogle=loginWithGoogle;
 window.loginWithFacebook=loginWithFacebook;
 window.logout=logout;
@@ -771,30 +527,18 @@ window.logout=logout;
 <script>
 /* ────────────────────────────────────────────
    CONSTANTES & ÉTAT
-   ──────────────────────────────────────────── */
-const API    = 'https://api.jikan.moe/v4';
-const PROXY  = 'https://corsproxy.io/?url=';
-const ALIST  = 'https://graphql.anilist.co';
-const PH     = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 280'%3E%3Crect width='200' height='280' fill='%231e1e2e'/%3E%3Ctext x='100' y='140' text-anchor='middle' fill='%238888aa' font-size='13'%3ESans image%3C/text%3E%3C/svg%3E";
+──────────────────────────────────────────── */
+const API   = 'https://api.jikan.moe/v4';
+const PROXY = 'https://corsproxy.io/?url=';
+const ALIST = 'https://graphql.anilist.co';
+const PH    = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 280'%3E%3Crect width='200' height='280' fill='%231a1a28'/%3E%3Ctext x='100' y='140' text-anchor='middle' fill='%237878a0' font-size='12'%3ESans image%3C/text%3E%3C/svg%3E";
 
 const EP_FIX = {21:1122,1:220,2:500,3:366,4:291,5:131,6:87,7:47,8:55,9:138,10:293,11:25,12:24,13:25,14:24,15:12};
 
-const GENRES_ANIME = [
-  {id:'',lbl:'🌟 Tous'},{id:'1',lbl:'⚔️ Action'},{id:'4',lbl:'😄 Comédie'},
-  {id:'8',lbl:'🎭 Drame'},{id:'10',lbl:'✨ Fantasy'},{id:'14',lbl:'😱 Horreur'},
-  {id:'22',lbl:'💕 Romance'},{id:'24',lbl:'🥊 Sports'},{id:'36',lbl:'🔮 Surnaturel'},
-];
-const GENRES_MANGA = [
-  {id:'',lbl:'🌟 Tous'},{id:'1',lbl:'⚔️ Action'},{id:'4',lbl:'😄 Comédie'},
-  {id:'8',lbl:'🎭 Drame'},{id:'10',lbl:'✨ Fantasy'},{id:'22',lbl:'💕 Romance'},
-  {id:'24',lbl:'🥊 Sports'},
-];
-const GENRES_WEBTOON = [
-  {id:'all',lbl:'🌟 Tous'},{id:'action',lbl:'⚔️ Action'},{id:'romance',lbl:'💕 Romance'},
-  {id:'fantasy',lbl:'✨ Fantasy'},{id:'horror',lbl:'👻 Horreur'},{id:'drama',lbl:'🎭 Drame'},
-];
+const GENRES_ANIME   = [{id:'',lbl:'🌟 Tous'},{id:'1',lbl:'⚔️ Action'},{id:'4',lbl:'😄 Comédie'},{id:'8',lbl:'🎭 Drame'},{id:'10',lbl:'✨ Fantasy'},{id:'14',lbl:'😱 Horreur'},{id:'22',lbl:'💕 Romance'},{id:'24',lbl:'🥊 Sports'},{id:'36',lbl:'🔮 Surnaturel'}];
+const GENRES_MANGA   = [{id:'',lbl:'🌟 Tous'},{id:'1',lbl:'⚔️ Action'},{id:'4',lbl:'😄 Comédie'},{id:'8',lbl:'🎭 Drame'},{id:'10',lbl:'✨ Fantasy'},{id:'22',lbl:'💕 Romance'},{id:'24',lbl:'🥊 Sports'}];
+const GENRES_WEBTOON = [{id:'all',lbl:'🌟 Tous'},{id:'action',lbl:'⚔️ Action'},{id:'romance',lbl:'💕 Romance'},{id:'fantasy',lbl:'✨ Fantasy'},{id:'horror',lbl:'👻 Horreur'},{id:'drama',lbl:'🎭 Drame'}];
 
-/* Webtoons locaux (AniList ne les distingue pas facilement) */
 const WEBTOONS_DB = [
   {id:113138,title:'Solo Leveling',score:8.9,chapters:179,year:2018,status:'FINISHED',image:'https://cdn.myanimelist.net/images/manga/2/209195.jpg',genre:'action'},
   {id:100178,title:'Tower of God',score:8.7,chapters:600,year:2010,status:'RELEASING',image:'https://cdn.myanimelist.net/images/manga/2/165032.jpg',genre:'action'},
@@ -805,9 +549,7 @@ const WEBTOONS_DB = [
   {id:117709,title:'Sweet Home',score:8.5,chapters:141,year:2017,status:'FINISHED',image:'https://cdn.myanimelist.net/images/manga/1/217405.jpg',genre:'horror'},
   {id:119698,title:'The Beginning After The End',score:8.8,chapters:178,year:2018,status:'RELEASING',image:'https://cdn.myanimelist.net/images/manga/2/220707.jpg',genre:'fantasy'},
   {id:126146,title:'Eleceed',score:8.4,chapters:280,year:2019,status:'RELEASING',image:'https://cdn.myanimelist.net/images/manga/1/227940.jpg',genre:'action'},
-  {id:126000,title:'Wind Breaker',score:8.3,chapters:450,year:2013,status:'RELEASING',image:'https://cdn.myanimelist.net/images/manga/1/228906.jpg',genre:'action'},
   {id:118737,title:'Omniscient Reader',score:8.9,chapters:204,year:2019,status:'FINISHED',image:'https://cdn.myanimelist.net/images/manga/3/236250.jpg',genre:'fantasy'},
-  {id:125672,title:'I Love Yoo',score:8.0,chapters:200,year:2018,status:'RELEASING',image:'https://cdn.myanimelist.net/images/manga/1/230123.jpg',genre:'romance'},
 ];
 
 let currentCat    = 'anime';
@@ -815,13 +557,14 @@ let currentTab    = 'home';
 let currentGenre  = '';
 let currentPage   = 1;
 let calWeekOffset = 0;
+let calLangFilter = 'all';
 let loading       = false;
 let favorites     = JSON.parse(localStorage.getItem('akrya_fav')||'[]');
 let searchTimer;
 
 /* ────────────────────────────────────────────
    UTILITAIRES
-   ──────────────────────────────────────────── */
+──────────────────────────────────────────── */
 function esc(s){ if(!s)return''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 let toastTimer;
@@ -847,16 +590,22 @@ function saveFavs(){
 function isFav(id){ return favorites.some(f=>f.id==id&&f.cat===currentCat); }
 function toggleFav(item){
   const idx=favorites.findIndex(f=>f.id==item.id&&f.cat===currentCat);
-  if(idx===-1){
-    favorites.push({id:item.id,cat:currentCat,title:item.title,image:item.image,score:item.score});
-    toast('❤️ '+item.title+' ajouté aux favoris');
-  }else{ favorites.splice(idx,1); toast('💔 '+item.title+' retiré'); }
+  if(idx===-1){ favorites.push({id:item.id,cat:currentCat,title:item.title,image:item.image,score:item.score}); toast('❤️ '+item.title+' ajouté aux favoris'); }
+  else { favorites.splice(idx,1); toast('💔 '+item.title+' retiré'); }
   saveFavs();
+}
+
+function timeAgo(date){
+  const diff=Math.floor((Date.now()-date.getTime())/1000);
+  if(diff<60)return'À l\'instant';
+  if(diff<3600)return`Il y a ${Math.floor(diff/60)} min`;
+  if(diff<86400)return`Il y a ${Math.floor(diff/3600)} h`;
+  return`Il y a ${Math.floor(diff/86400)} j`;
 }
 
 /* ────────────────────────────────────────────
    THÈME & CATÉGORIE
-   ──────────────────────────────────────────── */
+──────────────────────────────────────────── */
 function applyTheme(){
   const saved=localStorage.getItem('akrya_theme');
   if(saved==='light') document.body.classList.add('light-theme');
@@ -870,9 +619,9 @@ function toggleTheme(){
 }
 
 const CAT_META={
-  anime:  {title:'📺 Bienvenue sur Akrya Anime',  desc:'Découvrez les animes tendances',         cls:''},
-  manga:  {title:'📖 Bienvenue sur Akrya Manga',  desc:'Découvrez les mangas populaires',        cls:'cat-manga'},
-  webtoon:{title:'🎨 Bienvenue sur Akrya Webtoon',desc:'Découvrez les meilleurs webtoons coréens',cls:'cat-webtoon'},
+  anime:  {title:'📺 Bienvenue sur Akrya Anime',  desc:'Découvrez les animes tendances en VF et VOSTFR',  cls:''},
+  manga:  {title:'📖 Bienvenue sur Akrya Manga',  desc:'Découvrez les mangas populaires',                 cls:'cat-manga'},
+  webtoon:{title:'🎨 Bienvenue sur Akrya Webtoon',desc:'Découvrez les meilleurs webtoons coréens',         cls:'cat-webtoon'},
 };
 
 function setCat(cat){
@@ -881,17 +630,17 @@ function setCat(cat){
   const m=CAT_META[cat];
   document.getElementById('heroTitle').textContent=m.title;
   document.getElementById('heroDesc').textContent=m.desc;
-  // Couleur de thème
   document.body.classList.remove('cat-manga','cat-webtoon');
   if(m.cls) document.body.classList.add(m.cls);
   buildGenreBar();
-  if(currentTab==='home') loadHome();
-  if(currentTab==='top')  loadTop();
+  if(currentTab==='home')   loadHome();
+  if(currentTab==='top')    loadTop();
+  if(currentTab==='latest') loadLatest();
 }
 
 /* ────────────────────────────────────────────
    GENRES BAR
-   ──────────────────────────────────────────── */
+──────────────────────────────────────────── */
 function buildGenreBar(){
   const bar=document.getElementById('genreBar');
   const genres=currentCat==='webtoon'?GENRES_WEBTOON:(currentCat==='manga'?GENRES_MANGA:GENRES_ANIME);
@@ -906,10 +655,11 @@ function buildGenreBar(){
 
 /* ────────────────────────────────────────────
    RENDU DES CARTES
-   ──────────────────────────────────────────── */
+──────────────────────────────────────────── */
 function cardHtml(item,type='anime'){
   const count=item.episodes?`${item.episodes} ép`:(item.chapters?`${item.chapters} ch`:'');
-  const badge=item.status==='RELEASING'||item.status==='Currently Airing'?'🟢 En cours':'✅ Terminé';
+  const isAiring=item.status==='RELEASING'||item.status==='Currently Airing';
+  const badge=isAiring?'🟢 En cours':'✅ Terminé';
   const fav=isFav(item.id);
   const score=item.score||item.averageScore||(item.averageScore?item.averageScore/10:null);
   const scoreStr=score?`⭐ ${typeof score==='number'&&score>10?(score/10).toFixed(1):score}`:'';
@@ -938,7 +688,6 @@ function attachCardEvents(container,type){
     b.addEventListener('click',e=>{
       e.stopPropagation();
       const id=b.dataset.id;
-      // Trouver l'item dans la grille parente
       const card=b.closest('.card');
       const title=card.querySelector('h3').textContent;
       const img=card.querySelector('img').src;
@@ -958,7 +707,7 @@ function renderGrid(containerId,items,type){
 
 /* ────────────────────────────────────────────
    PAGINATION
-   ──────────────────────────────────────────── */
+──────────────────────────────────────────── */
 function renderPagination(current,total){
   const pag=document.getElementById('pagination');
   if(!pag||total<=1){if(pag)pag.innerHTML='';return;}
@@ -975,16 +724,14 @@ function renderPagination(current,total){
 
 /* ────────────────────────────────────────────
    PAGE ACCUEIL
-   ──────────────────────────────────────────── */
+──────────────────────────────────────────── */
 async function loadHome(){
   if(loading)return; loading=true;
   const grid=document.getElementById('animeGrid');
   grid.innerHTML='<div class="loading">⏳ Chargement…</div>';
-
   const titleEl=document.getElementById('homeTitle');
   if(titleEl) titleEl.textContent=currentCat==='anime'?'Animes récents':currentCat==='manga'?'Mangas récents':'Webtoons récents';
 
-  // ── WEBTOON : données locales ──
   if(currentCat==='webtoon'){
     let data=WEBTOONS_DB;
     if(currentGenre&&currentGenre!=='all') data=data.filter(w=>w.genre===currentGenre);
@@ -995,7 +742,6 @@ async function loadHome(){
     loading=false; return;
   }
 
-  // ── ANIME / MANGA : Jikan ──
   const cat=currentCat==='manga'?'manga':'anime';
   try{
     let url;
@@ -1010,14 +756,11 @@ async function loadHome(){
     const d=await r.json();
     if(!d.data?.length) throw new Error('Aucune donnée');
     const items=d.data.map(a=>({
-      id:   a.mal_id,
-      title:a.title||'Sans titre',
-      score:a.score,
+      id:a.mal_id, title:a.title||'Sans titre', score:a.score,
       episodes:cat==='anime'?(EP_FIX[a.mal_id]||a.episodes):null,
       chapters:cat==='manga'?a.chapters:null,
-      year: a.aired?.from?new Date(a.aired.from).getFullYear():a.published?.from?new Date(a.published.from).getFullYear():null,
-      status:a.status,
-      image:a.images?.jpg?.image_url||PH,
+      year:a.aired?.from?new Date(a.aired.from).getFullYear():a.published?.from?new Date(a.published.from).getFullYear():null,
+      status:a.status, image:a.images?.jpg?.image_url||PH,
     })).sort((a,b)=>(b.year||0)-(a.year||0));
     renderGrid('animeGrid',items,cat);
     renderPagination(currentPage,d.pagination?.last_visible_page||1);
@@ -1028,8 +771,63 @@ async function loadHome(){
 }
 
 /* ────────────────────────────────────────────
+   PAGE DERNIERS ÉPISODES (AniList)
+──────────────────────────────────────────── */
+const LATEST_QUERY=`query($page:Int){
+  Page(page:$page,perPage:50){
+    airingSchedules(sort:TIME_DESC,airingAt_lesser:${Math.floor(Date.now()/1000)}){
+      airingAt episode
+      media{
+        id title{romaji english}
+        coverImage{medium large}
+        averageScore
+        siteUrl
+      }
+    }
+  }
+}`;
+
+async function loadLatest(){
+  const list=document.getElementById('latestList');
+  list.innerHTML='<div class="loading">⏳ Chargement…</div>';
+  try{
+    const r=await fetch(PROXY+encodeURIComponent(ALIST),{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({query:LATEST_QUERY,variables:{page:1}}),
+      signal:AbortSignal.timeout(12000)
+    });
+    const data=await r.json();
+    const schedules=data?.data?.Page?.airingSchedules||[];
+    if(!schedules.length){ list.innerHTML='<div class="error">❌ Aucun épisode récent.</div>'; return; }
+    list.innerHTML=schedules.slice(0,40).map(s=>{
+      const title=s.media?.title?.romaji||s.media?.title?.english||'?';
+      const img=s.media?.coverImage?.medium||PH;
+      const score=s.media?.averageScore?(s.media.averageScore/10).toFixed(1):null;
+      const date=new Date(s.airingAt*1000);
+      const ago=timeAgo(date);
+      const id=s.media?.id;
+      return`<a class="latest-item" href="detail.html?id=${id}&type=anime">
+        <img class="latest-thumb" src="${img}" onerror="this.src='${PH}'" loading="lazy" alt="${esc(title)}">
+        <div class="latest-info">
+          <div class="latest-title">${esc(title)}</div>
+          <div class="latest-meta">
+            <span class="badge-lang badge-vostfr">VOSTFR</span>
+            <span class="latest-ep">Épisode ${s.episode}</span>
+            ${score?`<span style="font-size:.68rem;color:#ffd700">⭐ ${score}</span>`:''}
+          </div>
+        </div>
+        <span class="latest-time">${ago}</span>
+      </a>`;
+    }).join('');
+  }catch(e){
+    list.innerHTML=`<div class="error">❌ Impossible de charger les derniers épisodes.<br><small>${esc(e.message)}</small></div>`;
+  }
+}
+
+/* ────────────────────────────────────────────
    TOP RATED
-   ──────────────────────────────────────────── */
+──────────────────────────────────────────── */
 async function loadTop(){
   const grid=document.getElementById('topGrid');
   grid.innerHTML='<div class="loading">⏳ Chargement…</div>';
@@ -1042,14 +840,11 @@ async function loadTop(){
     const r=await apiFetch(`${API}/top/${cat}?limit=24`);
     const d=await r.json();
     if(!d.data?.length) throw new Error('Aucune donnée');
-    const items=d.data.map((a,i)=>({
-      id:a.mal_id, title:a.title,
-      score:a.score,
+    const items=d.data.map(a=>({
+      id:a.mal_id, title:a.title, score:a.score,
       episodes:cat==='anime'?(EP_FIX[a.mal_id]||a.episodes):null,
       chapters:cat==='manga'?a.chapters:null,
-      year:a.year||null,
-      status:a.status,
-      image:a.images?.jpg?.image_url||PH,
+      year:a.year||null, status:a.status, image:a.images?.jpg?.image_url||PH,
     }));
     renderGrid('topGrid',items,cat);
   }catch(e){
@@ -1059,8 +854,8 @@ async function loadTop(){
 
 /* ────────────────────────────────────────────
    ACTUALITÉS
-   ──────────────────────────────────────────── */
-const NEWS_FB=[
+──────────────────────────────────────────── */
+const NEWS_FALLBACK=[
   {title:'One Piece : arc final annoncé — Oda confirme la fin prochaine',date:new Date().toLocaleDateString('fr-FR'),src:'Shonen Jump',img:'https://cdn.myanimelist.net/images/anime/6/73245.jpg',url:'https://www.crunchyroll.com/fr/news'},
   {title:'Jujutsu Kaisen : Gege Akutami entre dans l\'arc final du manga',date:new Date().toLocaleDateString('fr-FR'),src:'Weekly Shonen Jump',img:'https://cdn.myanimelist.net/images/anime/1171/109222.jpg',url:'https://www.crunchyroll.com/fr/news'},
   {title:'Demon Slayer : le film "Infinity Castle" sortira au cinéma',date:new Date().toLocaleDateString('fr-FR'),src:'Crunchyroll',img:'https://cdn.myanimelist.net/images/anime/1286/99889.jpg',url:'https://www.crunchyroll.com/fr/news'},
@@ -1080,9 +875,9 @@ function renderNews(items){
     </div>`).join('');
 }
 async function loadNews(){
-  renderNews(NEWS_FB);
+  renderNews(NEWS_FALLBACK);
   try{
-    const r=await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent('https://www.animenewsnetwork.com/news/rss.xml')}&count=12`,{signal:AbortSignal.timeout(6000)});
+    const r=await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent('https://www.animenewsnetwork.com/news/rss.xml')}&count=12`,{signal:AbortSignal.timeout(7000)});
     if(!r.ok)return;
     const d=await r.json();
     if(d.status!=='ok'||!d.items?.length)return;
@@ -1097,24 +892,23 @@ async function loadNews(){
 }
 
 /* ────────────────────────────────────────────
-   CALENDRIER — style AnimeSama avec AniList
-   ──────────────────────────────────────────── */
-const DAYS_FR=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
-const MONTHS_FR=['janv','févr','mars','avr','mai','juin','juil','août','sept','oct','nov','déc'];
+   CALENDRIER — style FRAnime avec AniList
+──────────────────────────────────────────── */
+const DAYS_FR   = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+const MONTHS_FR = ['janv','févr','mars','avr','mai','juin','juil','août','sept','oct','nov','déc'];
 
 function weekRange(offset=0){
   const now=new Date();
   now.setDate(now.getDate()+offset*7);
-  const dow=now.getDay(); // 0=dim
+  const dow=now.getDay();
   const diff=dow===0?6:dow-1;
   const mon=new Date(now); mon.setDate(now.getDate()-diff); mon.setHours(0,0,0,0);
   const sun=new Date(mon); sun.setDate(mon.getDate()+6); sun.setHours(23,59,59,999);
   return{mon,sun};
 }
 
-// Requête AniList : planning hebdomadaire (airingSchedules)
 const CAL_QUERY=`query($start:Int,$end:Int){
-  Page(page:1,perPage:100){
+  Page(page:1,perPage:200){
     airingSchedules(airingAt_greater:$start,airingAt_lesser:$end,sort:TIME){
       airingAt episode
       media{
@@ -1130,29 +924,32 @@ async function fetchCalendar(offset=0){
   const{mon,sun}=weekRange(offset);
   const start=Math.floor(mon.getTime()/1000);
   const end=Math.floor(sun.getTime()/1000);
-  // Titre semaine
   const ts=`${mon.getDate()} ${MONTHS_FR[mon.getMonth()]} – ${sun.getDate()} ${MONTHS_FR[sun.getMonth()]} ${sun.getFullYear()}`;
   document.getElementById('calTitle').textContent=`📅 Semaine du ${ts}`;
 
   // Headers jours
+  const today=new Date();
   const hdr=document.getElementById('calDaysHeader');
   hdr.innerHTML=Array.from({length:7},(_,i)=>{
     const d=new Date(mon); d.setDate(mon.getDate()+i);
-    return`<div class="cal-day-hdr">${DAYS_FR[i]}<div class="cal-day-date">${d.getDate()} ${MONTHS_FR[d.getMonth()]}</div></div>`;
+    const isToday=d.toDateString()===today.toDateString();
+    return`<div class="cal-day-hdr${isToday?' today':''}">${DAYS_FR[i]}<div class="cal-day-date">${d.getDate()} ${MONTHS_FR[d.getMonth()]}</div></div>`;
   }).join('');
 
-  // Loader
-  document.getElementById('calGrid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-muted)">⏳ Chargement du calendrier…</div>`;
+  document.getElementById('calGrid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:2.5rem;color:var(--text-muted)">⏳ Chargement du calendrier…</div>`;
 
   try{
     const r=await fetch(PROXY+encodeURIComponent(ALIST),{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({query:CAL_QUERY,variables:{start,end}}),
-      signal:AbortSignal.timeout(12000)
+      signal:AbortSignal.timeout(14000)
     });
     const data=await r.json();
-    const schedules=data?.data?.Page?.airingSchedules||[];
+    let schedules=data?.data?.Page?.airingSchedules||[];
+
+    // Filtre langue (simulé — AniList ne fournit pas VF/VOSTFR, on affiche tout)
+    // On pourrait filtrer via une liste externe, pour l'instant on affiche tout
 
     // Grouper par jour de la semaine (0=lundi..6=dimanche)
     const byDay=Array.from({length:7},()=>[]);
@@ -1166,29 +963,36 @@ async function fetchCalendar(offset=0){
     grid.innerHTML=Array.from({length:7},(_,i)=>{
       const eps=byDay[i];
       const dayDate=new Date(mon); dayDate.setDate(mon.getDate()+i);
-      const isToday=dayDate.toDateString()===new Date().toDateString();
-      return`<div class="cal-col" style="${isToday?'background:color-mix(in srgb,var(--primary) 8%,var(--bg-card))':''}">`+
+      const isToday=dayDate.toDateString()===today.toDateString();
+      return`<div class="cal-col${isToday?' today-col':''}">`+
         (eps.length===0?`<div class="cal-empty">Aucune sortie</div>`:
           eps.map(s=>{
             const title=s.media?.title?.romaji||s.media?.title?.english||'?';
             const score=s.media?.averageScore?(s.media.averageScore/10).toFixed(1):null;
             const time=new Date(s.airingAt*1000);
             const timeStr=`${String(time.getHours()).padStart(2,'0')}:${String(time.getMinutes()).padStart(2,'0')}`;
+            const img=s.media?.coverImage?.medium||PH;
             return`<div class="cal-episode" data-id="${s.media?.id}" onclick="location.href='detail.html?id=${s.media?.id}&type=anime'">
-              <div class="cal-ep-title">${esc(title.length>22?title.slice(0,20)+'…':title)}</div>
-              <div class="cal-ep-info">Ép.${s.episode} · ${timeStr}${score?` · ⭐${score}`:''}</div>
+              <img class="cal-ep-thumb" src="${img}" onerror="this.src='${PH}'" loading="lazy" alt="${esc(title)}">
+              <div class="cal-ep-title">${esc(title.length>24?title.slice(0,22)+'…':title)}</div>
+              <div class="cal-ep-info">
+                <span class="cal-ep-badge vostfr">VOSTFR</span>
+                <span>Ép.${s.episode}</span>
+                <span>${timeStr}</span>
+                ${score?`<span>⭐${score}</span>`:''}
+              </div>
             </div>`;
           }).join('')
         )+`</div>`;
     }).join('');
   }catch(e){
-    document.getElementById('calGrid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--primary)">❌ Impossible de charger le calendrier.<br><small>${esc(e.message)}</small></div>`;
+    document.getElementById('calGrid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--primary)">❌ Impossible de charger le calendrier.<br><small>${esc(e.message)}</small><br><button onclick="fetchCalendar(${offset})" style="margin-top:.8rem;padding:.4rem 1rem;background:var(--primary);border:none;border-radius:8px;color:#fff;cursor:pointer">🔄 Réessayer</button></div>`;
   }
 }
 
 /* ────────────────────────────────────────────
    RECHERCHE
-   ──────────────────────────────────────────── */
+──────────────────────────────────────────── */
 async function doSearch(q){
   const drop=document.getElementById('searchDropdown');
   if(!q.trim()){drop.classList.remove('open');return;}
@@ -1216,9 +1020,10 @@ async function fullSearch(q){
   const grid=document.getElementById('animeGrid');
   grid.innerHTML='<div class="loading">🔍 Recherche…</div>';
   document.getElementById('searchDropdown').classList.remove('open');
-  // Forcer la page home
   document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
   document.getElementById('homePage').classList.remove('hidden');
+  currentTab='home';
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab==='home'));
   const cat=currentCat==='webtoon'?'anime':currentCat;
   try{
     const r=await apiFetch(`${API}/${cat}?q=${encodeURIComponent(q)}&limit=30`);
@@ -1238,7 +1043,7 @@ async function fullSearch(q){
 
 /* ────────────────────────────────────────────
    NAVIGATION ONGLETS
-   ──────────────────────────────────────────── */
+──────────────────────────────────────────── */
 function switchTab(tab){
   currentTab=tab;
   document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
@@ -1247,11 +1052,12 @@ function switchTab(tab){
   if(tab==='calendar') fetchCalendar(calWeekOffset);
   if(tab==='top')      loadTop();
   if(tab==='news')     loadNews();
+  if(tab==='latest')   loadLatest();
 }
 
 /* ────────────────────────────────────────────
    INIT
-   ──────────────────────────────────────────── */
+──────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded',()=>{
   applyTheme();
   document.getElementById('themeToggle').addEventListener('click',toggleTheme);
@@ -1266,6 +1072,16 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('prevWeekBtn').addEventListener('click',()=>{calWeekOffset--;fetchCalendar(calWeekOffset);});
   document.getElementById('nextWeekBtn').addEventListener('click',()=>{calWeekOffset++;fetchCalendar(calWeekOffset);});
   document.getElementById('curWeekBtn').addEventListener('click',()=>{calWeekOffset=0;fetchCalendar(0);});
+
+  // Filtres calendrier
+  document.getElementById('calFilters').querySelectorAll('.cal-filter-btn').forEach(b=>{
+    b.addEventListener('click',()=>{
+      calLangFilter=b.dataset.lang;
+      document.getElementById('calFilters').querySelectorAll('.cal-filter-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      fetchCalendar(calWeekOffset);
+    });
+  });
 
   // Auth
   document.getElementById('btnGoogle').addEventListener('click',loginWithGoogle);
