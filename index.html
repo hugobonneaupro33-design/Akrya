@@ -577,8 +577,22 @@ function toast(msg){
 window.showToast=toast;
 
 async function apiFetch(url){
-  try{ const r=await fetch(url,{signal:AbortSignal.timeout(9000)}); if(r.ok)return r; }catch(_){}
-  return fetch(PROXY+encodeURIComponent(url),{signal:AbortSignal.timeout(14000)});
+  // Jikan supporte CORS nativement
+  const r=await fetch(url,{signal:AbortSignal.timeout(12000)});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return r;
+}
+
+async function alistFetch(query,variables){
+  // AniList GraphQL supporte CORS nativement
+  const r=await fetch(ALIST,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify({query,variables}),
+    signal:AbortSignal.timeout(12000)
+  });
+  if(!r.ok) throw new Error('AniList HTTP '+r.status);
+  return r.json();
 }
 
 function saveFavs(){
@@ -791,16 +805,7 @@ async function loadLatest(){
   const list=document.getElementById('latestList');
   list.innerHTML='<div class="loading">⏳ Chargement…</div>';
   try{
-    let r;
-  try{
-    r=await fetch(ALIST,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:LATEST_QUERY,variables:{page:1}}),signal:AbortSignal.timeout(10000)});
-    if(!r.ok)throw new Error('HTTP '+r.status);
-  }catch(e1){
-    try{
-      r=await fetch(PROXY+encodeURIComponent(ALIST),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:LATEST_QUERY,variables:{page:1}}),signal:AbortSignal.timeout(14000)});
-    }catch(e2){throw new Error(e1.message);}
-  }
-    const data=await r.json();
+    const data=await alistFetch(LATEST_QUERY,{page:1});
     const schedules=data?.data?.Page?.airingSchedules||[];
     if(!schedules.length){ list.innerHTML='<div class="error">❌ Aucun épisode récent.</div>'; return; }
     list.innerHTML=schedules.slice(0,40).map(s=>{
@@ -942,17 +947,7 @@ async function fetchCalendar(offset=0){
   document.getElementById('calGrid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:2.5rem;color:var(--text-muted)">⏳ Chargement du calendrier…</div>`;
 
   try{
-    // AniList accepte les requêtes cross-origin directement
-  let r;
-  try{
-    r=await fetch(ALIST,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:CAL_QUERY,variables:{start,end}}),signal:AbortSignal.timeout(12000)});
-    if(!r.ok)throw new Error('HTTP '+r.status);
-  }catch(e1){
-    try{
-      r=await fetch(PROXY+encodeURIComponent(ALIST),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:CAL_QUERY,variables:{start,end}}),signal:AbortSignal.timeout(14000)});
-    }catch(e2){throw new Error(e1.message);}
-  }
-    const data=await r.json();
+    const data=await alistFetch(CAL_QUERY,{start,end});
     let schedules=data?.data?.Page?.airingSchedules||[];
 
     // Filtre langue (simulé — AniList ne fournit pas VF/VOSTFR, on affiche tout)
