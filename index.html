@@ -742,7 +742,7 @@ function renderPagination(current,total){
 const HOME_ANIME_Q=`query($page:Int,$genre:String){
   Page(page:$page,perPage:24){
     pageInfo{lastPage}
-    media(type:ANIME,sort:START_DATE_DESC,status_in:[RELEASING,FINISHED],season:SUMMER,seasonYear:2026,genre:$genre,isAdult:false,genre_not_in:["Hentai"]){
+    media(type:ANIME,sort:START_DATE_DESC,status_in:[RELEASING,FINISHED],season:SUMMER,seasonYear:2026,genre:$genre,isAdult:false){
       id title{romaji english} coverImage{large medium} averageScore episodes status startDate{year} genres
     }
   }
@@ -750,21 +750,21 @@ const HOME_ANIME_Q=`query($page:Int,$genre:String){
 const HOME_MANGA_Q=`query($page:Int,$genre:String){
   Page(page:$page,perPage:24){
     pageInfo{lastPage}
-    media(type:MANGA,sort:START_DATE_DESC,status_in:[RELEASING,FINISHED],genre:$genre,isAdult:false,genre_not_in:["Hentai"]){
+    media(type:MANGA,sort:START_DATE_DESC,status_in:[RELEASING,FINISHED],genre:$genre,isAdult:false){
       id title{romaji english} coverImage{large medium} averageScore chapters status startDate{year} genres
     }
   }
 }`;
 const TOP_ANIME_Q=`query{
   Page(page:1,perPage:24){
-    media(type:ANIME,sort:SCORE_DESC,status:FINISHED,isAdult:false,genre_not_in:["Hentai"]){
+    media(type:ANIME,sort:SCORE_DESC,status:FINISHED,isAdult:false){
       id title{romaji english} coverImage{large medium} averageScore episodes status startDate{year} genres
     }
   }
 }`;
 const TOP_MANGA_Q=`query{
   Page(page:1,perPage:24){
-    media(type:MANGA,sort:SCORE_DESC,isAdult:false,genre_not_in:["Hentai"]){
+    media(type:MANGA,sort:SCORE_DESC,isAdult:false){
       id title{romaji english} coverImage{large medium} averageScore chapters status startDate{year} genres
     }
   }
@@ -836,10 +836,10 @@ const LATEST_QUERY=`query($page:Int){
   Page(page:$page,perPage:50){
     airingSchedules(sort:TIME_DESC,airingAt_lesser:${Math.floor(Date.now()/1000)}){
       airingAt episode
-      media(isAdult:false,genre_not_in:["Hentai"]){
+      media{
         id title{romaji english}
         coverImage{medium large}
-        averageScore genres
+        averageScore genres isAdult
         siteUrl
       }
     }
@@ -853,8 +853,8 @@ async function loadLatest(){
     const data=await alistFetch(LATEST_QUERY,{page:1});
     let schedules=data?.data?.Page?.airingSchedules||[];
     if(!schedules.length){ list.innerHTML='<div class="error">❌ Aucun épisode récent.</div>'; return; }
-    // Filtrer les contenus Ecchi de la liste des derniers épisodes
-    schedules=schedules.filter(s=>!(s.media?.genres||[]).includes('Ecchi'));
+    // Filtrer les contenus adultes et Ecchi côté client
+    schedules=schedules.filter(s=>!s.media?.isAdult && !(s.media?.genres||[]).includes('Ecchi') && !(s.media?.genres||[]).includes('Hentai'));
     list.innerHTML=schedules.slice(0,40).map(s=>{
       const title=s.media?.title?.romaji||s.media?.title?.english||'?';
       const img=s.media?.coverImage?.medium||PH;
@@ -962,10 +962,10 @@ const CAL_QUERY=`query($start:Int,$end:Int){
   Page(page:1,perPage:200){
     airingSchedules(airingAt_greater:$start,airingAt_lesser:$end,sort:TIME){
       airingAt episode
-      media(isAdult:false,genre_not_in:["Hentai"]){
+      media{
         id title{romaji english}
         coverImage{medium}
-        averageScore siteUrl genres
+        averageScore siteUrl genres isAdult
       }
     }
   }
@@ -993,8 +993,8 @@ async function fetchCalendar(offset=0){
     const data=await alistFetch(CAL_QUERY,{start,end});
     let schedules=data?.data?.Page?.airingSchedules||[];
 
-    // Filtre langue (simulé — AniList ne fournit pas VF/VOSTFR, on affiche tout)
-    // On pourrait filtrer via une liste externe, pour l'instant on affiche tout
+    // Filtrer les contenus adultes, Ecchi et Hentai côté client
+    schedules=schedules.filter(s=>!s.media?.isAdult && !(s.media?.genres||[]).includes('Ecchi') && !(s.media?.genres||[]).includes('Hentai'));
 
     // Grouper par jour de la semaine (0=lundi..6=dimanche)
     const byDay=Array.from({length:7},()=>[]);
