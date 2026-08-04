@@ -737,6 +737,60 @@ function renderPagination(current,total){
 }
 
 /* ────────────────────────────────────────────
+   QUERIES ANILIST ACCUEIL
+──────────────────────────────────────────── */
+const HOME_ANIME_Q=`query($page:Int,$genre:String){
+  Page(page:$page,perPage:24){
+    pageInfo{lastPage}
+    media(type:ANIME,sort:START_DATE_DESC,status_in:[RELEASING,FINISHED],season:SUMMER,seasonYear:2026,genre:$genre){
+      id title{romaji english} coverImage{large medium} averageScore episodes status startDate{year}
+    }
+  }
+}`;
+const HOME_MANGA_Q=`query($page:Int,$genre:String){
+  Page(page:$page,perPage:24){
+    pageInfo{lastPage}
+    media(type:MANGA,sort:START_DATE_DESC,status_in:[RELEASING,FINISHED],genre:$genre){
+      id title{romaji english} coverImage{large medium} averageScore chapters status startDate{year}
+    }
+  }
+}`;
+const TOP_ANIME_Q=`query{
+  Page(page:1,perPage:24){
+    media(type:ANIME,sort:SCORE_DESC,status:FINISHED){
+      id title{romaji english} coverImage{large medium} averageScore episodes status startDate{year}
+    }
+  }
+}`;
+const TOP_MANGA_Q=`query{
+  Page(page:1,perPage:24){
+    media(type:MANGA,sort:SCORE_DESC){
+      id title{romaji english} coverImage{large medium} averageScore chapters status startDate{year}
+    }
+  }
+}`;
+const SEARCH_Q=`query($q:String,$type:MediaType){
+  Page(page:1,perPage:30){
+    media(search:$q,type:$type,sort:SEARCH_MATCH){
+      id title{romaji english} coverImage{large medium} averageScore episodes chapters status startDate{year}
+    }
+  }
+}`;
+
+function alistToItem(a,type){
+  return{
+    id:a.id,
+    title:a.title?.romaji||a.title?.english||'Sans titre',
+    score:a.averageScore?(a.averageScore/10):null,
+    episodes:type==='anime'?a.episodes:null,
+    chapters:type==='manga'?a.chapters:null,
+    year:a.startDate?.year||null,
+    status:a.status==='RELEASING'?'Currently Airing':a.status==='FINISHED'?'Finished Airing':a.status,
+    image:a.coverImage?.large||a.coverImage?.medium||PH,
+  };
+}
+
+/* ────────────────────────────────────────────
    PAGE ACCUEIL
 ──────────────────────────────────────────── */
 async function loadHome(){
@@ -756,28 +810,17 @@ async function loadHome(){
     loading=false; return;
   }
 
-  const cat=currentCat==='manga'?'manga':'anime';
+  const type=currentCat==='manga'?'manga':'anime';
+  const genreMap={'1':'Action','4':'Comedy','8':'Drama','10':'Fantasy','14':'Horror','22':'Romance','24':'Sports','36':'Supernatural'};
+  const genreStr=currentGenre?genreMap[currentGenre]||null:null;
   try{
-    let url;
-    if(currentGenre){
-      url=`${API}/${cat}?genres=${currentGenre}&page=${currentPage}&limit=24&order_by=start_date&sort=desc`;
-    }else{
-      url=cat==='anime'
-        ? `${API}/seasons/now?page=${currentPage}&limit=24`
-        : `${API}/manga?page=${currentPage}&limit=24&order_by=start_date&sort=desc&status=publishing`;
-    }
-    const r=await apiFetch(url);
-    const d=await r.json();
-    if(!d.data?.length) throw new Error('Aucune donnée');
-    const items=d.data.map(a=>({
-      id:a.mal_id, title:a.title||'Sans titre', score:a.score,
-      episodes:cat==='anime'?(EP_FIX[a.mal_id]||a.episodes):null,
-      chapters:cat==='manga'?a.chapters:null,
-      year:a.aired?.from?new Date(a.aired.from).getFullYear():a.published?.from?new Date(a.published.from).getFullYear():null,
-      status:a.status, image:a.images?.jpg?.image_url||PH,
-    })).sort((a,b)=>(b.year||0)-(a.year||0));
-    renderGrid('animeGrid',items,cat);
-    renderPagination(currentPage,d.pagination?.last_visible_page||1);
+    const q=type==='anime'?HOME_ANIME_Q:HOME_MANGA_Q;
+    const data=await alistFetch(q,{page:currentPage,genre:genreStr});
+    const media=data?.data?.Page?.media||[];
+    if(!media.length) throw new Error('Aucune donnée');
+    const items=media.map(a=>alistToItem(a,type));
+    renderGrid('animeGrid',items,type);
+    renderPagination(currentPage,data?.data?.Page?.pageInfo?.lastPage||1);
   }catch(e){
     grid.innerHTML=`<div class="error">❌ Erreur : ${esc(e.message)}<br><button onclick="loadHome()" style="margin-top:.8rem;padding:.4rem 1rem;background:var(--primary);border:none;border-radius:8px;color:#fff;cursor:pointer">🔄 Réessayer</button></div>`;
   }
@@ -843,18 +886,13 @@ async function loadTop(){
     renderGrid('topGrid',[...WEBTOONS_DB].sort((a,b)=>b.score-a.score).slice(0,12),'webtoon');
     return;
   }
-  const cat=currentCat==='manga'?'manga':'anime';
+  const type=currentCat==='manga'?'manga':'anime';
   try{
-    const r=await apiFetch(`${API}/top/${cat}?limit=24`);
-    const d=await r.json();
-    if(!d.data?.length) throw new Error('Aucune donnée');
-    const items=d.data.map(a=>({
-      id:a.mal_id, title:a.title, score:a.score,
-      episodes:cat==='anime'?(EP_FIX[a.mal_id]||a.episodes):null,
-      chapters:cat==='manga'?a.chapters:null,
-      year:a.year||null, status:a.status, image:a.images?.jpg?.image_url||PH,
-    }));
-    renderGrid('topGrid',items,cat);
+    const q=type==='anime'?TOP_ANIME_Q:TOP_MANGA_Q;
+    const data=await alistFetch(q,{});
+    const media=data?.data?.Page?.media||[];
+    if(!media.length) throw new Error('Aucune donnée');
+    renderGrid('topGrid',media.map(a=>alistToItem(a,type)),type);
   }catch(e){
     grid.innerHTML=`<div class="error">❌ Erreur top.<br><small>${esc(e.message)}</small></div>`;
   }
@@ -998,22 +1036,26 @@ async function fetchCalendar(offset=0){
 async function doSearch(q){
   const drop=document.getElementById('searchDropdown');
   if(!q.trim()){drop.classList.remove('open');return;}
-  const cat=currentCat==='webtoon'?'anime':currentCat;
+  const type=currentCat==='webtoon'?'ANIME':currentCat==='manga'?'MANGA':'ANIME';
   try{
-    const r=await apiFetch(`${API}/${cat}?q=${encodeURIComponent(q)}&limit=8`);
-    const d=await r.json();
-    if(!d.data?.length){drop.innerHTML='<div class="search-item"><div class="si-info"><p>Aucun résultat</p></div></div>';drop.classList.add('open');return;}
-    drop.innerHTML=d.data.map(a=>`
-      <div class="search-item" data-id="${a.mal_id}">
-        <img src="${a.images?.jpg?.image_url||PH}" onerror="this.src='${PH}'" alt="">
+    const data=await alistFetch(SEARCH_Q,{q,type});
+    const media=data?.data?.Page?.media||[];
+    if(!media.length){drop.innerHTML='<div class="search-item"><div class="si-info"><p>Aucun résultat</p></div></div>';drop.classList.add('open');return;}
+    drop.innerHTML=media.slice(0,8).map(a=>{
+      const title=a.title?.romaji||a.title?.english||'?';
+      const score=a.averageScore?(a.averageScore/10).toFixed(1):'N/A';
+      const ep=type==='ANIME'?(a.episodes?a.episodes+' ép':'?'):(a.chapters?a.chapters+' ch':'?');
+      return`<div class="search-item" data-id="${a.id}">
+        <img src="${a.coverImage?.medium||PH}" onerror="this.src='${PH}'" alt="">
         <div class="si-info">
-          <h4>${esc(a.title?.length>40?a.title.slice(0,38)+'…':a.title)}</h4>
-          <p>⭐${a.score||'N/A'} · ${cat==='anime'?(EP_FIX[a.mal_id]||a.episodes||'?')+' ép':a.chapters?a.chapters+' ch':'?'} · ${a.year||'?'}</p>
+          <h4>${esc(title.length>40?title.slice(0,38)+'…':title)}</h4>
+          <p>⭐${score} · ${ep} · ${a.startDate?.year||'?'}</p>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
     drop.classList.add('open');
     drop.querySelectorAll('.search-item').forEach(el=>el.addEventListener('click',()=>{
-      location.href=`detail.html?id=${el.dataset.id}&type=${cat}`;
+      location.href=`detail.html?id=${el.dataset.id}&type=${type.toLowerCase()}`;
     }));
   }catch(_){drop.classList.remove('open');}
 }
@@ -1026,18 +1068,12 @@ async function fullSearch(q){
   document.getElementById('homePage').classList.remove('hidden');
   currentTab='home';
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab==='home'));
-  const cat=currentCat==='webtoon'?'anime':currentCat;
+  const type=currentCat==='webtoon'?'ANIME':currentCat==='manga'?'MANGA':'ANIME';
   try{
-    const r=await apiFetch(`${API}/${cat}?q=${encodeURIComponent(q)}&limit=30`);
-    const d=await r.json();
-    if(!d.data?.length){grid.innerHTML='<div class="error">❌ Aucun résultat.</div>';return;}
-    const items=d.data.map(a=>({
-      id:a.mal_id,title:a.title,score:a.score,
-      episodes:cat==='anime'?(EP_FIX[a.mal_id]||a.episodes):null,
-      chapters:cat==='manga'?a.chapters:null,
-      year:a.year||null,status:a.status,image:a.images?.jpg?.image_url||PH
-    }));
-    renderGrid('animeGrid',items,cat);
+    const data=await alistFetch(SEARCH_Q,{q,type});
+    const media=data?.data?.Page?.media||[];
+    if(!media.length){grid.innerHTML='<div class="error">❌ Aucun résultat.</div>';return;}
+    renderGrid('animeGrid',media.map(a=>alistToItem(a,type.toLowerCase())),type.toLowerCase());
     document.getElementById('pagination').innerHTML='';
     if(document.getElementById('homeTitle')) document.getElementById('homeTitle').textContent=`Résultats : "${q}"`;
   }catch(e){grid.innerHTML=`<div class="error">❌ Erreur recherche.<br><small>${esc(e.message)}</small></div>`;}
