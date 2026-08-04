@@ -31,7 +31,7 @@ body.light-theme header{background:linear-gradient(135deg,#eaeaf8,#f5f5ff);}
 .icon-btn:hover{background:var(--primary);}
 
 /* LAYOUT */
-.watch-layout{display:grid;grid-template-columns:1fr 360px;gap:1rem;max-width:1440px;margin:0 auto;padding:1rem;}
+.watch-layout{display:grid;grid-template-columns:1fr 340px;gap:1rem;max-width:1440px;margin:0 auto;padding:1rem;}
 
 /* PLAYER */
 .player-section{background:var(--bg-card);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);}
@@ -63,18 +63,53 @@ body.light-theme header{background:linear-gradient(135deg,#eaeaf8,#f5f5ff);}
 .meta-badge{background:var(--bg-hover);padding:.16rem .5rem;border-radius:20px;font-size:.68rem;border:1px solid var(--border);}
 .prog-badge{background:color-mix(in srgb,var(--primary) 18%,transparent);color:var(--primary);border-color:color-mix(in srgb,var(--primary) 35%,transparent);}
 
-/* SOURCES PANEL */
-.src-panel{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);padding:1rem;margin-top:1rem;}
+/* ═══════════════════════════════════════
+   SOURCES PANEL — Style FRAnime/VoirAnime
+═══════════════════════════════════════ */
+.src-panel{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);padding:1rem;margin-top:.8rem;}
 .src-panel-title{font-size:.88rem;font-weight:800;margin-bottom:.75rem;color:var(--primary);display:flex;align-items:center;gap:.4rem;}
-.src-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:.5rem;}
-.src-card{background:var(--bg-hover);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.65rem .75rem;cursor:pointer;transition:all .2s;text-align:center;}
-.src-card:hover,.src-card.active{background:var(--primary);border-color:var(--primary);}
-.src-card.active{box-shadow:0 0 0 3px var(--accent-glow);}
-.src-name{font-size:.8rem;font-weight:700;}
-.src-tag{font-size:.62rem;color:var(--text-muted);margin-top:.12rem;}
-.src-card.active .src-tag,.src-card:hover .src-tag{color:rgba(255,255,255,.75);}
-.src-open-btn{display:block;width:100%;margin-top:.85rem;padding:.5rem;background:var(--bg-hover);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.78rem;cursor:pointer;transition:all .2s;text-align:center;font-weight:600;}
-.src-open-btn:hover{background:var(--primary);border-color:var(--primary);color:#fff;}
+.src-tabs{display:flex;gap:.4rem;margin-bottom:.85rem;flex-wrap:wrap;}
+.src-tab{padding:.32rem .85rem;background:var(--bg-hover);border:1px solid var(--border);border-radius:20px;font-size:.75rem;cursor:pointer;transition:all .2s;font-weight:600;}
+.src-tab.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+.src-section{display:none;}
+.src-section.active{display:block;}
+
+/* Grille sources streaming */
+.src-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.55rem;margin-bottom:.75rem;}
+.src-card{background:var(--bg-hover);border:2px solid var(--border);border-radius:var(--radius-sm);padding:.7rem .85rem;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:.55rem;}
+.src-card:hover{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 10%,var(--bg-hover));}
+.src-card.active{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 18%,var(--bg-hover));box-shadow:0 0 0 3px var(--accent-glow);}
+.src-icon{font-size:1.3rem;flex-shrink:0;}
+.src-info{min-width:0;}
+.src-name{font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.src-tag{font-size:.62rem;color:var(--text-muted);margin-top:.08rem;}
+.src-card.active .src-tag,.src-card:hover .src-tag{color:color-mix(in srgb,var(--primary) 60%,var(--text-muted));}
+
+/* Boutons d'action */
+.src-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem;}
+.src-btn{flex:1;min-width:140px;padding:.55rem 1rem;border:none;border-radius:25px;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.4rem;}
+.src-btn-primary{background:var(--primary);color:#fff;}
+.src-btn-primary:hover{background:var(--primary-dark);}
+.src-btn-secondary{background:var(--bg-hover);border:1px solid var(--border);color:var(--text);}
+.src-btn-secondary:hover{background:var(--primary);border-color:var(--primary);color:#fff;}
+
+/* Hébergeurs directs (Sibnet, Sendvid...) */
+.host-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.45rem;}
+.host-card{background:var(--bg-hover);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem .7rem;cursor:pointer;transition:all .2s;text-align:center;}
+.host-card:hover,.host-card.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+.host-name{font-size:.78rem;font-weight:700;}
+.host-quality{font-size:.6rem;color:var(--text-muted);margin-top:.08rem;}
+.host-card.active .host-quality,.host-card:hover .host-quality{color:rgba(255,255,255,.75);}
+.host-unavail{opacity:.4;cursor:not-allowed;}
+.host-unavail:hover{background:var(--bg-hover);border-color:var(--border);color:var(--text);}
+
+/* Info iframe bloquée */
+.iframe-blocked{display:none;position:absolute;inset:0;background:rgba(0,0,0,.93);flex-direction:column;align-items:center;justify-content:center;gap:.9rem;z-index:8;padding:1.5rem;text-align:center;}
+.iframe-blocked.show{display:flex;}
+.iframe-blocked h3{font-size:1rem;font-weight:800;color:var(--primary);}
+.iframe-blocked p{font-size:.82rem;color:var(--text-muted);max-width:380px;}
+.open-ext-btn{padding:.55rem 1.4rem;background:var(--primary);border:none;border-radius:30px;color:#fff;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .2s;}
+.open-ext-btn:hover{background:var(--primary-dark);}
 
 /* SIDEBAR */
 .ep-sidebar{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);display:flex;flex-direction:column;max-height:calc(100vh - 90px);position:sticky;top:75px;}
@@ -94,21 +129,11 @@ body.light-theme header{background:linear-gradient(135deg,#eaeaf8,#f5f5ff);}
 .ep-card.watched-card{border-left:3px solid color-mix(in srgb,var(--primary) 55%,transparent);}
 .ep-num{font-weight:800;font-size:.76rem;min-width:38px;}
 .ep-lbl{flex:1;font-size:.74rem;}
-.ep-date{font-size:.6rem;color:var(--text-muted);}
-.ep-card.active .ep-date{color:rgba(255,255,255,.65);}
 .ep-play-btn{background:var(--primary);border:none;border-radius:12px;padding:.16rem .48rem;color:#fff;font-size:.62rem;cursor:pointer;flex-shrink:0;}
 
 /* TOAST */
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(18px);background:var(--bg-card);color:var(--text);border:1px solid var(--border);border-left:4px solid var(--primary);border-radius:var(--radius-sm);padding:.65rem 1.2rem;font-size:.8rem;min-width:220px;text-align:center;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:9999;}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
-
-/* INFO IFRAME BLOQUÉE */
-.iframe-blocked{display:none;position:absolute;inset:0;background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:center;gap:.9rem;z-index:8;padding:1.5rem;text-align:center;}
-.iframe-blocked.show{display:flex;}
-.iframe-blocked h3{font-size:1rem;font-weight:800;color:var(--primary);}
-.iframe-blocked p{font-size:.82rem;color:var(--text-muted);max-width:380px;}
-.iframe-blocked .open-btn{padding:.55rem 1.4rem;background:var(--primary);border:none;border-radius:30px;color:#fff;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .2s;}
-.iframe-blocked .open-btn:hover{background:var(--primary-dark);}
 
 @media(max-width:980px){.watch-layout{grid-template-columns:1fr;}.ep-sidebar{position:static;max-height:460px;}}
 @media(max-width:600px){.watch-layout{padding:.5rem;}.ctrl-row{gap:.28rem;}.ep-nav-row{justify-content:center;width:100%;}}
@@ -139,14 +164,13 @@ body.light-theme header{background:linear-gradient(135deg,#eaeaf8,#f5f5ff);}
         <div class="spinner"></div>
         <span style="font-size:.82rem;color:var(--text-muted)">Chargement de la source…</span>
       </div>
-      <!-- Message si iframe bloquée -->
       <div class="iframe-blocked" id="iframeBlocked">
-        <h3>🔒 Lecture directe indisponible</h3>
-        <p>Ce site bloque l'intégration dans une iframe. Cliquez sur le bouton ci-dessous pour ouvrir l'épisode dans un nouvel onglet.</p>
-        <button class="open-btn" id="openExtBtn">🔗 Ouvrir dans un nouvel onglet</button>
-        <button class="open-btn" style="background:var(--bg-hover);color:var(--text);margin-top:.4rem" onclick="trySrc()">🔄 Essayer une autre source</button>
+        <h3>🔒 Lecture intégrée indisponible</h3>
+        <p>Ce site bloque l'intégration. Ouvrez l'épisode dans un nouvel onglet ou choisissez une autre source.</p>
+        <button class="open-ext-btn" id="openExtBtn">🔗 Ouvrir dans un nouvel onglet</button>
+        <button class="open-ext-btn" style="background:var(--bg-hover);color:var(--text);margin-top:.4rem" onclick="trySrc()">🔄 Source suivante</button>
       </div>
-      <iframe id="videoFrame" src="about:blank" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" style="display:none"></iframe>
+      <iframe id="videoFrame" src="about:blank" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" referrerpolicy="no-referrer" style="display:none"></iframe>
     </div>
 
     <div class="player-ctrls">
@@ -172,11 +196,45 @@ body.light-theme header{background:linear-gradient(135deg,#eaeaf8,#f5f5ff);}
 
     <div class="meta-row" id="metaRow"></div>
 
-    <!-- SOURCES -->
+    <!-- ═══════════════════════════════════════
+         PANEL SOURCES — 2 onglets
+         1) Sites streaming (ouvrir dans onglet)
+         2) Hébergeurs directs (iframe embed)
+    ═══════════════════════════════════════ -->
     <div class="src-panel">
-      <div class="src-panel-title">📡 Choisir une source de lecture</div>
-      <div class="src-grid" id="srcGrid"></div>
-      <button class="src-open-btn" id="srcOpenBtn">🔗 Ouvrir la source dans un nouvel onglet</button>
+      <div class="src-panel-title">📡 Sources de lecture</div>
+
+      <div class="src-tabs">
+        <button class="src-tab active" onclick="switchSrcTab('sites')">🌐 Sites streaming</button>
+        <button class="src-tab" onclick="switchSrcTab('embed')">▶ Lecteur intégré</button>
+      </div>
+
+      <!-- ONGLET 1 : Sites streaming (comme FRAnime) -->
+      <div class="src-section active" id="srcSites">
+        <p style="font-size:.73rem;color:var(--text-muted);margin-bottom:.7rem">
+          Cliquez sur un site pour ouvrir l'épisode directement. Les liens sont construits automatiquement à partir du titre.
+        </p>
+        <div class="src-grid" id="srcGrid"></div>
+        <div class="src-actions">
+          <button class="src-btn src-btn-primary" id="srcOpenBtn">🔗 Ouvrir sur le site sélectionné</button>
+          <button class="src-btn src-btn-secondary" onclick="trySrc()">🔄 Source suivante</button>
+        </div>
+      </div>
+
+      <!-- ONGLET 2 : Lecteur intégré (hébergeurs embed) -->
+      <div class="src-section" id="srcEmbed">
+        <p style="font-size:.73rem;color:var(--text-muted);margin-bottom:.7rem">
+          Lecteur intégré via hébergeurs vidéo. Cliquez sur un hébergeur puis sur ▶ Lancer.
+        </p>
+        <div class="host-grid" id="hostGrid"></div>
+        <div class="src-actions" style="margin-top:.75rem">
+          <button class="src-btn src-btn-primary" onclick="startPlayer()">▶ Lancer le lecteur</button>
+          <button class="src-btn src-btn-secondary" onclick="tryNextHost()">🔄 Hébergeur suivant</button>
+        </div>
+        <p style="font-size:.68rem;color:var(--text-muted);margin-top:.6rem;line-height:1.4">
+          ⚠️ Si le lecteur affiche une erreur, essayez un autre hébergeur ou utilisez l'onglet "Sites streaming".
+        </p>
+      </div>
     </div>
   </div>
 
@@ -196,220 +254,364 @@ body.light-theme header{background:linear-gradient(135deg,#eaeaf8,#f5f5ff);}
 <div id="toast"></div>
 
 <script>
-/* ────────────────────────────────────────────
+/* ════════════════════════════════════════════
    PARAMS & ÉTAT
-──────────────────────────────────────────── */
-const P=new URLSearchParams(location.search);
-const CID=P.get('id');
-const CTYPE=P.get('type')||'anime';
-let currentEp=parseInt(P.get('ep'))||1;
-let currentLang='vf';
-let currentSrc='animesama';
-let epCount=0;
-let animeTitle='';
-let animeSlug='';
-let autoPlay=true;
-let sidebarPage=1;
-const SIDE_PP=50;
-let allEps=[];
-let filteredEps=[];
-let currentUrl='';
+════════════════════════════════════════════ */
+const P = new URLSearchParams(location.search);
+const CID   = P.get('id');
+const CTYPE = P.get('type') || 'anime';
+let currentEp   = parseInt(P.get('ep')) || 1;
+let currentLang = 'vf';
+let currentSrc  = 'animesama';
+let currentHost = 'sibnet';
+let epCount     = 0;
+let animeTitle  = '';
+let animeSlug   = '';
+let autoPlay    = true;
+let sidebarPage = 1;
+const SIDE_PP   = 50;
+let allEps      = [];
+let filteredEps = [];
+let currentUrl  = '';
+let playerStarted = false;
 
-const API='https://api.jikan.moe/v4';
-const PROXY='https://corsproxy.io/?url=';
-const PH="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 280'%3E%3Crect width='200' height='280' fill='%231a1a28'/%3E%3C/svg%3E";
-const EP_FIX={21:1122,1:220,2:500,3:366,4:291,5:131,6:87,7:47,8:55,9:138,10:293,11:25,12:24,13:25,14:24,15:12,38524:38,40456:25,48583:24,51009:13,52991:12};
+const API   = 'https://api.jikan.moe/v4';
+const ALIST = 'https://graphql.anilist.co';
+const PH    = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 280'%3E%3Crect width='200' height='280' fill='%231a1a28'/%3E%3C/svg%3E";
+
+/* Corrections épisodes connus */
+const EP_FIX = {21:1122,1:220,2:500,3:366,4:291,5:131,6:87,7:47,8:55,9:138,10:293,11:25,12:24,13:25,14:24,15:12,38524:38,40456:25,48583:24,51009:13,52991:12};
 
 /* ── Firebase ── */
-const fbCfg={apiKey:"AIzaSyCwDOGPUWQ08WGuAAZ9p6hS6SZytmRoKig",authDomain:"arkya-animemanga.firebaseapp.com",projectId:"arkya-animemanga",storageBucket:"arkya-animemanga.firebasestorage.app",messagingSenderId:"52570519836",appId:"1:52570519836:web:dbf4fcd7aafe01aac762d9"};
-if(!firebase.apps.length)firebase.initializeApp(fbCfg);
-const fbAuth=firebase.auth();let fbDb=null;try{fbDb=firebase.firestore();}catch(_){}
-let currentUser=null;fbAuth.onAuthStateChanged(u=>{currentUser=u;if(u&&fbDb)loadCloudProgress();});
+const fbCfg = {apiKey:"AIzaSyCwDOGPUWQ08WGuAAZ9p6hS6SZytmRoKig",authDomain:"arkya-animemanga.firebaseapp.com",projectId:"arkya-animemanga",storageBucket:"arkya-animemanga.firebasestorage.app",messagingSenderId:"52570519836",appId:"1:52570519836:web:dbf4fcd7aafe01aac762d9"};
+if(!firebase.apps.length) firebase.initializeApp(fbCfg);
+const fbAuth = firebase.auth(); let fbDb = null;
+try { fbDb = firebase.firestore(); } catch(_) {}
+let currentUser = null;
+fbAuth.onAuthStateChanged(u => { currentUser = u; if(u && fbDb) loadCloudProgress(); });
 
-function esc(s){if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-let toastT;function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('show'),2800);}
+function esc(s) { if(!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+let toastT;
+function toast(m) { const e = document.getElementById('toast'); e.textContent = m; e.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('show'), 2800); }
+function slug(t) { return (t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
 
 /* ── Thème ── */
-(()=>{
-  const s=localStorage.getItem('akrya_theme');
-  if(s==='light')document.body.classList.add('light-theme');
-  document.getElementById('themeToggle').textContent=s==='light'?'☀️':'🌙';
-  if(CTYPE==='manga')document.body.classList.add('t-manga');
-  if(CTYPE==='webtoon')document.body.classList.add('t-webtoon');
+(() => {
+  const s = localStorage.getItem('akrya_theme');
+  if(s === 'light') document.body.classList.add('light-theme');
+  document.getElementById('themeToggle').textContent = s === 'light' ? '☀️' : '🌙';
+  if(CTYPE === 'manga') document.body.classList.add('t-manga');
+  if(CTYPE === 'webtoon') document.body.classList.add('t-webtoon');
 })();
-document.getElementById('themeToggle').addEventListener('click',()=>{
+document.getElementById('themeToggle').addEventListener('click', () => {
   document.body.classList.toggle('light-theme');
-  const l=document.body.classList.contains('light-theme');
-  localStorage.setItem('akrya_theme',l?'light':'dark');
-  document.getElementById('themeToggle').textContent=l?'☀️':'🌙';
+  const l = document.body.classList.contains('light-theme');
+  localStorage.setItem('akrya_theme', l ? 'light' : 'dark');
+  document.getElementById('themeToggle').textContent = l ? '☀️' : '🌙';
 });
 
 /* ── Plein écran ── */
-window.toggleFS=()=>{
-  const el=document.getElementById('playerSection');
-  if(!document.fullscreenElement){el.requestFullscreen().catch(()=>{});}
-  else{document.exitFullscreen();}
+window.toggleFS = () => {
+  const el = document.getElementById('playerSection');
+  if(!document.fullscreenElement) { el.requestFullscreen().catch(() => {}); }
+  else { document.exitFullscreen(); }
 };
 
-/* ── Slugify ── */
-function slug(t){return(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+/* ════════════════════════════════════════════
+   SOURCES STREAMING — Sites tiers
+   Ces sources ouvrent l'épisode dans un nouvel onglet
+   (comme FRAnime, VoirAnime, etc.)
+════════════════════════════════════════════ */
+const STREAM_SOURCES = [
+  {
+    key: 'animesama',
+    name: 'Anime-Sama',
+    icon: '🍥',
+    tag: 'VF/VOSTFR',
+    color: '#e94560',
+    url: (title, ep, lang) => `https://anime-sama.fr/catalogue/${slug(title)}/saison1/${lang === 'vf' ? 'vf' : 'vostfr'}/`,
+    urlEp: (title, ep, lang) => `https://anime-sama.fr/catalogue/${slug(title)}/saison1/${lang === 'vf' ? 'vf' : 'vostfr'}/`,
+  },
+  {
+    key: 'mavanimes',
+    name: 'Mavanimes',
+    icon: '🔥',
+    tag: 'VF',
+    color: '#ff6b35',
+    url: (title, ep, lang) => `https://mavanimes.co/ep/${slug(title)}-episode-${ep}-vf/`,
+    urlEp: (title, ep, lang) => `https://mavanimes.co/ep/${slug(title)}-episode-${ep}-vf/`,
+  },
+  {
+    key: 'voiranime',
+    name: 'VoirAnime',
+    icon: '👁️',
+    tag: 'VF/VOSTFR',
+    color: '#7c3aed',
+    url: (title, ep, lang) => `https://voiranime.com/anime/${slug(title)}/`,
+    urlEp: (title, ep, lang) => `https://voiranime.com/anime/${slug(title)}/`,
+  },
+  {
+    key: 'animevf',
+    name: 'AnimeVF',
+    icon: '🎙️',
+    tag: 'VF',
+    color: '#059669',
+    url: (title, ep, lang) => `https://animevf.biz/episode/${slug(title)}-episode-${ep}-vf/`,
+    urlEp: (title, ep, lang) => `https://animevf.biz/episode/${slug(title)}-episode-${ep}-vf/`,
+  },
+  {
+    key: 'nakanime',
+    name: 'Nakanime',
+    icon: '🌸',
+    tag: 'VF/VOSTFR',
+    color: '#db2777',
+    url: (title, ep, lang) => `https://nakanime.tv/anime/${slug(title)}/`,
+    urlEp: (title, ep, lang) => `https://nakanime.tv/anime/${slug(title)}/`,
+  },
+  {
+    key: 'animesaturn',
+    name: 'AnimeSaturn',
+    icon: '🪐',
+    tag: 'VOSTFR/ITA',
+    color: '#d97706',
+    url: (title, ep, lang) => `https://www.animesaturn.cx/animelist?search=${encodeURIComponent(title)}`,
+    urlEp: (title, ep, lang) => `https://www.animesaturn.cx/animelist?search=${encodeURIComponent(title)}`,
+  },
+  {
+    key: 'adn',
+    name: 'ADN',
+    icon: '🎬',
+    tag: 'VF/VOSTFR Légal',
+    color: '#0ea5e9',
+    url: (title, ep, lang) => `https://animationdigitalnetwork.fr/recherche?q=${encodeURIComponent(title)}`,
+    urlEp: (title, ep, lang) => `https://animationdigitalnetwork.fr/recherche?q=${encodeURIComponent(title)}`,
+  },
+  {
+    key: 'crunchyroll',
+    name: 'Crunchyroll',
+    icon: '🍣',
+    tag: 'VOSTFR Légal',
+    color: '#f97316',
+    url: (title, ep, lang) => `https://www.crunchyroll.com/fr/search?q=${encodeURIComponent(title)}`,
+    urlEp: (title, ep, lang) => `https://www.crunchyroll.com/fr/search?q=${encodeURIComponent(title)}`,
+  },
+];
 
-/* ────────────────────────────────────────────
-   SOURCES — URLs directes vers les sites
-   Note : la plupart bloquent les iframes (X-Frame-Options).
-   On propose donc d'ouvrir dans un nouvel onglet + fallback iframe.
-──────────────────────────────────────────── */
-const SOURCES={
-  animesama:{
-    name:'AnimeSama',icon:'🍥',tag:'VF/VOSTFR',
-    url:(id,ep,lang,title)=>`https://anime-sama.fr/catalogue/${slug(title)}/${lang}/ep${ep}/`,
-    embed:(id,ep,lang,title)=>`https://anime-sama.fr/catalogue/${slug(title)}/${lang}/ep${ep}/`,
+/* ════════════════════════════════════════════
+   HÉBERGEURS EMBED — Lecteur intégré
+   Ces hébergeurs autorisent les iframes
+════════════════════════════════════════════ */
+const EMBED_HOSTS = [
+  {
+    key: 'sibnet',
+    name: 'Sibnet',
+    quality: 'HD',
+    available: true,
+    // Sibnet: https://video.sibnet.ru/shell.php?videoid=XXXXX
+    // On construit l'URL via une recherche de l'anime sur Sibnet
+    buildUrl: (title, ep, lang) => `https://video.sibnet.ru/search/?text=${encodeURIComponent(title + ' ' + (lang === 'vf' ? 'vf' : 'vostfr') + ' episode ' + ep)}`,
+    embedUrl: (videoId) => `https://video.sibnet.ru/shell.php?videoid=${videoId}`,
+    searchUrl: (title, ep, lang) => `https://video.sibnet.ru/search/?text=${encodeURIComponent(title + ' ' + ep)}`,
   },
-  neko:{
-    name:'Neko-sama',icon:'😺',tag:'VF/VOSTFR',
-    url:(id,ep,lang,title)=>`https://neko-sama.fr/anime/episode/${id}-${slug(title)}-${ep}_${lang}/`,
-    embed:(id,ep,lang,title)=>`https://neko-sama.fr/anime/episode/${id}-${slug(title)}-${ep}_${lang}/`,
+  {
+    key: 'sendvid',
+    name: 'Sendvid',
+    quality: 'HD',
+    available: true,
+    searchUrl: (title, ep, lang) => `https://sendvid.com/search?q=${encodeURIComponent(title + ' episode ' + ep)}`,
+    embedUrl: (videoId) => `https://sendvid.com/embed/${videoId}`,
   },
-  mavanimes:{
-    name:'Mavanimes',icon:'🔥',tag:'VF',
-    url:(id,ep,lang,title)=>`https://mavanimes.co/ep/${slug(title)}-episode-${ep}-${lang}/`,
-    embed:(id,ep,lang,title)=>`https://mavanimes.co/ep/${slug(title)}-episode-${ep}-${lang}/`,
+  {
+    key: 'vidmoly',
+    name: 'Vidmoly',
+    quality: 'HD',
+    available: true,
+    searchUrl: (title, ep, lang) => `https://vidmoly.to/search?q=${encodeURIComponent(title)}`,
+    embedUrl: (videoId) => `https://vidmoly.to/embed-${videoId}.html`,
   },
-  voiranime:{
-    name:'VoirAnime',icon:'👁️',tag:'VF/VOSTFR',
-    url:(id,ep,lang,title)=>`https://voir-anime.to/${slug(title)}-${lang}-episode-${ep}/`,
-    embed:(id,ep,lang,title)=>`https://voir-anime.to/${slug(title)}-${lang}-episode-${ep}/`,
+  {
+    key: 'voe',
+    name: 'VOE',
+    quality: 'FHD',
+    available: true,
+    searchUrl: (title, ep, lang) => `https://voe.sx/search?q=${encodeURIComponent(title)}`,
+    embedUrl: (videoId) => `https://voe.sx/e/${videoId}`,
   },
-  vf5:{
-    name:'VF5',icon:'🎬',tag:'VF',
-    url:(id,ep,lang,title)=>`https://vf5.fr/anime/${slug(title)}-vf/ep-${ep}/`,
-    embed:(id,ep,lang,title)=>`https://vf5.fr/anime/${slug(title)}-vf/ep-${ep}/`,
+  {
+    key: 'filemoon',
+    name: 'Filemoon',
+    quality: 'HD',
+    available: true,
+    searchUrl: (title, ep, lang) => `https://filemoon.sx/search/${encodeURIComponent(title)}`,
+    embedUrl: (videoId) => `https://filemoon.sx/e/${videoId}`,
   },
-  aniwave:{
-    name:'AniWave',icon:'🌊',tag:'VOSTFR',
-    url:(id,ep,lang,title)=>`https://aniwave.to/watch/${slug(title)}.${id}/ep-${ep}`,
-    embed:(id,ep,lang,title)=>`https://aniwave.to/watch/${slug(title)}.${id}/ep-${ep}`,
-  },
-  adn:{
-    name:'ADN',icon:'🎬',tag:'VF/VOSTFR (Légal)',
-    url:(id,ep,lang,title)=>`https://animationdigitalnetwork.fr/recherche?q=${encodeURIComponent(title)}`,
-    embed:(id,ep,lang,title)=>`https://animationdigitalnetwork.fr/recherche?q=${encodeURIComponent(title)}`,
-  },
-  crunchyroll:{
-    name:'Crunchyroll',icon:'🍣',tag:'VOSTFR (Légal)',
-    url:(id,ep,lang,title)=>`https://www.crunchyroll.com/fr/search?q=${encodeURIComponent(title)}`,
-    embed:(id,ep,lang,title)=>`https://www.crunchyroll.com/fr/search?q=${encodeURIComponent(title)}`,
-  },
-  animevf:{
-    name:'AnimeVF',icon:'🎙️',tag:'VF',
-    url:(id,ep,lang,title)=>`https://animevf.biz/episode/${slug(title)}-episode-${ep}-vf/`,
-    embed:(id,ep,lang,title)=>`https://animevf.biz/episode/${slug(title)}-episode-${ep}-vf/`,
-  },
-  animepahe:{
-    name:'AnimePahe',icon:'🌙',tag:'VOSTFR',
-    url:(id,ep,lang,title)=>`https://animepahe.ru/anime/${slug(title)}`,
-    embed:(id,ep,lang,title)=>`https://animepahe.ru/anime/${slug(title)}`,
-  },
+];
+
+/* IDs vidéo connus (titre_slug + ep + lang → videoId) */
+/* Ces IDs sont des exemples — dans un vrai site, ils seraient en base de données */
+const KNOWN_EMBEDS = {
+  /* Format: "animeslug_ep_lang": {host: "sibnet", id: "XXXXX"} */
+  /* Exemples pour les animes populaires */
 };
 
-/* ── Construire grille sources ── */
-function buildSrcGrid(){
-  const g=document.getElementById('srcGrid');
-  g.innerHTML=Object.entries(SOURCES).map(([k,v])=>`
-    <div class="src-card${k===currentSrc?' active':''}" data-src="${k}" onclick="changeSrc('${k}')">
-      <div class="src-name">${v.icon} ${v.name}</div>
-      <div class="src-tag">${v.tag}</div>
+/* ════════════════════════════════════════════
+   ONGLETS SOURCES
+════════════════════════════════════════════ */
+window.switchSrcTab = function(tab) {
+  document.querySelectorAll('.src-tab').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && tab === 'sites') || (i === 1 && tab === 'embed'));
+  });
+  document.getElementById('srcSites').classList.toggle('active', tab === 'sites');
+  document.getElementById('srcEmbed').classList.toggle('active', tab === 'embed');
+};
+
+/* ════════════════════════════════════════════
+   CONSTRUCTION GRILLES
+════════════════════════════════════════════ */
+function buildSrcGrid() {
+  const g = document.getElementById('srcGrid');
+  g.innerHTML = STREAM_SOURCES.map(s => `
+    <div class="src-card${s.key === currentSrc ? ' active' : ''}" data-src="${s.key}" onclick="changeSrc('${s.key}')">
+      <span class="src-icon">${s.icon}</span>
+      <div class="src-info">
+        <div class="src-name">${s.name}</div>
+        <div class="src-tag">${s.tag}</div>
+      </div>
+    </div>`).join('');
+
+  // Mettre à jour le bouton d'ouverture
+  updateOpenBtn();
+}
+
+function buildHostGrid() {
+  const g = document.getElementById('hostGrid');
+  g.innerHTML = EMBED_HOSTS.map(h => `
+    <div class="host-card${h.key === currentHost ? ' active' : ''}${!h.available ? ' host-unavail' : ''}"
+      data-host="${h.key}" onclick="${h.available ? `changeHost('${h.key}')` : 'toast(\"⚠️ Hébergeur indisponible\")'}">
+      <div class="host-name">${h.name}</div>
+      <div class="host-quality">${h.quality}</div>
     </div>`).join('');
 }
 
-window.changeSrc=function(k){
-  currentSrc=k;
-  document.querySelectorAll('.src-card').forEach(c=>c.classList.toggle('active',c.dataset.src===k));
-  const src=SOURCES[k];
-  if(!src)return;
-  currentUrl=src.url(CID,currentEp,currentLang,animeTitle);
-  document.getElementById('srcOpenBtn').onclick=()=>window.open(currentUrl,'_blank');
-  document.getElementById('openExtBtn').onclick=()=>window.open(currentUrl,'_blank');
-  if(document.getElementById('videoFrame').style.display==='block'||document.getElementById('iframeBlocked').classList.contains('show')){
-    startPlayer();
-  }
-  toast('Source : '+src.name);
+/* ════════════════════════════════════════════
+   CHANGEMENT SOURCE / HÉBERGEUR
+════════════════════════════════════════════ */
+window.changeSrc = function(k) {
+  currentSrc = k;
+  document.querySelectorAll('.src-card').forEach(c => c.classList.toggle('active', c.dataset.src === k));
+  updateOpenBtn();
+  toast('Source : ' + (STREAM_SOURCES.find(s => s.key === k)?.name || k));
 };
 
-/* ── PLAYER ── */
-let playerStarted=false;
+window.changeHost = function(k) {
+  currentHost = k;
+  document.querySelectorAll('.host-card').forEach(c => c.classList.toggle('active', c.dataset.host === k));
+  toast('Hébergeur : ' + (EMBED_HOSTS.find(h => h.key === k)?.name || k));
+};
 
-window.startPlayer=function(){
-  const frame=document.getElementById('videoFrame');
-  const loader=document.getElementById('playerLoader');
-  const overlay=document.getElementById('playerOverlay');
-  const blocked=document.getElementById('iframeBlocked');
-  const src=SOURCES[currentSrc];
-  if(!src){toast('❌ Source invalide');return;}
+function updateOpenBtn() {
+  const src = STREAM_SOURCES.find(s => s.key === currentSrc);
+  if(!src) return;
+  currentUrl = src.urlEp(animeTitle, currentEp, currentLang);
+  const btn = document.getElementById('srcOpenBtn');
+  if(btn) {
+    btn.textContent = `🔗 Ouvrir sur ${src.name}`;
+    btn.onclick = () => window.open(currentUrl, '_blank');
+  }
+  const extBtn = document.getElementById('openExtBtn');
+  if(extBtn) extBtn.onclick = () => window.open(currentUrl, '_blank');
+}
 
-  currentUrl=src.embed(CID,currentEp,currentLang,animeTitle);
-  document.getElementById('srcOpenBtn').onclick=()=>window.open(currentUrl,'_blank');
-  document.getElementById('openExtBtn').onclick=()=>window.open(currentUrl,'_blank');
+window.trySrc = function() {
+  const keys = STREAM_SOURCES.map(s => s.key);
+  const idx = keys.indexOf(currentSrc);
+  const next = keys[(idx + 1) % keys.length];
+  changeSrc(next);
+  toast('Source suivante : ' + STREAM_SOURCES.find(s => s.key === next)?.name);
+};
+
+window.tryNextHost = function() {
+  const keys = EMBED_HOSTS.filter(h => h.available).map(h => h.key);
+  const idx = keys.indexOf(currentHost);
+  const next = keys[(idx + 1) % keys.length];
+  changeHost(next);
+  startPlayer();
+};
+
+/* ════════════════════════════════════════════
+   LECTEUR INTÉGRÉ (EMBED)
+════════════════════════════════════════════ */
+window.startPlayer = function() {
+  const frame   = document.getElementById('videoFrame');
+  const loader  = document.getElementById('playerLoader');
+  const overlay = document.getElementById('playerOverlay');
+  const blocked = document.getElementById('iframeBlocked');
+  const host    = EMBED_HOSTS.find(h => h.key === currentHost);
+  if(!host) { toast('❌ Hébergeur invalide'); return; }
+
+  // Chercher si on a un ID connu pour cet épisode
+  const embedKey = `${slug(animeTitle)}_${currentEp}_${currentLang}`;
+  const known = KNOWN_EMBEDS[embedKey];
+
+  let embedUrl = '';
+  if(known && known.host === currentHost) {
+    embedUrl = host.embedUrl(known.id);
+  } else {
+    // Pas d'ID connu → ouvrir la page de recherche de l'hébergeur
+    embedUrl = host.searchUrl(animeTitle, currentEp, currentLang);
+    // Pour Sibnet, on peut tenter un embed direct avec une recherche
+    if(currentHost === 'sibnet') {
+      embedUrl = `https://video.sibnet.ru/shell.php?videoid=0&autostart=1`;
+    }
+  }
 
   overlay.classList.add('hidden');
   blocked.classList.remove('show');
-  frame.style.display='block';
+  frame.style.display = 'block';
   loader.classList.add('active');
-  frame.src=currentUrl;
+  frame.src = embedUrl;
 
-  // Timeout : si après 8s l'iframe n'a pas chargé, proposer d'ouvrir en onglet
-  const blockTimer=setTimeout(()=>{
+  const blockTimer = setTimeout(() => {
     loader.classList.remove('active');
-    // On tente de détecter si l'iframe est vide (bloquée)
-    try{
-      const doc=frame.contentDocument||frame.contentWindow?.document;
-      if(!doc||doc.body?.innerHTML===''||doc.location?.href==='about:blank'){
-        frame.style.display='none';
+    try {
+      const doc = frame.contentDocument || frame.contentWindow?.document;
+      if(!doc || doc.body?.innerHTML === '' || doc.location?.href === 'about:blank') {
+        frame.style.display = 'none';
         blocked.classList.add('show');
       }
-    }catch(e){
-      // Cross-origin = iframe chargée (bonne signe) ou bloquée
-      // On laisse l'iframe visible
+    } catch(e) {
+      // Cross-origin = iframe chargée normalement
     }
-  },8000);
+  }, 9000);
 
-  frame.onload=()=>{
+  frame.onload = () => {
     clearTimeout(blockTimer);
     loader.classList.remove('active');
-    // Vérifier si l'iframe est réellement chargée
-    try{
-      const doc=frame.contentDocument||frame.contentWindow?.document;
-      if(doc&&(doc.body?.innerHTML===''||doc.title?.includes('refused'))){
-        frame.style.display='none';
+    try {
+      const doc = frame.contentDocument || frame.contentWindow?.document;
+      if(doc && (doc.body?.innerHTML === '' || doc.title?.includes('refused') || doc.title?.includes('403'))) {
+        frame.style.display = 'none';
         blocked.classList.add('show');
       }
-    }catch(e){
+    } catch(e) {
       // Cross-origin = chargé normalement
     }
   };
 
-  playerStarted=true;
-  history.replaceState({},'',`?id=${CID}&type=${CTYPE}&ep=${currentEp}`);
+  playerStarted = true;
+  history.replaceState({}, '', `?id=${CID}&type=${CTYPE}&ep=${currentEp}`);
   saveProgress(currentEp);
   markWatched(currentEp);
   updateDisplay();
 };
 
-window.trySrc=function(){
-  // Passer à la source suivante
-  const keys=Object.keys(SOURCES);
-  const idx=keys.indexOf(currentSrc);
-  const next=keys[(idx+1)%keys.length];
-  changeSrc(next);
-  startPlayer();
-};
-
-function loadEpisode(ep){
-  currentEp=ep;
-  if(playerStarted){
+function loadEpisode(ep) {
+  currentEp = ep;
+  updateOpenBtn();
+  if(playerStarted) {
     startPlayer();
-  }else{
-    document.getElementById('overlayTitle').textContent=`▶  ${CTYPE==='anime'?'Épisode':'Chapitre'} ${ep} — ${animeTitle}`;
+  } else {
+    document.getElementById('overlayTitle').textContent = `▶  ${CTYPE === 'anime' ? 'Épisode' : 'Chapitre'} ${ep} — ${animeTitle}`;
   }
   updateDisplay();
   syncSidebar(ep);
@@ -417,185 +619,227 @@ function loadEpisode(ep){
   markWatched(ep);
 }
 
-function updateDisplay(){
-  const label=CTYPE==='anime'?'Épisode':'Chapitre';
-  document.getElementById('epDisplay').textContent=`${label} ${currentEp}`;
-  const meta=document.getElementById('metaRow');
-  meta.innerHTML=`<span class="meta-badge prog-badge">📊 ${label} ${currentEp} / ${epCount||'?'}</span>
-    <span class="meta-badge">🎌 ${animeTitle}</span>
+function updateDisplay() {
+  const label = CTYPE === 'anime' ? 'Épisode' : 'Chapitre';
+  document.getElementById('epDisplay').textContent = `${label} ${currentEp}`;
+  const meta = document.getElementById('metaRow');
+  meta.innerHTML = `<span class="meta-badge prog-badge">📊 ${label} ${currentEp} / ${epCount || '?'}</span>
+    <span class="meta-badge">🎌 ${esc(animeTitle)}</span>
     <span class="meta-badge">🔤 ${currentLang.toUpperCase()}</span>`;
 }
 
-function syncSidebar(ep){
-  document.querySelectorAll('.ep-card').forEach(c=>{
-    const n=parseInt(c.dataset.ep);
-    c.classList.toggle('active',n===ep);
-    if(n===ep)c.scrollIntoView({behavior:'smooth',block:'nearest'});
+function syncSidebar(ep) {
+  document.querySelectorAll('.ep-card').forEach(c => {
+    const n = parseInt(c.dataset.ep);
+    c.classList.toggle('active', n === ep);
+    if(n === ep) c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
 }
 
-function nextEp(){if(currentEp<epCount)loadEpisode(currentEp+1);else toast('🎉 Dernier épisode !');}
-function prevEp(){if(currentEp>1)loadEpisode(currentEp-1);else toast('📺 Premier épisode !');}
+function nextEp() { if(currentEp < epCount) loadEpisode(currentEp + 1); else toast('🎉 Dernier épisode !'); }
+function prevEp() { if(currentEp > 1) loadEpisode(currentEp - 1); else toast('📺 Premier épisode !'); }
 
-/* ── HISTORIQUE ── */
-function getWatched(){return new Set(JSON.parse(localStorage.getItem('akrya_watched_'+CID)||'[]'));}
-function markWatched(ep){const w=getWatched();w.add(ep);localStorage.setItem('akrya_watched_'+CID,JSON.stringify([...w]));refreshWatchedClasses();}
-function refreshWatchedClasses(){const w=getWatched();document.querySelectorAll('.ep-card').forEach(c=>c.classList.toggle('watched-card',w.has(parseInt(c.dataset.ep))));}
+/* ════════════════════════════════════════════
+   HISTORIQUE
+════════════════════════════════════════════ */
+function getWatched() { return new Set(JSON.parse(localStorage.getItem('akrya_watched_' + CID) || '[]')); }
+function markWatched(ep) { const w = getWatched(); w.add(ep); localStorage.setItem('akrya_watched_' + CID, JSON.stringify([...w])); refreshWatchedClasses(); }
+function refreshWatchedClasses() { const w = getWatched(); document.querySelectorAll('.ep-card').forEach(c => c.classList.toggle('watched-card', w.has(parseInt(c.dataset.ep)))); }
 
 /* ── Progression Firestore ── */
-function saveProgress(ep){
-  localStorage.setItem('akrya_prog_'+CID,ep);
-  if(currentUser&&fbDb){
+function saveProgress(ep) {
+  localStorage.setItem('akrya_prog_' + CID, ep);
+  if(currentUser && fbDb) {
     fbDb.collection('users').doc(currentUser.uid).set({
-      [`progress.${CTYPE}.${CID}`]:ep,
-      lastWatched:firebase.firestore.FieldValue.serverTimestamp()
-    },{merge:true}).catch(()=>{});
+      [`progress.${CTYPE}.${CID}`]: ep,
+      lastWatched: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true }).catch(() => {});
   }
 }
-async function loadCloudProgress(){
-  if(!fbDb||!currentUser)return;
-  try{
-    const doc=await fbDb.collection('users').doc(currentUser.uid).get();
-    if(doc.exists){
-      const saved=doc.data()?.progress?.[CTYPE]?.[CID];
-      const localSaved=parseInt(localStorage.getItem('akrya_prog_'+CID)||'0');
-      const best=Math.max(saved||0,localSaved||0);
-      if(best&&best!==currentEp){
-        if(confirm(`📌 Reprendre à l'épisode ${best} ?`)){loadEpisode(best);}
+async function loadCloudProgress() {
+  if(!fbDb || !currentUser) return;
+  try {
+    const doc = await fbDb.collection('users').doc(currentUser.uid).get();
+    if(doc.exists) {
+      const saved = doc.data()?.progress?.[CTYPE]?.[CID];
+      const localSaved = parseInt(localStorage.getItem('akrya_prog_' + CID) || '0');
+      const best = Math.max(saved || 0, localSaved || 0);
+      if(best && best !== currentEp) {
+        if(confirm(`📌 Reprendre à l'épisode ${best} ?`)) { loadEpisode(best); }
       }
     }
-  }catch(_){}
+  } catch(_) {}
 }
 
-/* ── SIDEBAR PAGINATION ── */
-function buildSidebarEps(){
-  allEps=Array.from({length:Math.min(epCount,3000)},(_,i)=>i+1);
-  filteredEps=[...allEps];
-  sidebarPage=1;
+/* ════════════════════════════════════════════
+   SIDEBAR PAGINATION
+════════════════════════════════════════════ */
+function buildSidebarEps() {
+  allEps = Array.from({ length: Math.min(epCount, 3000) }, (_, i) => i + 1);
+  filteredEps = [...allEps];
+  sidebarPage = 1;
   renderSidebarPage();
 }
 
-function renderSidebarPage(){
-  const totalPages=Math.ceil(filteredEps.length/SIDE_PP);
-  const start=(sidebarPage-1)*SIDE_PP;
-  const slice=filteredEps.slice(start,start+SIDE_PP);
-  const label=CTYPE==='anime'?'Ép.':'Ch.';
-  const watched=getWatched();
-  const list=document.getElementById('epList');
-  list.innerHTML=slice.map(n=>{
-    return`<div class="ep-card${n===currentEp?' active':''}${watched.has(n)?' watched-card':''}" data-ep="${n}">
+function renderSidebarPage() {
+  const totalPages = Math.ceil(filteredEps.length / SIDE_PP);
+  const start = (sidebarPage - 1) * SIDE_PP;
+  const slice = filteredEps.slice(start, start + SIDE_PP);
+  const label = CTYPE === 'anime' ? 'Ép.' : 'Ch.';
+  const watched = getWatched();
+  const list = document.getElementById('epList');
+  list.innerHTML = slice.map(n => `
+    <div class="ep-card${n === currentEp ? ' active' : ''}${watched.has(n) ? ' watched-card' : ''}" data-ep="${n}">
       <span class="ep-num">${label} ${n}</span>
       <span class="ep-lbl">Épisode ${n}</span>
       <button class="ep-play-btn">▶</button>
-    </div>`;
-  }).join('');
-  list.querySelectorAll('.ep-card').forEach(c=>{
-    c.addEventListener('click',e=>{if(e.target.classList.contains('ep-play-btn'))return;loadEpisode(parseInt(c.dataset.ep));});
-    c.querySelector('.ep-play-btn').addEventListener('click',()=>loadEpisode(parseInt(c.dataset.ep)));
+    </div>`).join('');
+  list.querySelectorAll('.ep-card').forEach(c => {
+    c.addEventListener('click', e => { if(e.target.classList.contains('ep-play-btn')) return; loadEpisode(parseInt(c.dataset.ep)); });
+    c.querySelector('.ep-play-btn').addEventListener('click', () => loadEpisode(parseInt(c.dataset.ep)));
   });
-  const pag=document.getElementById('sidebarPag');
-  const pages=[];
-  for(let i=Math.max(1,sidebarPage-1);i<=Math.min(totalPages,sidebarPage+1);i++)pages.push(i);
-  pag.innerHTML=`
-    <button class="s-pg" onclick="goSidePage(1)" ${sidebarPage===1?'disabled':''} title="Début">«</button>
-    <button class="s-pg" onclick="goSidePage(${sidebarPage-1})" ${sidebarPage===1?'disabled':''}>‹</button>
-    ${pages.map(p=>`<button class="s-pg${p===sidebarPage?' active':''}" onclick="goSidePage(${p})">${p}</button>`).join('')}
-    <button class="s-pg" onclick="goSidePage(${sidebarPage+1})" ${sidebarPage===totalPages?'disabled':''}>›</button>
-    <button class="s-pg" onclick="goSidePage(${totalPages})" ${sidebarPage===totalPages?'disabled':''} title="Fin">»</button>
+  const pag = document.getElementById('sidebarPag');
+  const pages = [];
+  for(let i = Math.max(1, sidebarPage - 1); i <= Math.min(totalPages, sidebarPage + 1); i++) pages.push(i);
+  pag.innerHTML = `
+    <button class="s-pg" onclick="goSidePage(1)" ${sidebarPage === 1 ? 'disabled' : ''} title="Début">«</button>
+    <button class="s-pg" onclick="goSidePage(${sidebarPage - 1})" ${sidebarPage === 1 ? 'disabled' : ''}>‹</button>
+    ${pages.map(p => `<button class="s-pg${p === sidebarPage ? ' active' : ''}" onclick="goSidePage(${p})">${p}</button>`).join('')}
+    <button class="s-pg" onclick="goSidePage(${sidebarPage + 1})" ${sidebarPage === totalPages ? 'disabled' : ''}>›</button>
+    <button class="s-pg" onclick="goSidePage(${totalPages})" ${sidebarPage === totalPages ? 'disabled' : ''} title="Fin">»</button>
     <span class="s-pg-info">${sidebarPage}/${totalPages}</span>`;
 }
 
-window.goSidePage=function(p){
-  const total=Math.ceil(filteredEps.length/SIDE_PP);
-  if(isNaN(p)||p<1||p>total)return;
-  sidebarPage=p;renderSidebarPage();
+window.goSidePage = function(p) {
+  const total = Math.ceil(filteredEps.length / SIDE_PP);
+  if(isNaN(p) || p < 1 || p > total) return;
+  sidebarPage = p; renderSidebarPage();
 };
 
-document.getElementById('epSearchSide').addEventListener('input',e=>{
-  const v=e.target.value.trim().toLowerCase();
-  filteredEps=v?allEps.filter(n=>String(n).includes(v)):allEps;
-  sidebarPage=1;renderSidebarPage();
+document.getElementById('epSearchSide').addEventListener('input', e => {
+  const v = e.target.value.trim().toLowerCase();
+  filteredEps = v ? allEps.filter(n => String(n).includes(v)) : allEps;
+  sidebarPage = 1; renderSidebarPage();
 });
 
-/* ── Fetch API ── */
-async function apiFetch(url){
-  try{const r=await fetch(url,{signal:AbortSignal.timeout(9000)});if(r.ok)return r;}catch(_){}
-  return fetch(PROXY+encodeURIComponent(url),{signal:AbortSignal.timeout(14000)});
+/* ════════════════════════════════════════════
+   CHARGEMENT INFOS ANIME (AniList + Jikan fallback)
+════════════════════════════════════════════ */
+async function alistFetch(query, variables = {}) {
+  const r = await fetch(ALIST, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ query, variables }),
+    signal: AbortSignal.timeout(10000)
+  });
+  return r.json();
 }
 
-/* ── CHARGEMENT ── */
-async function loadAnime(){
-  if(!CID){document.getElementById('hdrTitle').textContent='ID manquant';return;}
-  document.getElementById('backLink').href=`detail.html?id=${CID}&type=${CTYPE}`;
+async function loadAnime() {
+  if(!CID) { document.getElementById('hdrTitle').textContent = 'ID manquant'; return; }
+  document.getElementById('backLink').href = `detail.html?id=${CID}&type=${CTYPE}`;
 
-  const cat=CTYPE==='webtoon'?'manga':CTYPE;
-  const label=CTYPE==='anime'?'Ép.':'Ch.';
+  const label = CTYPE === 'anime' ? 'Ép.' : 'Ch.';
 
-  try{
-    const r=await apiFetch(`${API}/${cat}/${CID}`);
-    const d=await r.json();
-    const item=d.data;
-    if(!item)throw new Error();
-    animeTitle=item.title||'Anime';
-    animeSlug=slug(animeTitle);
-    epCount=EP_FIX[CID]||item.episodes||item.chapters||24;
-    document.title=`${animeTitle} — Lecture — Akrya`;
-    document.getElementById('hdrTitle').textContent=animeTitle;
-    document.getElementById('sidebarTitle').textContent=`${CTYPE==='anime'?'📺':'📚'} ${label.slice(0,-1)}s (${epCount})`;
-    document.getElementById('overlayTitle').textContent=`▶  ${label} ${currentEp} — ${animeTitle}`;
+  // Essayer AniList d'abord
+  try {
+    const q = `query($id:Int){Media(id:$id,type:${CTYPE === 'anime' ? 'ANIME' : 'MANGA'}){id title{romaji english}episodes chapters status coverImage{medium}averageScore}}`;
+    const d = await alistFetch(q, { id: parseInt(CID) });
+    const m = d?.data?.Media;
+    if(m) {
+      animeTitle = m.title?.romaji || m.title?.english || 'Anime';
+      animeSlug  = slug(animeTitle);
+      epCount    = EP_FIX[CID] || m.episodes || m.chapters || 24;
+      document.title = `${animeTitle} — Lecture — Akrya`;
+      document.getElementById('hdrTitle').textContent = animeTitle;
+      document.getElementById('sidebarTitle').textContent = `${CTYPE === 'anime' ? '📺' : '📚'} ${label.slice(0,-1)}s (${epCount})`;
+      document.getElementById('overlayTitle').textContent = `▶  ${label} ${currentEp} — ${animeTitle}`;
+      const meta = document.getElementById('metaRow');
+      if(m.averageScore) meta.innerHTML += `<span class="meta-badge">⭐ ${(m.averageScore/10).toFixed(1)}</span>`;
+      if(m.status) meta.innerHTML += `<span class="meta-badge">${m.status === 'RELEASING' ? '🟢 En cours' : '✅ Terminé'}</span>`;
+      buildSrcGrid();
+      buildHostGrid();
+      buildSidebarEps();
+      updateDisplay();
+      updateOpenBtn();
+      return;
+    }
+  } catch(_) {}
 
-    buildSrcGrid();
-    buildSidebarEps();
-    updateDisplay();
+  // Fallback Jikan
+  try {
+    const cat = CTYPE === 'webtoon' ? 'manga' : CTYPE;
+    const r = await fetch(`${API}/${cat}/${CID}`, { signal: AbortSignal.timeout(9000) });
+    if(r.ok) {
+      const d = await r.json();
+      const item = d.data;
+      if(item) {
+        animeTitle = item.title || 'Anime';
+        animeSlug  = slug(animeTitle);
+        epCount    = EP_FIX[CID] || item.episodes || item.chapters || 24;
+        document.title = `${animeTitle} — Lecture — Akrya`;
+        document.getElementById('hdrTitle').textContent = animeTitle;
+        document.getElementById('sidebarTitle').textContent = `${CTYPE === 'anime' ? '📺' : '📚'} ${label.slice(0,-1)}s (${epCount})`;
+        document.getElementById('overlayTitle').textContent = `▶  ${label} ${currentEp} — ${animeTitle}`;
+        const meta = document.getElementById('metaRow');
+        if(item.score) meta.innerHTML += `<span class="meta-badge">⭐ ${item.score}</span>`;
+        buildSrcGrid();
+        buildHostGrid();
+        buildSidebarEps();
+        updateDisplay();
+        updateOpenBtn();
+        return;
+      }
+    }
+  } catch(_) {}
 
-    // Initialiser le bouton "Ouvrir dans un onglet"
-    currentUrl=SOURCES[currentSrc].url(CID,currentEp,currentLang,animeTitle);
-    document.getElementById('srcOpenBtn').onclick=()=>window.open(currentUrl,'_blank');
-    document.getElementById('openExtBtn').onclick=()=>window.open(currentUrl,'_blank');
-
-    const meta=document.getElementById('metaRow');
-    if(item.score)meta.innerHTML+=`<span class="meta-badge">⭐ ${item.score}</span>`;
-    if(item.status)meta.innerHTML+=`<span class="meta-badge">${item.status==='Currently Airing'?'🟢 En cours':'✅ Terminé'}</span>`;
-
-  }catch(e){
-    animeTitle='Anime';epCount=24;
-    document.getElementById('hdrTitle').textContent='Chargement…';
-    buildSrcGrid();
-    buildSidebarEps();
-    updateDisplay();
-    toast('⚠️ Infos limitées — lecture disponible');
-  }
+  // Aucune info disponible — on continue quand même
+  animeTitle = 'Anime';
+  epCount = 24;
+  document.getElementById('hdrTitle').textContent = 'Chargement…';
+  buildSrcGrid();
+  buildHostGrid();
+  buildSidebarEps();
+  updateDisplay();
+  updateOpenBtn();
+  toast('⚠️ Infos limitées — lecture disponible');
 }
 
-/* ── ÉVÉNEMENTS ── */
-document.getElementById('prevEpBtn').addEventListener('click',prevEp);
-document.getElementById('nextEpBtn').addEventListener('click',nextEp);
-document.getElementById('autoPlayChk').addEventListener('change',e=>{autoPlay=e.target.checked;});
+/* ════════════════════════════════════════════
+   ÉVÉNEMENTS
+════════════════════════════════════════════ */
+document.getElementById('prevEpBtn').addEventListener('click', prevEp);
+document.getElementById('nextEpBtn').addEventListener('click', nextEp);
+document.getElementById('autoPlayChk').addEventListener('change', e => { autoPlay = e.target.checked; });
 
-document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>{
-  currentLang=b.dataset.lang;
-  document.querySelectorAll('[data-lang]').forEach(x=>x.classList.remove('active'));
+document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => {
+  currentLang = b.dataset.lang;
+  document.querySelectorAll('[data-lang]').forEach(x => x.classList.remove('active'));
   b.classList.add('active');
-  if(playerStarted)startPlayer();
-  toast('Langue : '+b.dataset.lang.toUpperCase());
+  updateOpenBtn();
+  if(playerStarted) startPlayer();
+  toast('Langue : ' + b.dataset.lang.toUpperCase());
 }));
 
-document.querySelectorAll('[data-speed]').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('[data-speed]').forEach(x=>x.classList.remove('active'));
+document.querySelectorAll('[data-speed]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-speed]').forEach(x => x.classList.remove('active'));
   b.classList.add('active');
-  try{const v=document.getElementById('videoFrame').contentWindow?.document?.querySelector('video');if(v)v.playbackRate=parseFloat(b.dataset.speed);}catch(_){}
-  toast('Vitesse : '+b.dataset.speed+'×');
+  try {
+    const v = document.getElementById('videoFrame').contentWindow?.document?.querySelector('video');
+    if(v) v.playbackRate = parseFloat(b.dataset.speed);
+  } catch(_) {}
+  toast('Vitesse : ' + b.dataset.speed + '×');
 }));
 
-document.addEventListener('keydown',e=>{
-  if(e.target.tagName==='INPUT')return;
-  if(e.key==='ArrowRight'||e.key==='n'||e.key==='N')nextEp();
-  if(e.key==='ArrowLeft' ||e.key==='p'||e.key==='P')prevEp();
-  if(e.key===' '){e.preventDefault();if(!playerStarted)startPlayer();}
-  if(e.key==='f'||e.key==='F')toggleFS();
+document.addEventListener('keydown', e => {
+  if(e.target.tagName === 'INPUT') return;
+  if(e.key === 'ArrowRight' || e.key === 'n' || e.key === 'N') nextEp();
+  if(e.key === 'ArrowLeft'  || e.key === 'p' || e.key === 'P') prevEp();
+  if(e.key === ' ') { e.preventDefault(); if(!playerStarted) startPlayer(); }
+  if(e.key === 'f' || e.key === 'F') toggleFS();
 });
 
-window.addEventListener('message',e=>{if(autoPlay&&(e.data==='ended'||e.data?.type==='ended'))nextEp();});
+window.addEventListener('message', e => { if(autoPlay && (e.data === 'ended' || e.data?.type === 'ended')) nextEp(); });
 
 loadAnime();
 </script>
